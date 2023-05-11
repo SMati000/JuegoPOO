@@ -29,7 +29,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         panel.setLayout(new BorderLayout());
         panel.setBounds(50,50,150,200);
         panel.setBackground(Color.gray);
-        panel.add(new JLabel("Juego 1"), BorderLayout.NORTH);
+        panel.add(new JLabel("1943"), BorderLayout.NORTH);
         b1 = new JButton("Iniciar");
         panel.add(b1, BorderLayout.SOUTH);
       
@@ -119,7 +119,6 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent evento){
         JPanel panelJuego = new JPanel();
-        JPanel panelJuego2 = new JPanel();
         JFrame frame = new JFrame();
         
 
@@ -227,34 +226,17 @@ class InterfacePrinc extends JFrame implements ActionListener{
         }
 
 
-        if(evento.getActionCommand() == b1.getActionCommand()){
-            panelJuego.add(new JLabel("Cargando..."));
-            panelJuego.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b2.getActionCommand()){
-            panelJuego2.add(new JLabel("Cargando..."));
-            panelJuego2.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego2);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b3.getActionCommand()){
-            panelJuego.add(new JLabel("Cargando..."));
-            panelJuego.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b4.getActionCommand()){
+        if(evento.getSource() == b1){
+            Juego juego = new Juego1943();
+
+            Thread t = new Thread() {
+                public void run() {
+                    juego.run(1.0 / 60.0);
+                }
+            };
+
+            t.start();
+        } else if(evento.getActionCommand() == b2.getActionCommand()) {
             panelJuego.add(new JLabel("Cargando..."));
             panelJuego.setBackground(Color.gray);
             Dimension dim = new Dimension(100,100);

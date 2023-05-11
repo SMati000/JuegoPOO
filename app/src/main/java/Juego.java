@@ -1,15 +1,15 @@
-import java.awt.Frame;
-import java.awt.event.ActionListener;
+import com.entropyinteractive.*;
 
-import javax.swing.BoxLayout;
+abstract public class Juego extends JGame {
+    protected String nombre;
+    protected String descripcion;
 
-import java.awt.*;
+    public Juego(String nombre, String descripcion) {
+        super(nombre, 800, 600);
 
-abstract public class Juego extends Frame{
-    private String nombre;
-    private String descripcion;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+    }
 
-    abstract public void iniciar();
-    abstract public void finalizar();
-
+    // Los metodos iniciar, finalizar, actualizar y dibujar los provee la superclase JGame.
 }
