@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 
 
@@ -10,6 +11,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
     JMenuItem item1,item2, item3;
     JMenuBar menu;
     JMenu menu1, menu2;
+    private static final String NOMBRE_BASEDATOS = "./app/src/main/confi/teclas.db";
 
     
 
@@ -29,7 +31,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         panel.setLayout(new BorderLayout());
         panel.setBounds(50,50,150,200);
         panel.setBackground(Color.gray);
-        panel.add(new JLabel("Juego 1"), BorderLayout.NORTH);
+        panel.add(new JLabel("1943"), BorderLayout.NORTH);
         b1 = new JButton("Iniciar");
         panel.add(b1, BorderLayout.SOUTH);
       
@@ -60,26 +62,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         b4 = new JButton("Iniciar");
         panel4.add(b4, BorderLayout.SOUTH);
 
-        //menu visto en pantalla
-        menu = new JMenuBar();
-        setJMenuBar(menu);
-        menu1 = new JMenu("Configuraciones");
-        menu2 = new JMenu("Ver");
-        menu.add(menu1); 
-        menu.add(menu2); 
-
-        //item dentro de configuraciones
-        item1 = new JMenuItem("Teclado");
-        menu1.add(item1);
-       // item1.addActionListener(this);
-        item1.addActionListener(this);
-        item2 = new JMenuItem("Sonido");
-        menu1.add(item2);
-        item2.addActionListener(this);
-        item3 = new JMenuItem("Avion");         
-        menu1.add(item3);
-        item3.addActionListener(this);
-       
+        
 
 
         b1.addActionListener(this);
@@ -119,14 +102,13 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent evento){
         JPanel panelJuego = new JPanel();
-        JPanel panelJuego2 = new JPanel();
         JFrame frame = new JFrame();
         
-
         if (evento.getSource()==item1) {
             JFrame framConfTecla;
             JLabel lb1, lb2, lb3, lb4, lb5, lb6, lb7;
             Choice ch1, ch2, ch3, ch4, ch5, ch6, ch7 ;
+            Configuraciones conf = new Configuraciones();
 
             
             framConfTecla = new JFrame();
@@ -144,12 +126,26 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb1);
             framConfTecla.add(ch1);
 
+            
+       
+            ch1.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                   // System.out.println(("Ha seleccionado: "+ ch1.getSelectedItem()));
+                    conf.selecTeclas(ch1.getSelectedItem());
+                }
+            });
+
+
+
             lb2 = new JLabel("Hacia abajo: ");
             ch2 = new Choice();
             ch2.addItem("↓");                                   //muestra un cuadrado, cambiarlo
             for (int i = 0; i < opciones.length; i++) {
                 ch2.add(opciones[i]);
             }
+
+            //Captura el elemento del choice
+            
 
             framConfTecla.add(lb2);
             framConfTecla.add(ch2);
@@ -227,34 +223,69 @@ class InterfacePrinc extends JFrame implements ActionListener{
         }
 
 
-        if(evento.getActionCommand() == b1.getActionCommand()){
-            panelJuego.add(new JLabel("Cargando..."));
-            panelJuego.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b2.getActionCommand()){
-            panelJuego2.add(new JLabel("Cargando..."));
-            panelJuego2.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego2);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b3.getActionCommand()){
-            panelJuego.add(new JLabel("Cargando..."));
-            panelJuego.setBackground(Color.gray);
-            Dimension dim = new Dimension(100,100);
-            frame.setPreferredSize(dim);
-            frame.add(panelJuego);
-            frame.setVisible(true);
-            frame.pack();
-        }
-        if(evento.getActionCommand() == b4.getActionCommand()){
+        if(evento.getSource() == b1){
+            
+            JFrame frameJuego = new JFrame();
+            frameJuego.setLayout(new BorderLayout());           //no se con layout hacerlo para que quede bien
+            Dimension dim1 = new Dimension(300,300);
+            frameJuego.setPreferredSize(dim1);
+            
+            
+
+                       
+            JButton jugar =  new JButton("JUGAR");
+            jugar.addActionListener(this);
+            frameJuego.add(jugar, BorderLayout.SOUTH);
+            //menu visto en pantalla
+            menu = new JMenuBar();
+            setJMenuBar(menu);
+            menu1 = new JMenu("Configuraciones");
+            menu2 = new JMenu("Ver");
+            menu.add(menu1); 
+            menu.add(menu2); 
+
+            //item dentro de configuraciones
+            item1 = new JMenuItem("Teclado");
+            menu1.add(item1);
+            // item1.addActionListener(this);
+            item1.addActionListener(this);
+            item2 = new JMenuItem("Sonido");
+            menu1.add(item2);
+            item2.addActionListener(this);
+            item3 = new JMenuItem("Avion");         
+            menu1.add(item3);
+            item3.addActionListener(this);
+       
+            frameJuego.add(menu);
+            
+            jugar.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    if(evt.getSource() == jugar){
+                        Juego juego = new Juego1943();
+                        Thread t = new Thread() {
+                            public void run() {
+                                juego.run(1.0 / 60.0);
+                            }
+                        };
+            
+                        t.start();
+                        
+                    }
+                }
+            });
+
+
+
+           
+
+            frameJuego.setVisible(true);
+            frameJuego.pack();
+            
+
+
+
+            
+        } else if(evento.getActionCommand() == b2.getActionCommand()) {
             panelJuego.add(new JLabel("Cargando..."));
             panelJuego.setBackground(Color.gray);
             Dimension dim = new Dimension(100,100);
@@ -266,9 +297,18 @@ class InterfacePrinc extends JFrame implements ActionListener{
         
         
         
+        
+
         
     
     }
+
+
+
+}
+
+class FrameMedio extends JFrame{
+
 
 
 
