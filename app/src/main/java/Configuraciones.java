@@ -22,14 +22,6 @@ public class Configuraciones {
                  
          } catch (SQLException e) {
              System.out.println(e.getMessage());
-         } finally {
-             try {
-                 if (conn != null) {
-                     conn.close();
-                 }
-             } catch (SQLException ex) {
-                 System.out.println(ex.getMessage());
-             }
          }
     }
 
@@ -37,32 +29,29 @@ public class Configuraciones {
     public void selecTeclas(String TeclaSelect){
 
         try{
-            String sql ="Select "+ TeclaSelect + " from Teclas";
+            String sql ="Select prueba from Teclas where codigo = " + TeclaSelect + ";";
+            // System.out.println(sql);
             
             stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
             
             while(rs.next()){
-                //System.out.println(rs.getString("Defecto"));
-
-                 
+                System.out.println(rs.getString("prueba"));
             }
-
 
          }catch (SQLException e) {
             System.out.println(e.getMessage());
-     
-        try {
-            if (conn != null) {
-                conn.close();
+         } finally {
+            try {
+                if (conn != null) {
+                   conn.close();
+                   System.out.println("Closed Connection");
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
             }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
         }
     }
-    }
-
-
 }
 
 
