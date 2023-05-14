@@ -19,12 +19,32 @@ public class Configuraciones {
             
             System.out.println("Conectado a  SQLite.");
                  
-        } catch (SQLException e) {
+         } catch (SQLException e) {
+             System.out.println(e.getMessage());
+         }
+    }
+
+    //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
+    public void selecTeclas(String TeclaSelect){
+
+        try{
+            String sql ="Select Usuario from Teclas where codigo = " + TeclaSelect + ";";
+            // System.out.println(sql);
+            
+            stmt = conn.createStatement();
+            rs  = stmt.executeQuery(sql);
+            
+            while(rs.next()){
+                System.out.println(rs.getString("Usuario"));
+            }
+
+         }catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
+         } finally {
             try {
-                if (conn == null) {
-                    conn.close();
+                if (conn != null) {
+                   conn.close();
+                   System.out.println("Closed Connection");
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
@@ -32,35 +52,12 @@ public class Configuraciones {
         }
     }
 
-    //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
-    public void selecTeclas(String TeclaSelect){
-
-        try{
-            String sql ="Select Defecto from Teclado where Letra = '"+ TeclaSelect + "'";
-            //System.out.println("se selecciono: " + TeclaSelect);
-            stmt = conn.createStatement();
-            rs  = stmt.executeQuery(sql);
-            
-            while(rs.next()){
-                System.out.println(rs.getString("Defecto"));
-                 
-            }
+    public void guardarEnBD(int codigo, String letra){
+        String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra) VALUES(Defecto,codigo,letra)";
 
 
-        }catch (SQLException e) {
-            System.out.println(e.getMessage());
-     
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
     }
-    }
-
-
+    
 }
 
 
