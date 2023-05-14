@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
+
 
 
 
@@ -11,7 +11,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
     JMenuItem item1,item2, item3;
     JMenuBar menu;
     JMenu menu1, menu2;
-    private static final String NOMBRE_BASEDATOS = "./app/src/main/confi/teclas.db";
+    
 
     
 
@@ -118,7 +118,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             lb1 = new JLabel("Hacia adelante: ");
             ch1 = new Choice();
-            String opciones[] = {"a","b", "c", "d"};
+            String opciones[] = {"a","b", "c", "d" ,"e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
             ch1.addItem("↑");                                   //muestra un cuadrado, cambiarlo
             for (int i = 0; i < opciones.length; i++) {
                 ch1.add(opciones[i]);
@@ -126,11 +126,9 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb1);
             framConfTecla.add(ch1);
 
-            
-       
+        
             ch1.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                   // System.out.println(("Ha seleccionado: "+ ch1.getSelectedItem()));
                     conf.selecTeclas(ch1.getSelectedItem());
                 }
             });
@@ -145,7 +143,11 @@ class InterfacePrinc extends JFrame implements ActionListener{
             }
 
             //Captura el elemento del choice
-            
+            ch2.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch2.getSelectedItem());
+                }
+            });            
 
             framConfTecla.add(lb2);
             framConfTecla.add(ch2);
@@ -159,6 +161,13 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb3);
             framConfTecla.add(ch3);
 
+            ch3.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch3.getSelectedItem());
+                }
+            });
+
+
             lb4 = new JLabel("Izquierda: ");
             ch4 = new Choice();
             ch4.addItem("←");                                   //muestra un cuadrado, cambiarlo
@@ -168,6 +177,11 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb4);
             framConfTecla.add(ch4);
            
+            ch4.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch4.getSelectedItem());
+                }
+            });
            
             lb5 = new JLabel("Disparar: ");
             ch5 = new Choice();
@@ -178,6 +192,13 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb5);
             framConfTecla.add(ch5);
 
+            ch5.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch5.getSelectedItem());
+                }
+            });
+
+
             lb6 = new JLabel("Ataques especiales: ");
             ch6 = new Choice();
             ch6.addItem("z");                                   
@@ -187,6 +208,12 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.add(lb6);
             framConfTecla.add(ch6);
 
+            ch6.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch6.getSelectedItem());
+                }
+            });
+
             lb7 = new JLabel("Pausa: ");
             ch7 = new Choice();
             ch7.addItem("Barra espacio");                                   
@@ -195,6 +222,12 @@ class InterfacePrinc extends JFrame implements ActionListener{
             }
             framConfTecla.add(lb7);
             framConfTecla.add(ch7);
+
+            ch7.addItemListener(new ItemListener(){
+                public void itemStateChanged(ItemEvent ie){
+                    conf.selecTeclas(ch7.getSelectedItem());
+                }
+            });
 
             framConfTecla.setVisible(true);
             framConfTecla.pack();
@@ -295,20 +328,8 @@ class InterfacePrinc extends JFrame implements ActionListener{
             frame.pack();
         }
         
-        
-        
-        
 
-        
-    
     }
-
-
-
-}
-
-class FrameMedio extends JFrame{
-
 
 
 
