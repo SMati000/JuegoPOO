@@ -30,36 +30,42 @@ public class Configuraciones {
 
         try{
             String sql ="Select Usuario from Teclado where Letra = '" + TeclaSelect + "';";
-            
-            
+                  
             stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
 
-            //seteo de variables.
-            if(rs.getString("Usuario") != null){    
-                if(nroChoice == 1){
-                    arriba = rs.getString("Usuario");  
+            String valor = rs.getString("Usuario");
+            boolean guardado = false;
+
+            if(valor == null) {
+                guardado = guardarEnBD(codLetra, TeclaSelect, nroChoice);
+                valor = codLetra + "";
+            }
+            
+            if(guardado) {
+                switch(nroChoice){
+                    case 1:
+                        arriba = valor;
+                        break;
+                    case 2:
+                        abajo = valor;
+                        break;
+                    case 3:
+                        der = valor;
+                        break;
+                    case 4:
+                        izq = valor;
+                        break;
+                    case 5:
+                        disparo = valor;
+                        break;
+                    case 6:
+                        dispEspecial = valor;
+                        break;
+                    case 7:
+                        pausa = valor;
+                        break;
                 }
-                if(nroChoice == 2){
-                    abajo = rs.getString("Usuario");
-                }   
-                if(nroChoice == 3){
-                    der = rs.getString("Usuario");
-                }
-                if(nroChoice == 4){
-                    izq = rs.getString("Usuario");
-                }
-                if(nroChoice == 5){
-                    disparo= rs.getString("Usuario");
-                }
-                if(nroChoice == 6){
-                    dispEspecial = rs.getString("Usuario");
-                }
-                if(nroChoice == 7){
-                    pausa = rs.getString("Usuario");
-                }
-            }else{
-                guardarEnBD(codLetra, TeclaSelect, nroChoice);
             }
 
         }catch (SQLException e) {
@@ -76,12 +82,9 @@ public class Configuraciones {
         }
     }
 
-
-
   
-    public void guardarEnBD(int codigo, String letra, int nroChoice){
+    public boolean guardarEnBD(int codigo, String letra, int nroChoice){
         try{
-
             String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra) VALUES(?,?,?)";
             pstmt = conn.prepareStatement(sql);
     
@@ -89,10 +92,8 @@ public class Configuraciones {
             pstmt.setInt(2, codigo);    
             pstmt.setString(3, letra);
             pstmt.executeUpdate();
-            
-            selecTeclas(letra, nroChoice, codigo);
-           
 
+            return true;
         }catch (SQLException e) {
             System.out.println(e.getMessage());
             try {
@@ -102,6 +103,8 @@ public class Configuraciones {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
+
+            return false;
         }
        
 
