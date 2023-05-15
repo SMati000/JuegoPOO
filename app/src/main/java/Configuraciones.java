@@ -3,7 +3,8 @@ import java.sql.*;
 
 public class Configuraciones {
     //teclas por defecto
-    static int arriba, abajo, izq, der, disparo, dispEspecial, pausa;
+    static String arriba, abajo, izq, der, disparo, dispEspecial, pausa;
+
     ResultSet rs = null;
     PreparedStatement pstmt= null;
     Statement stmt;
@@ -19,42 +20,90 @@ public class Configuraciones {
             
             System.out.println("Conectado a  SQLite.");
                  
-         } catch (SQLException e) {
-             System.out.println(e.getMessage());
-         }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
-    public void selecTeclas(String TeclaSelect){
+    public void selecTeclas(String TeclaSelect, int nroChoice, int codLetra){
 
         try{
-            String sql ="Select Usuario from Teclas where codigo = " + TeclaSelect + ";";
-            // System.out.println(sql);
+            String sql ="Select Usuario from Teclado where Letra = '" + TeclaSelect + "';";
+            
             
             stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
-            
-            while(rs.next()){
-                System.out.println(rs.getString("Usuario"));
+
+            //seteo de variables.
+            if(rs.getString("Usuario") != null){    
+                if(nroChoice == 1){
+                    arriba = rs.getString("Usuario");  
+                }
+                if(nroChoice == 2){
+                    abajo = rs.getString("Usuario");
+                }   
+                if(nroChoice == 3){
+                    der = rs.getString("Usuario");
+                }
+                if(nroChoice == 4){
+                    izq = rs.getString("Usuario");
+                }
+                if(nroChoice == 5){
+                    disparo= rs.getString("Usuario");
+                }
+                if(nroChoice == 6){
+                    dispEspecial = rs.getString("Usuario");
+                }
+                if(nroChoice == 7){
+                    pausa = rs.getString("Usuario");
+                }
+            }else{
+                guardarEnBD(codLetra, TeclaSelect, nroChoice);
             }
 
-         }catch (SQLException e) {
+        }catch (SQLException e) {
             System.out.println(e.getMessage());
-         } finally {
+            //  } finally {
+            //     try {
+            //         if (conn != null) {
+            //            conn.close();
+            //            System.out.println("Closed Connection");
+            //         }
+            //     } catch (SQLException ex) {
+            //         System.out.println(ex.getMessage());
+            //     }
+        }
+    }
+
+
+
+  
+    public void guardarEnBD(int codigo, String letra, int nroChoice){
+        try{
+
+            String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra) VALUES(?,?,?)";
+            pstmt = conn.prepareStatement(sql);
+    
+            pstmt.setInt(1, codigo);  
+            pstmt.setInt(2, codigo);    
+            pstmt.setString(3, letra);
+            pstmt.executeUpdate();
+            
+            selecTeclas(letra, nroChoice, codigo);
+           
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
             try {
                 if (conn != null) {
-                   conn.close();
-                   System.out.println("Closed Connection");
+                    conn.close();
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
         }
-    }
-
-    public void guardarEnBD(int codigo, String letra){
-        String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra) VALUES(Defecto,codigo,letra)";
-
+       
 
     }
     
