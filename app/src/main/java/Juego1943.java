@@ -1,9 +1,11 @@
 import java.awt.*;
+import java.io.File;
 
-public class Juego1943 extends Juego{
+public class Juego1943 extends Juego {
 
     public Juego1943(){
         super("1943", "Juego 1943");
+        setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
     }
 
     @Override

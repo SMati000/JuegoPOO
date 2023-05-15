@@ -40,7 +40,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         panel = new JPanel(new BorderLayout());
 
         panel.setBackground(Color.gray);        
-        panel.add(new JLabel("1943"));
+        panel.add(new JLabel("1943"), BorderLayout.NORTH);
         
         b1 = new JButton("Iniciar");
         panel.add(b1, BorderLayout.SOUTH);
@@ -56,7 +56,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 JPanel juegoGenerico = new JPanel(new BorderLayout());
 
                 juegoGenerico.setBackground(Color.gray);
-                juegoGenerico.add(new JLabel("Juego " + (i+j*2)));
+                juegoGenerico.add(new JLabel("Juego " + (i+j*2)), BorderLayout.NORTH);
                 
                 bGenerico = new JButton("Iniciar");
                 juegoGenerico.add(bGenerico, BorderLayout.SOUTH);
