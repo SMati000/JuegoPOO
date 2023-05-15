@@ -8,10 +8,13 @@ import com.entropyinteractive.*;
 abstract public class Juego extends JGame {
     protected String nombre;
     protected String descripcion;
+    protected int ancho, alto;
 
     public Juego(String nombre, String descripcion) {
         super(nombre, 800, 600);
-
+        ancho = 800;
+        alto = 600;
+    
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
