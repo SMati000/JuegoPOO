@@ -1,14 +1,14 @@
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.*;
 
 class InterfacePrinc extends JFrame implements ActionListener{
-    JPanel panel, panelFondo = new JPanel();
+    JPanel panel;
+    JLabel fondo = new JLabel();
     JButton b1, bGenerico;
     JMenuBar menu;
     JMenu menu1, menu2;
-    JMenuItem item1,item2, item3;
+    JMenuItem item1, item2, item3;
 
     public static void main(String[] args) {  
         new InterfacePrinc();
@@ -16,13 +16,19 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
     public InterfacePrinc() {
         this.setPreferredSize(new Dimension(450, 550));
-        this.setLayout(new GridBagLayout());
+        this.setResizable(false);
+        this.pack();
         
+        fondo.setLayout(new GridBagLayout());
+        fondo.setIcon(new ImageIcon(getClass().getResource("/imagenes/fondo.jpg")));
+        this.add(fondo);
+        this.setComponentZOrder(fondo, 0);
+
         mostrarCatalogo();
 
         this.setVisible(true);
-        this.pack();  
-        
+        this.repaint();
+
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                     System.exit(0);
@@ -46,7 +52,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         panel.add(b1, BorderLayout.SOUTH);
         b1.addActionListener(this);
         
-        this.add(panel, c);
+        fondo.add(panel, c);
 
         for(int j = 0; j <= 1; j++) {
             for(int i = j == 0 ? 2 : 1; i <= 2; i++) {
@@ -62,11 +68,10 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 juegoGenerico.add(bGenerico, BorderLayout.SOUTH);
                 bGenerico.addActionListener(this);
                 
-                this.add(juegoGenerico, c);
+                fondo.add(juegoGenerico, c);
             }
         }
 
-        this.add(panelFondo);
     }
 
     public void actionPerformed(ActionEvent evento){
@@ -104,7 +109,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             
             ch1.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                   System.out.println(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
+                    System.out.println(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
                     System.out.println(KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0])));
                     // conf.selecTeclas(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
                 }
