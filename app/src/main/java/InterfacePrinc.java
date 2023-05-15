@@ -11,16 +11,32 @@ class InterfacePrinc extends JFrame implements ActionListener{
     JMenuItem item1,item2, item3;
     JMenuBar menu;
     JMenu menu1, menu2;
-    JPanel panelFondo = new JPanel();
-    
+    JLabel fondo = new JLabel();
 
     public static void main(String[] args) {  
         new InterfacePrinc();
     } 
 
     public InterfacePrinc() {
-        mostrarCatalogo();
+        this.setPreferredSize(new Dimension(450, 550));
+        this.setResizable(false);
+        this.pack();
         
+        fondo.setLayout(null);
+        fondo.setIcon(new ImageIcon(getClass().getResource("/imagenes/fondo.jpg")));
+        this.add(fondo);
+        this.setComponentZOrder(fondo, 0);
+
+        mostrarCatalogo();
+
+        this.setVisible(true);
+        this.repaint();
+
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                    System.exit(0);
+            };
+        });
     }
 /*
     public void paint(Graphics g){
@@ -33,11 +49,6 @@ class InterfacePrinc extends JFrame implements ActionListener{
     }
 */
     public void mostrarCatalogo(){
-        setLayout(null);
-       
-        
-
-        
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBounds(50,50,150,200);
@@ -82,12 +93,10 @@ class InterfacePrinc extends JFrame implements ActionListener{
         b4.addActionListener(this);
         
 
-        this.add(panel);
-        this.add(panel2);
-        this.add(panel3);
-        this.add(panel4);
-        this.add(panelFondo);   
-        
+        fondo.add(panel);
+        fondo.add(panel2);
+        fondo.add(panel3);
+        fondo.add(panel4);
 
         setVisible(true);
         pack();
@@ -312,7 +321,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             //menu visto en pantalla
             menu = new JMenuBar();
-            setJMenuBar(menu);
+            
             menu1 = new JMenu("Configuraciones");
             menu2 = new JMenu("Ver");
             menu.add(menu1); 
@@ -330,7 +339,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             menu1.add(item3);
             item3.addActionListener(this);
        
-            frameJuego.add(menu);
+            frameJuego.setJMenuBar(menu);
             
             jugar.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
