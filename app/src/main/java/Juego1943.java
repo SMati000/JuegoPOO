@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
 import com.entropyinteractive.Keyboard;
 
@@ -53,13 +52,6 @@ public class Juego1943 extends Juego {
 
     @Override
     public void gameDraw(Graphics2D g) {
-        // g.setColor(Color.white);
-        // g.fillOval(-200, -200, 1500, 1200); // fondo trucho
-
-        // g.setColor(Color.black);
-        // g.drawString("Juego llamado: " + nombre, 300, 290);
-        // g.drawString("Descripcion: " + descripcion, 300, 310);
-
         avionAmigo.draw(g);
     }
 }

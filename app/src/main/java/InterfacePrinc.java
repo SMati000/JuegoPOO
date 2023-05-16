@@ -71,7 +71,6 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 fondo.add(juegoGenerico, c);
             }
         }
-
     }
 
     public void actionPerformed(ActionEvent evento){
@@ -81,11 +80,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
         if (evento.getSource()==item1) {
             JFrame framConfTecla;
             JLabel lb1, lb2, lb3, lb4, lb5, lb6, lb7;
-            Choice ch1, ch2, ch3, ch4, ch5, ch6;
-            
-            TextField ch7 = new TextField();
-            // ch7.setEditable(false);
-            // ch7.setEnabled(false);
+            Choice ch1, ch2, ch3, ch4, ch5, ch6, ch7;
 
             Configuraciones conf = new Configuraciones();
 
@@ -112,6 +107,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
                     System.out.println(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
                     System.out.println(KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0])));
                     // conf.selecTeclas(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
+                    conf.selecTeclas(ch1.getSelectedItem(), 1, KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().charAt(0)));
                 }
             });
 
@@ -127,7 +123,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             //Captura el elemento del choice
             ch2.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch2.getSelectedItem());
+                    conf.selecTeclas(ch2.getSelectedItem(), 2, KeyEvent.getExtendedKeyCodeForChar(ch2.getSelectedItem().charAt(0)));
                 }
             });            
 
@@ -145,7 +141,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             ch3.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch3.getSelectedItem());
+                    conf.selecTeclas(ch3.getSelectedItem(), 3, KeyEvent.getExtendedKeyCodeForChar(ch3.getSelectedItem().charAt(0)));
                 }
             });
 
@@ -161,7 +157,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
            
             ch4.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch4.getSelectedItem());
+                    conf.selecTeclas(ch4.getSelectedItem(), 4, KeyEvent.getExtendedKeyCodeForChar(ch4.getSelectedItem().charAt(0)));
                 }
             });
            
@@ -176,7 +172,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             ch5.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch5.getSelectedItem());
+                    conf.selecTeclas(ch5.getSelectedItem(), 5, KeyEvent.getExtendedKeyCodeForChar(ch5.getSelectedItem().charAt(0)));
                 }
             });
 
@@ -192,38 +188,25 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             ch6.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch6.getSelectedItem());
+                    conf.selecTeclas(ch6.getSelectedItem(), 6, KeyEvent.getExtendedKeyCodeForChar(ch6.getSelectedItem().charAt(0)));
                 }
             });
 
             lb7 = new JLabel("Pausa: ");
-            // ch7 = new Choice();
-            // ch7.addItem("Barra espacio");                                   
-            // for (int i = 0; i < opciones.length; i++) {
-            //     ch7.add(opciones[i]);
-            // }
+            ch7 = new Choice();
+            ch7.addItem("Barra espacio");                                   
+            for (int i = 0; i < opciones.length; i++) {
+                ch7.add(opciones[i]);
+            }
             framConfTecla.add(lb7);
             framConfTecla.add(ch7);
-
-            ch7.addKeyListener(new KeyAdapter() {
-
-                @Override
-                public void keyReleased(KeyEvent e) {
-                   // System.out.println(KeyEvent.getKeyText(e.getExtendedKeyCode()) + " - " + e.getExtendedKeyCode());
-                    conf.guardarEnBD(e.getExtendedKeyCode(), KeyEvent.getKeyText(e.getExtendedKeyCode()));
-                    ch7.setText(KeyEvent.getKeyText(e.getExtendedKeyCode()));
-                    // habria q hacer que se guarde en la DB
-                }
-            });
             
-
-/*
             ch7.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    conf.selecTeclas(ch7.getSelectedItem());
+                    conf.selecTeclas(ch7.getSelectedItem(), 7, KeyEvent.getExtendedKeyCodeForChar(ch7.getSelectedItem().charAt(0)));
                 }
             });
-*/
+
             framConfTecla.setVisible(true);
             framConfTecla.pack();
 
@@ -278,6 +261,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             //menu visto en pantalla
             menu = new JMenuBar();
 
+            
             menu1 = new JMenu("Configuraciones");
             menu2 = new JMenu("Ver");
             
