@@ -14,6 +14,7 @@ abstract public class Juego extends JGame {
         super(nombre, 800, 600);
         ancho = 800;
         alto = 600;
+        
     
         this.nombre = nombre;
         this.descripcion = descripcion;

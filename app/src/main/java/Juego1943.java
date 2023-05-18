@@ -3,6 +3,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JFrame;
+
 import com.entropyinteractive.Keyboard;
 
 public class Juego1943 extends Juego {
@@ -30,8 +32,32 @@ public class Juego1943 extends Juego {
     public void gameShutdown() {
         
     }
-
+/*
     @Override
+    public void gameUpdate(double delta) {
+        if (keyboard.isKeyPressed(Integer.parseInt(Configuraciones.arriba))) {
+            avionAmigo.setY(avionAmigo.getY() - (int)(dezplazamiento * delta));
+        }
+          
+        if (keyboard.isKeyPressed(Integer.parseInt(Configuraciones.abajo))) {
+            avionAmigo.setY(avionAmigo.getY() + (int)(dezplazamiento * delta));
+        }
+
+        if (keyboard.isKeyPressed(Integer.parseInt(Configuraciones.izq))) {
+            avionAmigo.setX(avionAmigo.getX() - (int)(dezplazamiento * delta));
+        }
+
+        if (keyboard.isKeyPressed(Integer.parseInt(Configuraciones.der))) {
+            avionAmigo.setX(avionAmigo.getX() + (int)(dezplazamiento * delta));
+        }
+      
+        if(keyboard.isKeyPressed(Integer.parseInt(Configuraciones.der))){
+            JFrame pausado = new JFrame();
+            //crear un frame o un panel para que cuando aprete pausa aparezca en pantalla con el boton reanudar
+        }
+
+    }
+*/
     public void gameUpdate(double delta) {
         if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
             avionAmigo.setY(avionAmigo.getY() - (int)(dezplazamiento * delta));

@@ -9,6 +9,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
     JMenuBar menu;
     JMenu menu1, menu2;
     JMenuItem item1, item2, item3;
+    Configuraciones conf = new Configuraciones();;
 
     public static void main(String[] args) {  
         new InterfacePrinc();
@@ -82,13 +83,13 @@ class InterfacePrinc extends JFrame implements ActionListener{
             JLabel lb1, lb2, lb3, lb4, lb5, lb6, lb7;
             Choice ch1, ch2, ch3, ch4, ch5, ch6, ch7;
 
-            Configuraciones conf = new Configuraciones();
+           // conf = new Configuraciones();
 
             String opciones[] = {"a","b", "c", "d" ,"e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
         
             framConfTecla = new JFrame("Configuracion de teclas");
 
-            framConfTecla.setLayout(new GridLayout(7,7));
+            framConfTecla.setLayout(new GridLayout(8,8));
             framConfTecla.setPreferredSize(new Dimension(300,400));
 
             lb1 = new JLabel("Hacia adelante: ");
@@ -104,10 +105,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             
             ch1.addItemListener(new ItemListener(){
                 public void itemStateChanged(ItemEvent ie){
-                    System.out.println(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
-                    System.out.println(KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0])));
-                    // conf.selecTeclas(KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().toCharArray()[0]) + "");
-                    conf.selecTeclas(ch1.getSelectedItem(), 1, KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().charAt(0)));
+                    conf.selecTeclas(ch1.getSelectedItem(), 1, KeyEvent.getExtendedKeyCodeForChar(ch1.getSelectedItem().charAt(0)));                   
                 }
             });
 
@@ -207,6 +205,10 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 }
             });
 
+
+
+
+
             framConfTecla.setVisible(true);
             framConfTecla.pack();
 
@@ -290,6 +292,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
                         Thread t = new Thread() {
                             public void run() {
                                 juego.run(1.0 / 60.0);
+
                             }
                         };
             
