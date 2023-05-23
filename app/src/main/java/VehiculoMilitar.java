@@ -13,8 +13,14 @@ public abstract class VehiculoMilitar {
         this.posicion = new Point(0, 0); 
     }
 
+    protected void setGrafico(BufferedImage grafico) {
+        this.grafico = grafico;
+    }
+
     public void setPosicion(Point p) {
         this.posicion = p;
+        // setX(p.x);
+        // setY(p.y);
     }
 
     public Point getPosicion() {
@@ -22,11 +28,15 @@ public abstract class VehiculoMilitar {
     }
 
     public void setX(int x) {
-        this.posicion.x = x;
+        if(x > 0 && x < Juego1943.getInstance().getWidth()-grafico.getWidth()) {
+            this.posicion.x = x;
+        }
     }
 
     public void setY(int y) {
-        this.posicion.y = y;
+        if(y <= Juego1943.getInstance().getHeight()/2-5) {
+            this.posicion.y = y;
+        }
     }
 
     public int getX() {

@@ -286,10 +286,10 @@ class InterfacePrinc extends JFrame implements ActionListener{
             jugar.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     if(evt.getSource() == jugar){
-                        Juego juego = new Juego1943();
+                        Juego j1943 = Juego1943.getInstance();
                         Thread t = new Thread() {
                             public void run() {
-                                juego.run(1.0 / 60.0);
+                                j1943.run(1.0 / 60.0);
                             }
                         };
             
