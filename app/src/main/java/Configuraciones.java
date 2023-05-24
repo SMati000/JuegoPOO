@@ -4,17 +4,29 @@ public class Configuraciones {
     //teclas por defecto
     static int arriba, abajo, izq, der, disparo, dispEspecial, pausa;
     static String sonidoBD;
+
     ResultSet rs = null;
     PreparedStatement pstmt= null;
     Statement stmt;
     Connection conn = null;
+    
     private static final String nombre_base = "./app/Teclas.db";
+
    // String sonidoBD;
-    public Configuraciones(){
+    public Configuraciones() throws SQLException{
         //establece conexion con la base de datos
-       setDefecto("Usuario");
-       //setDefectoSonido();
+        String url = "jdbc:sqlite:" + nombre_base;
+        conn = DriverManager.getConnection(url);
+        
+        stmt = conn.createStatement();
+
+        setDefecto("Usuario");
+
+        FXPlayer.init();
+        FXPlayer.volume = FXPlayer.Volume.LOW;
+        cargarSonido();
     }
+
     //agregar String que devuelva la letra
     //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
     public void selecTeclas(String TeclaSelect, int nroChoice, int codLetra){
@@ -22,7 +34,6 @@ public class Configuraciones {
         try{
             String sql ="Select Usuario from Teclado where Letra = '" + TeclaSelect + "';";
                   
-            stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
             int valorAux = rs.getInt("Usuario");
             
@@ -82,7 +93,6 @@ public class Configuraciones {
 
         try{
             String sql ="Select Defecto from Teclado where Accion = '" + tipoLetra + "';";
-            stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
             
             String sqlAct = "UPDATE Teclado SET Defecto=?,  Usuario=? , Letra=?, Accion=? WHERE Accion =?";
@@ -111,11 +121,6 @@ public class Configuraciones {
   //setea por defecto cada vez que se inicie el juego
     public void setDefecto(String campoBD){
         try {
-            String url = "jdbc:sqlite:"+nombre_base;
-            
-            conn = DriverManager.getConnection(url); // Si no existe crea el archivo de la base de datos
-            stmt = conn.createStatement();
-
             String teclas[] = {"Arriba", "Abajo", "Izquierda", "Derecha", "Disparo", "DispEspecial", "Pausa"};
             int teclasDefecto[]= {arriba, abajo, izq, der, disparo, dispEspecial, pausa};
             
@@ -136,55 +141,51 @@ public class Configuraciones {
         }
         
     }
+
    //Para setear sonido por defecto
-    public String setDefectoSonido(){
-        try { 
-            String url = "jdbc:sqlite:"+nombre_base;
-            FXPlayer.init();
-            FXPlayer.volume = FXPlayer.Volume.LOW;
-           
-            if(sonidoBD == null) {
-            
-                conn = DriverManager.getConnection(url); // Si no existe crea el archivo de la base de datos
-                stmt = conn.createStatement();
-                String sql ="Select Defecto from Musica where Defecto is not null;";
-                rs  = stmt.executeQuery(sql);
-                sonidoBD = rs.getString("Defecto");            
-            
-            }
-            return sonidoBD;
-            
+    public void cargarSonido(){
+        try {
+            sonidoBD = getFromMusica("Usuario");
+        } catch (SQLException e) {
+            System.out.println("Error al cargar el sonido");
+            e.printStackTrace();
+        }
+    }
 
-        }catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return " ";
+    public void resetearSonido() {
+        try {
+            sonidoBD = getFromMusica("Defecto");
+            updateMusica("Usuario", sonidoBD);
+        } catch (SQLException e) {
+            System.out.println("Error al resetear el sonido");
+            e.printStackTrace();
+        }
+    }
 
+    //la base de datos queda ocupada con el setDefectoSonidos, probar poniendo sonidoDB como static
+    public void setNuevoSonido(String nuevoSon){
+        try {
+            updateMusica("Usuario", nuevoSon);
+            sonidoBD = getFromMusica("Usuario");
+        } catch (SQLException e) {
+            System.out.println("Error al setear el sonido");
+            e.printStackTrace();
         }
     }
    
-//la base de datos queda ocupada con el setDefectoSonidos, probar poniendo sonidoDB como static
-    public void setNuevoSonido(String nuevoSon){
-        try{
+    private String getFromMusica(String campo) throws SQLException {
+        String sql ="Select " + campo + " from Musica where Defecto is not null;";
+        rs  = stmt.executeQuery(sql);
+        return rs.getString(campo);
+    }
 
-           
-            String sqlAct = "UPDATE Musica SET Defecto=?,  Usuario=?, Disponibles=? WHERE Defecto ='CHASE';";
-            PreparedStatement pstmt1 = conn.prepareStatement(sqlAct);
-            pstmt1.setString(1, "CHASE");  //defecto
-            pstmt1.setString(2, nuevoSon);  //usuario
-            pstmt1.setString(3, "CHASE");  //Disponibles
-            pstmt1.executeUpdate();
-            
+    private void updateMusica(String campo, String valor) throws SQLException {
+        String sqlAct = "UPDATE Musica SET " + campo + "=? WHERE Defecto is not null;";
 
-        }catch (SQLException e) {
-            System.out.println(e.getMessage());
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
+        PreparedStatement pstmt1 = conn.prepareStatement(sqlAct);
+
+        pstmt1.setString(1, valor);
+        pstmt1.executeUpdate();
     }
  /*  
    //guarda las nuevas teclas que selecciona el usuario

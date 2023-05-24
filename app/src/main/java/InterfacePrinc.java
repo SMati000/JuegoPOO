@@ -4,6 +4,7 @@ import java.awt.event.*;
 //import javax.imageio.*;
 //import java.io.*;
 //import javax.sound.sampled.*;
+import java.sql.SQLException;
 
 
 
@@ -14,7 +15,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
     JMenuBar menu;
     JMenu menu1, menu2;
     JMenuItem item1, item2, item3;
-    Configuraciones conf = new Configuraciones();
+    Configuraciones conf;
    
 
     public static void main(String[] args) {  
@@ -22,6 +23,12 @@ class InterfacePrinc extends JFrame implements ActionListener{
     } 
 
     public InterfacePrinc() {
+        try {
+            conf = new Configuraciones();
+        } catch (SQLException e) {
+            System.out.println("Error al crear el objeto de Configuraciones\n" + e.getMessage());
+        }
+
         this.setPreferredSize(new Dimension(450, 550));
         this.setResizable(false);
         this.pack();
@@ -126,11 +133,8 @@ class InterfacePrinc extends JFrame implements ActionListener{
                     }
                 });
                
-                //String sonidoBD = conf.setDefectoSonido();
-               
                 if(Configuraciones.sonidoBD.equals("CHASE")){
                     FXPlayer.CHASE.play();
-                    
                 }
                 if(Configuraciones.sonidoBD.equals("ROBO_COP")){
                     FXPlayer.ROBO_COP.play();
@@ -309,13 +313,8 @@ class InterfacePrinc extends JFrame implements ActionListener{
                     if(evt.getSource() == defecto){
                         conf.setDefecto("Defecto");
                     }
-                    
-                    
                 }
             });
-
-
-
 
             framConfTecla.setVisible(true);
             framConfTecla.pack();
@@ -333,8 +332,10 @@ class InterfacePrinc extends JFrame implements ActionListener{
             Choice sonidos = new Choice();
             sonidos.addItem("CHASE");
             sonidos.addItem("ROBO_COP");
-            sonidos.addItem("DRAMTIC");
+            sonidos.addItem("DRAMATIC");
             sonidos.addItem("FIGHT");
+
+            sonidos.select(Configuraciones.sonidoBD);
 
             //para cambiar la musica seleccionada
             sonidos.addItemListener(new ItemListener(){
@@ -344,10 +345,17 @@ class InterfacePrinc extends JFrame implements ActionListener{
             });
 
 
-            JButton Defecto = new JButton("Defecto");    
+            JButton defecto = new JButton("Defecto");    
             
+            defecto.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    conf.resetearSonido();
+                    sonidos.select(Configuraciones.sonidoBD);
+                }
+            });
+
             framConfSonido.add(sonidos);
-            framConfSonido.add(Defecto);
+            framConfSonido.add(defecto);
 
             framConfSonido.setVisible(true);
             framConfSonido.pack();
