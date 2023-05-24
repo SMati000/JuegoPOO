@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -40,31 +39,31 @@ public class Juego1943 extends Juego {
         
     }
 
-    @Override
+    @Override 
     public void gameUpdate(double delta) {
-        if (keyboard.isKeyPressed(KeyEvent.VK_UP)) {
+        if (keyboard.isKeyPressed(Configuraciones.arriba)) {
             avionAmigo.setY(avionAmigo.getY() - (int)(dezplazamiento * delta));
         }
-        
-        if (keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
+
+        if (keyboard.isKeyPressed(Configuraciones.abajo)) {
             avionAmigo.setY(avionAmigo.getY() + (int)(dezplazamiento * delta));
         }
 
-        if (keyboard.isKeyPressed(KeyEvent.VK_LEFT)) {
+        if (keyboard.isKeyPressed(Configuraciones.izq)) {
             avionAmigo.setX(avionAmigo.getX() - (int)(dezplazamiento * delta));
             ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.IZQ);
         }
 
-        if (keyboard.isKeyPressed(KeyEvent.VK_RIGHT)) {
+        if (keyboard.isKeyPressed(Configuraciones.der)) {
             avionAmigo.setX(avionAmigo.getX() + (int)(dezplazamiento * delta));
             ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.DER);
         }
 
-        if(!keyboard.isKeyPressed(KeyEvent.VK_UP) && !keyboard.isKeyPressed(KeyEvent.VK_DOWN)) {
+        if(!keyboard.isKeyPressed(Configuraciones.arriba) && !keyboard.isKeyPressed(Configuraciones.abajo)) {
             avionAmigo.setY(avionAmigo.getY() - (int)(dezplazamiento * delta * 0.5));
         }
         
-        if(!keyboard.isKeyPressed(KeyEvent.VK_LEFT) && !keyboard.isKeyPressed(KeyEvent.VK_RIGHT)) {
+        if(!keyboard.isKeyPressed(Configuraciones.izq) && !keyboard.isKeyPressed(Configuraciones.der)) {
             ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.COMUN);
         }
 

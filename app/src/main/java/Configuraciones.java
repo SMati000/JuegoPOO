@@ -2,71 +2,79 @@ import java.sql.*;
 
 public class Configuraciones {
     //teclas por defecto
-    static String arriba, abajo, izq, der, disparo, dispEspecial, pausa;
+    static int arriba, abajo, izq, der, disparo, dispEspecial, pausa;
+    static String sonidoBD;
 
     ResultSet rs = null;
     PreparedStatement pstmt= null;
     Statement stmt;
     Connection conn = null;
+    
     private static final String nombre_base = "./app/Teclas.db";
-    public Configuraciones(){
+
+   // String sonidoBD;
+    public Configuraciones() throws SQLException{
         //establece conexion con la base de datos
-        try {
-                  
-            String url = "jdbc:sqlite:"+nombre_base;
-                
-            conn = DriverManager.getConnection(url); // Si no existe crea el archivo de la base de datos
-            
-            System.out.println("Conectado a  SQLite.");
-                 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        String url = "jdbc:sqlite:" + nombre_base;
+        conn = DriverManager.getConnection(url);
+        
+        stmt = conn.createStatement();
+
+        setDefecto("Usuario");
+
+        FXPlayer.init();
+        FXPlayer.volume = FXPlayer.Volume.LOW;
+        cargarSonido();
     }
 
+    //agregar String que devuelva la letra
     //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
     public void selecTeclas(String TeclaSelect, int nroChoice, int codLetra){
 
         try{
             String sql ="Select Usuario from Teclado where Letra = '" + TeclaSelect + "';";
                   
-            stmt = conn.createStatement();
             rs  = stmt.executeQuery(sql);
-
-            String valor = rs.getString("Usuario");
-            boolean guardado = false;
-
-            if(valor == null) {
-                guardado = guardarEnBD(codLetra, TeclaSelect, nroChoice);
-                valor = codLetra + "";
-            }
+            int valorAux = rs.getInt("Usuario");
             
-            if(guardado) {
-                switch(nroChoice){
+        
+        if( valorAux == 0){ 
+            int valor = codLetra;
+            System.out.println("valor: "+valor);
+
+            if(true){
+               switch(nroChoice){
                     case 1:
                         arriba = valor;
+                        actTeclas("Arriba", valor, TeclaSelect);
                         break;
                     case 2:
                         abajo = valor;
+                        actTeclas("Abajo", valor, TeclaSelect);
                         break;
                     case 3:
                         der = valor;
+                        actTeclas("Derecha", valor, TeclaSelect);
                         break;
                     case 4:
                         izq = valor;
+                        actTeclas("Izquierda", valor, TeclaSelect);
                         break;
                     case 5:
                         disparo = valor;
+                        actTeclas("Disparo", valor, TeclaSelect);
                         break;
                     case 6:
                         dispEspecial = valor;
+                        actTeclas("DispEspecial", valor, TeclaSelect);
                         break;
                     case 7:
                         pausa = valor;
+                        actTeclas("Pausa", valor, TeclaSelect);
                         break;
                 }
             }
-
+         }
         }catch (SQLException e) {
             System.out.println(e.getMessage());
             //  } finally {
@@ -80,19 +88,23 @@ public class Configuraciones {
             //     }
         }
     }
+    //actualiza las teclas en la base de datos
+    public void actTeclas(String tipoLetra, int nuevoValor, String TeclaSelect ){
 
-  
-    private boolean guardarEnBD(int codigo, String letra, int nroChoice){
         try{
-            String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra) VALUES(?,?,?)";
-            pstmt = conn.prepareStatement(sql);
-    
-            pstmt.setInt(1, codigo);  
-            pstmt.setInt(2, codigo);    
-            pstmt.setString(3, letra);
-            pstmt.executeUpdate();
+            String sql ="Select Defecto from Teclado where Accion = '" + tipoLetra + "';";
+            rs  = stmt.executeQuery(sql);
+            
+            String sqlAct = "UPDATE Teclado SET Defecto=?,  Usuario=? , Letra=?, Accion=? WHERE Accion =?";
 
-            return true;
+            PreparedStatement pstmt = conn.prepareStatement(sqlAct);
+            pstmt.setInt(1, rs.getInt("Defecto"));  //defecto
+            pstmt.setInt(2, nuevoValor); //usuario
+            pstmt.setString(3, TeclaSelect);  //letra 
+            pstmt.setString(4, tipoLetra);  //accion
+            pstmt.setString(5, tipoLetra);  //condicion where
+            pstmt.executeUpdate();
+            
         }catch (SQLException e) {
             System.out.println(e.getMessage());
             try {
@@ -102,10 +114,123 @@ public class Configuraciones {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-            return false;
         }
     }
+
+
+  //setea por defecto cada vez que se inicie el juego
+    public void setDefecto(String campoBD){
+        try {
+            String teclas[] = {"Arriba", "Abajo", "Izquierda", "Derecha", "Disparo", "DispEspecial", "Pausa"};
+            int teclasDefecto[]= {arriba, abajo, izq, der, disparo, dispEspecial, pausa};
+            
+            for (int i = 0; i < teclas.length; i++) {
+                String sql ="Select "+campoBD+" from Teclado where Accion = '" + teclas[i] + "';";
+                rs  = stmt.executeQuery(sql);
+                teclasDefecto[i] = rs.getInt(campoBD);
+            }
+            arriba = teclasDefecto[0];
+            abajo = teclasDefecto[1];
+            izq = teclasDefecto[2];
+            der = teclasDefecto[3];
+            disparo = teclasDefecto[4];
+            dispEspecial = teclasDefecto[5];
+            pausa = teclasDefecto[6];
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        
+    }
+
+   //Para setear sonido por defecto
+    public void cargarSonido(){
+        try {
+            sonidoBD = getFromMusica("Usuario");
+        } catch (SQLException e) {
+            System.out.println("Error al cargar el sonido");
+            e.printStackTrace();
+        }
+    }
+
+    public void resetearSonido() {
+        try {
+            sonidoBD = getFromMusica("Defecto");
+            updateMusica("Usuario", sonidoBD);
+        } catch (SQLException e) {
+            System.out.println("Error al resetear el sonido");
+            e.printStackTrace();
+        }
+    }
+
+    //la base de datos queda ocupada con el setDefectoSonidos, probar poniendo sonidoDB como static
+    public void setNuevoSonido(String nuevoSon){
+        try {
+            updateMusica("Usuario", nuevoSon);
+            sonidoBD = getFromMusica("Usuario");
+        } catch (SQLException e) {
+            System.out.println("Error al setear el sonido");
+            e.printStackTrace();
+        }
+    }
+   
+    private String getFromMusica(String campo) throws SQLException {
+        String sql ="Select " + campo + " from Musica where Defecto is not null;";
+        rs  = stmt.executeQuery(sql);
+        return rs.getString(campo);
+    }
+
+    private void updateMusica(String campo, String valor) throws SQLException {
+        String sqlAct = "UPDATE Musica SET " + campo + "=? WHERE Defecto is not null;";
+
+        PreparedStatement pstmt1 = conn.prepareStatement(sqlAct);
+
+        pstmt1.setString(1, valor);
+        pstmt1.executeUpdate();
+    }
+ /*  
+   //guarda las nuevas teclas que selecciona el usuario
+     private boolean guardarEnBD(int codigo, String letra, int nroChoice){
+         try{
+             String sql = "INSERT INTO Teclado(Defecto,Usuario,Letra, Accion) VALUES(?,?,?,?)";
+             pstmt = conn.prepareStatement(sql);
+             pstmt.setInt(1, codigo);  //defecto
+             pstmt.setInt(2, codigo);      //usuario
+             pstmt.setString(3, letra);     //letra
+             pstmt.setString(4, "null");      //accion
+             pstmt.executeUpdate();
+
+             return true;
+         }catch (SQLException e) {
+             System.out.println(e.getMessage());
+             try {
+                 if (conn != null) {
+                     conn.close();
+                 }
+             } catch (SQLException ex) {
+                 System.out.println(ex.getMessage());
+             }
+             return false;
+         }
+    }
+
+    public String setTecla(String accion){
+        try{
+            String sql ="Select Letra from Teclado where Accion = '"+accion+ "';";
+            System.out.println(sql);
+            stmt = conn.createStatement();
+            rs  = stmt.executeQuery(sql);
+
+            String nuevaLetra = rs.getString("Letra");
+            return nuevaLetra;
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return " ";
+        }
+        
+
+    }
+   */ 
+    
 }
-
-
 
