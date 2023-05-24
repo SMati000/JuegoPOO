@@ -1,12 +1,15 @@
 import javax.swing.*;
+//import FXPlayer.Volume;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 
 class InterfacePrinc extends JFrame implements ActionListener{
     JLabel img1943;
     JLabel fondo = new JLabel();
-    JButton b1, bGenerico;
     JMenuBar menu;
     JMenu menu1, menu2;
     JMenuItem item1, item2, item3;
@@ -66,29 +69,23 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 frameJuego.setLayout(new GridBagLayout());           //no se con layout hacerlo para que quede bien
                 Dimension dim1 = new Dimension(300,300);
                 frameJuego.setPreferredSize(dim1);
-                
-                Insets in = new Insets(5,5,5,5);
-                int gridx = 0;
-                int gridy = 200;
-                int gridwidth = 10;
-                int gridheight = 10;
-                double weightx = 1.0;
-                double weighty = 0.5;
-                int anchor = GridBagConstraints.CENTER; 
-                int fill = GridBagConstraints.NONE;
-            
-                int ipadx = 10;
-                int ipady = 10;
-            
-                GridBagConstraints resBotonJugar = new GridBagConstraints(gridx, gridy, gridwidth, gridheight, 
-                                                                    weightx, weighty, anchor, fill,in, ipadx, ipady);
-
+                          
+             
                 JButton jugar =  new JButton("JUGAR");
+
+                InputStream is = getClass().getResourceAsStream("/font/ArcadeClassic.ttf");
+               
+                //Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+                //Font font = new Font("ArcadeClassic", 0, 12);
+                //font.deriveFont(250f);
+                //jugar.setFont(font);
+                
                 jugar.addActionListener(InterfacePrinc.this);
-                frameJuego.add(jugar, resBotonJugar);
+               // frameJuego.add(jugar, resBotonJugar); 
 
                 //menu visto en pantalla
                 menu = new JMenuBar();
+
 
                 
                 menu1 = new JMenu("Configuraciones");
@@ -110,7 +107,25 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 item3.addActionListener(InterfacePrinc.this);    
                 menu1.add(item3);
         
+                
+                
+                
+                JLabel pantallaJuego = new JLabel();
+                pantallaJuego.setLayout(null);
+    
+              //  pantallaJuego.setIcon(new ImageIcon(getClass().getResource("/imagenes/pantallaJuego.jpg")));
+             
+                pantallaJuego.setOpaque(true);
+                frameJuego.add(pantallaJuego);
+                frameJuego.setComponentZOrder(pantallaJuego, 0);
+                jugar.setSize(100,50);
+                jugar.setLocation(100, 150);
+                pantallaJuego.add(jugar); 
+                
+              //frameJuego.setComponentZOrder(menu, 1);
                 frameJuego.setJMenuBar(menu);
+               
+                
                 
                 jugar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -322,7 +337,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
   
             JFrame framConfSonido = new JFrame();
             framConfSonido.setLayout(new FlowLayout());
-            framConfSonido.setPreferredSize(new Dimension(300,100));
+            framConfSonido.setPreferredSize(new Dimension(200,100));
            
             Choice sonidos = new Choice();
             sonidos.addItem("CHASE");
@@ -339,7 +354,21 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 }
             });
 
+            Checkbox activo = new Checkbox("Sonido");
+            activo.setState(true);
+            activo.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if(activo.getState()){
+                        FXPlayer.volume = FXPlayer.Volume.MUTE; 
+                       // FXPlayer.CHASE.stop();
+                    }
+                }
+            });
 
+            //checkbox para sonidos de tiros, efectos especiales, etc.
+            Checkbox efectos = new Checkbox("Efectos");
+            efectos.setState(true);
+           
             JButton defecto = new JButton("Defecto");    
             
             defecto.addActionListener(new ActionListener() {
@@ -351,6 +380,8 @@ class InterfacePrinc extends JFrame implements ActionListener{
 
             framConfSonido.add(sonidos);
             framConfSonido.add(defecto);
+            framConfSonido.add(activo);
+            framConfSonido.add(efectos);
 
             framConfSonido.setVisible(true);
             framConfSonido.pack();

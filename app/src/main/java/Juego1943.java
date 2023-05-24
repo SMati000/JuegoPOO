@@ -10,6 +10,7 @@ public class Juego1943 extends Juego {
     private Camara cam;
     private VehiculoMilitar avionAmigo;
     Keyboard keyboard;
+    private Bonus pow;
     private final double dezplazamiento = 120.0;
 
     private Juego1943(){
@@ -17,6 +18,7 @@ public class Juego1943 extends Juego {
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
         
         try {
+            pow = new Pow("/imagenes/pow.jpg");
             mapa = new Mapa("/imagenes/fondo1943.jpg");
             cam = new Camara(0, 0);
             avionAmigo = new AvionAmigo();
@@ -80,7 +82,7 @@ public class Juego1943 extends Juego {
         mapa.setPosition((int)cam.getX(), (int)cam.getY());
         mapa.display(g);
         avionAmigo.draw(g);
-
+        ((Pow)pow).draw(g);
         // g.translate(-cam.getX(),-cam.getY());
     }
 
