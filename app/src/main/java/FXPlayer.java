@@ -50,11 +50,9 @@ public enum FXPlayer {
    public void play() {
       if (volume != Volume.MUTE) {
          if (!clip.isRunning()){
-         	  clip.setFramePosition(0);
+               clip.setFramePosition(0);
          		clip.start();
          }
-
-
       }
    }
 
@@ -64,17 +62,14 @@ public enum FXPlayer {
               clip.setFramePosition(0);
                clip.stop();
          }
-
-
       }
    }
+
    public void loop(){
        if (volume != Volume.MUTE) {
          if (!clip.isRunning()){
               clip.loop(Clip.LOOP_CONTINUOUSLY);
          }
-
-
       }
    }
  

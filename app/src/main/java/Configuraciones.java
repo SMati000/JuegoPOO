@@ -117,8 +117,6 @@ public class Configuraciones {
         }
     }
 
-
-  //setea por defecto cada vez que se inicie el juego
     public void setDefecto(String campoBD){
         try {
             String teclas[] = {"Arriba", "Abajo", "Izquierda", "Derecha", "Disparo", "DispEspecial", "Pausa"};
