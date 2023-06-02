@@ -122,10 +122,8 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 jugar.setLocation(100, 150);
                 pantallaJuego.add(jugar); 
                 
-              //frameJuego.setComponentZOrder(menu, 1);
-                frameJuego.setJMenuBar(menu);
-               
-                
+                frameJuego.setJMenuBar(menu);               
+                // frameJuego.setComponentZOrder(menu, 1);
                 
                 jugar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -142,7 +140,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
                         }
                     }
                 });
-               
+                
                 if(Configuraciones.sonidoBD.equals("CHASE")){
                     FXPlayer.CHASE.play();
                 }
@@ -162,11 +160,11 @@ class InterfacePrinc extends JFrame implements ActionListener{
             }
             
         }); 
-
-    
+        
+        
         fondo.add(img1943, c);
-     //   c.ipadx = 120;
-       // c.ipady = 180;
+        //   c.ipadx = 120;
+        // c.ipady = 180;
         String imgs[] = {"/imagenes/counter.png", "/imagenes/pes.png", "/imagenes/mario.png"};
         for(int j = 0; j <= 1; j++) {
             for(int i = j == 0 ? 2 : 1; i <= 2; i++) {

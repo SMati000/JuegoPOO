@@ -26,7 +26,6 @@ public class Juego1943 extends Juego {
 
     private Bonus pow;
 
-    private Impacto iSimple, iMedio, iCompleto; // temporal
     private Juego1943(){
         super("1943", "Juego 1943");
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
@@ -34,20 +33,14 @@ public class Juego1943 extends Juego {
         try {
             gameOver = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
 
-            mapa = new Mapa("/imagenes/fondo1943Aire.jpg", "/imagenes/fondo1943Tierra.jpg");
-            mapa.setTransicion("/imagenes/fondo1943Transicion.jpg");
+            mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
+            mapa.setTransicion("fondo1943Transicion.jpg");
 
             cam = new Camara(desplazamiento, 0, 0);
             avionAmigo = new AvionAmigo(new Point(400, 300));
             animacionEnCurso = 0;
 
-            pow = new Pow("/imagenes/pow.jpg");
-
-            // temporal
-            iSimple = new Impacto(avionAmigo, Impacto.tipoImpacto.SIMPLE);
-            iMedio = new Impacto(avionAmigo, Impacto.tipoImpacto.MEDIO);
-            iCompleto = new Impacto(avionAmigo, Impacto.tipoImpacto.COMPLETO);
-            // ----------------------------
+            pow = new Pow("pow.jpg");
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
         }
@@ -61,13 +54,13 @@ public class Juego1943 extends Juego {
         cam.setRegionVisible(800, 600);
 
         try {
-            Enemigo e1 = new AvionEnemigo("Avion Enemigo 1", "avionEnemigo1.png", new Point(0, 0));
+            Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
             e1.setGraficosDoblar("avionEnemigo1Izq.png", "avionEnemigo1Der.png");
     
-            Enemigo e2 = new AvionEnemigo("Avion Enemigo 2", "avionEnemigo2.png", new Point(0, 0));
+            Enemigo e2 = new AvionEnemigo("avionEnemigo2.png", new Point(0, 0), avionAmigo.getPosicion());
             e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
     
-            Enemigo e3 = new Barco("Barco Enemigo 1", "barco1.png", new Point(0, 0));
+            Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
             // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
 
             misionAsignada = 1;
@@ -105,15 +98,6 @@ public class Juego1943 extends Juego {
     int posicion = 300;
     @Override 
     public void gameUpdate(double delta) {
-        // temporal p poder probar los impactos
-        if (keyboard.isKeyPressed(KeyEvent.VK_1)) {
-            iSimple.reset();
-        } else if (keyboard.isKeyPressed(KeyEvent.VK_2)) {
-            iMedio.reset();
-        } else if (keyboard.isKeyPressed(KeyEvent.VK_3)) {
-            iCompleto.reset();
-        }
-        // -----------------------------------------
 
         if (keyboard.isKeyPressed(Configuraciones.arriba)) {
             if(posicion < 565) {
@@ -162,7 +146,7 @@ public class Juego1943 extends Juego {
         }
 
         cam.avanzar((AvionAmigo)avionAmigo, delta);
-        mision.manejarEnemigos(avionAmigo.getPosicion());
+        mision.update(avionAmigo.getPosicion());
     }
 
     private void animacion() {
@@ -196,14 +180,10 @@ public class Juego1943 extends Juego {
 
         mision.draw(g, (int)(mapa.getY()-(cam.getY()*2)+60));
 
-        iSimple.draw(g);
-        iMedio.draw(g);
-        iCompleto.draw(g);
-
         ((Pow)pow).draw(g);
 
         avionAmigo.draw(g);
-        // g.translate(-cam.getX(),-cam.getY());
+        g.translate(-cam.getX(),-cam.getY());
     }
 
     public static Juego getInstance() {

@@ -1,39 +1,37 @@
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Mapa {
-    private BufferedImage aire = null, tierra = null, enUso = null, transicion = null;
-
-	private double positionX = 0;
-	private double positionY = 0;
+public class Mapa extends ObjetoGrafico {
+    private BufferedImage aire = null, tierra = null, transicion = null;
 	
     public Mapa(String filenameAire, String filenameTierra) throws IOException {
-        aire = ImageIO.read(getClass().getResource(filenameAire));
-		enUso = aire;
+		super("mapa", filenameAire, new Point(0, 0));
+        aire = ImageIO.read(getClass().getResource("imagenes/" + filenameAire));
+		grafico = aire;
 
-        tierra = ImageIO.read(getClass().getResource(filenameTierra));
-        this.positionX = this.positionY = 0;
+        tierra = ImageIO.read(getClass().getResource("imagenes/" + filenameTierra));
     }
 
 	public int getWidth(){
-		return enUso.getWidth();
+		return grafico.getWidth();
 	}
 
 	public int getHeight(){
-		return enUso.getHeight();
+		return grafico.getHeight();
 	}
 
 	public void setPosition(int x, int y){
-		this.positionX = x;
-		this.positionY = y;
+		this.posicion.x = x;
+		this.posicion.y = y;
 	}
 
 	public void setTransicion(String filename) {
 		try {
-			this.transicion =  ImageIO.read(getClass().getResource(filename));
+			this.transicion =  ImageIO.read(getClass().getResource("imagenes/" + filename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -41,26 +39,30 @@ public class Mapa {
 
 	// private int contador = 0;
 	public void cambiarMapa() {
-		if(enUso == aire) {
+		if(grafico == aire) {
 			if(transicion != null)
-				enUso = transicion;
+				grafico = transicion;
 			else
-				enUso = tierra;
+				grafico = tierra;
 		}
-		else if(enUso == transicion)
-			enUso = tierra;
+		else if(grafico == transicion)
+			grafico = tierra;
 	}
 
+    @Override
+    public void update() {}
+
+	@Override
    	public void draw(Graphics2D g) {
-			g.drawImage(enUso, (int)this.positionX, 
-			(int)(this.positionY-enUso.getHeight()+Juego1943.getInstance().getHeight()+25), null);
+			g.drawImage(grafico, this.posicion.x, 
+			this.posicion.y-grafico.getHeight()+Juego1943.getInstance().getHeight()+25, null);
 	}
 
-	public double getX(){
-		return positionX;
+	public int getX(){
+		return posicion.x;
 	}
 
-	public double getY(){
-		return positionY;
+	public int getY(){
+		return posicion.y;
 	}
 }

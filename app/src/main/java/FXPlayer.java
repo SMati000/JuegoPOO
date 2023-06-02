@@ -51,7 +51,7 @@ public enum FXPlayer {
       if (volume != Volume.MUTE) {
          if (!clip.isRunning()){
                clip.setFramePosition(0);
-         		clip.start();
+         		// clip.start();
          }
       }
    }

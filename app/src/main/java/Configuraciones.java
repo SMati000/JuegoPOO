@@ -38,7 +38,7 @@ public class Configuraciones {
             int valorAux = rs.getInt("Usuario");
             
         
-        if( valorAux == 0){ 
+        if(valorAux == 0){ 
             int valor = codLetra;
             System.out.println("valor: "+valor);
 

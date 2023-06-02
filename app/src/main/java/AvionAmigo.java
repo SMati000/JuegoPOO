@@ -27,9 +27,14 @@ public class AvionAmigo extends VehiculoMilitar {
     }
 
     @Override
-    public void disparar() {}
+    public Municion disparar() {
+        return null;
+    }
 
     @Override
     public void destruir() {}
+
+    @Override
+    public void update() {}
     
 }

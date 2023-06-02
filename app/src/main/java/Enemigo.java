@@ -1,3 +1,4 @@
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -5,13 +6,23 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Enemigo extends VehiculoMilitar {
+    protected Arma arma;
+
     protected int velocidad, rangoDeteccion;
+
     protected BufferedImage comun, izq, der;
 
-    public Enemigo(String nombre, String grafico, Point posicion) throws IOException {
-        super(nombre, grafico, posicion);
+    protected final Point objetivo;
+
+    public Enemigo(String grafico, Point posicion, Point objetivo) throws IOException {
+        super("enemigo", grafico, posicion);
         this.comun = ImageIO.read(Enemigo.class.getResource("imagenes/" + grafico));
-        rangoDeteccion = 400;
+
+        this.objetivo = objetivo;
+        this.velocidad = 5;
+        this.rangoDeteccion = 400;
+
+        arma = new Arma(this.getPosicion(), objetivo, "armaBarco1.png");
     }
 
     public Enemigo(Enemigo enemigo) throws IOException {
@@ -22,7 +33,11 @@ public class Enemigo extends VehiculoMilitar {
         this.izq = enemigo.izq;
         this.der = enemigo.der;
 
-        rangoDeteccion = 400;
+        this.objetivo = enemigo.objetivo;
+        this.velocidad = 5;
+        this.rangoDeteccion = 400;
+
+        arma = new Arma(this.getPosicion(), objetivo, "armaBarco1.png");
     }
 
     public void setGraficosDoblar(String izq, String der) {
@@ -42,22 +57,36 @@ public class Enemigo extends VehiculoMilitar {
         posicion.y += velocidad;
     }
 
-    public boolean objetivoEnRadar(int objetivoY) {
-        int distancia = objetivoY - this.posicion.y;
+    public boolean objetivoEnRadar() {
+        int distancia = objetivo.y - this.posicion.y;
 
         return distancia > 0 && distancia <= rangoDeteccion;
     }
 
     @Override
-    public void disparar() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'disparar'");
+    public Municion disparar() {
+        if(this.objetivoEnRadar())
+            return arma.disparar();
+         
+        return null;
     }
 
     @Override
-    public void destruir() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'destruir'");
+    public void destruir() {}
+
+    @Override
+    public void update() {
+        this.avanzar();
+        arma.update();
+
+        if(this.objetivoEnRadar()) {
+            this.setVelocidad(3);
+        }
     }
-    
+
+    @Override
+    public void draw(Graphics2D g) {
+        g.drawImage(grafico, posicion.x, posicion.y, null);
+        arma.draw(g);
+    }
 }

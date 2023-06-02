@@ -12,7 +12,7 @@ public class Pow extends PowerUp {
         
     }
     public Pow(String filename) throws IOException {
-        imagen = ImageIO.read(Mapa.class.getResource(filename));
+        imagen = ImageIO.read(Mapa.class.getResource("/imagenes/" + filename));
     }
     public void draw(Graphics2D g2) {
         g2.drawImage(imagen,400, 300, null);

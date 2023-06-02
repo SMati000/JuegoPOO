@@ -3,8 +3,8 @@ import java.io.IOException;
 
 public class Barco extends Enemigo {
 
-    public Barco(String nombre, String grafico, Point posicion) throws IOException {
-        super(nombre, grafico, posicion);
+    public Barco(String grafico, Point posicion, Point objetivo) throws IOException {
+        super(grafico, posicion, objetivo);
         this.rangoDeteccion = 800;
     }
 

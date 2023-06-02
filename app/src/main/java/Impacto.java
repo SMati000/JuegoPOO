@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -6,7 +7,7 @@ import javax.imageio.ImageIO;
 
 public class Impacto {
     public static enum tipoImpacto {
-        SIMPLE(new int[]{1, 2}), MEDIO(new int[]{1, 2, 3, 4}), COMPLETO(new int[]{1, 2, 3, 4, 3, 2, 1});
+        DISPARO(new int[]{1, 2, 3, 4});
 
         private int[] secuencia;
         private tipoImpacto(int[] sec) {
@@ -14,13 +15,13 @@ public class Impacto {
         }
     }
 
-    private VehiculoMilitar objetivo;
+    private Point objetivo;
     private final tipoImpacto tipo;
     private final BufferedImage[] impactos;
     private int puntero;
     private boolean entrar;
 
-    public Impacto(VehiculoMilitar objetivo, tipoImpacto tipo) throws IOException {
+    public Impacto(Point objetivo, tipoImpacto tipo) throws IOException {
         this.objetivo = objetivo;
         this.tipo = tipo;
         this.puntero = 0;
@@ -33,13 +34,17 @@ public class Impacto {
         impactos[3] = ImageIO.read(Impacto.class.getResource("imagenes/impacto4.png"));
     }
 
+    public void setObjetivo(Point objetivo) {
+        this.objetivo = objetivo;
+    }
+
     public void reset() {
         puntero = 0;
     }
 
     public void draw(Graphics2D g) {
         if(entrar && puntero < tipo.secuencia.length) {
-            g.drawImage(impactos[tipo.secuencia[puntero]-1], objetivo.getX(), objetivo.getY(), null);
+            g.drawImage(impactos[tipo.secuencia[puntero]-1], objetivo.x, objetivo.y, null);
             puntero++;
         }
 

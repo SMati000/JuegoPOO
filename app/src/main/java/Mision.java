@@ -18,6 +18,7 @@ public class Mision {
     }
 
     private ESTADO estado;
+    private final int factorProb = 10; 
     private final DIFICULTAD dificultad;
     private final Enemigo[] enemigos;
     private final Enemigo jefe;
@@ -26,9 +27,12 @@ public class Mision {
     private int contadorSegundo = 0; 
 
     private final ArrayList<Enemigo> enemigosCreados;
+    private final ArrayList<Municion> balasEnCurso;
 
     private Mision(MisionBuilder builder) {
         enemigosCreados = new ArrayList<Enemigo>();
+        balasEnCurso = new ArrayList<Municion>();
+        
         estado = ESTADO.AIRE;
 
         this.dificultad = builder.dificultad;
@@ -38,39 +42,13 @@ public class Mision {
         this.tiempoEnCurso = this.tiempo;
     }
 
-    public void manejarEnemigos(Point avionAmigo) {
+    public void update(Point avionAmigo) {
         crearEnemigos(avionAmigo);
-
-        for(int i = 0; i < enemigosCreados.size(); i++) {
-            Enemigo temp = enemigosCreados.get(i);
-
-            // eliminar enemigos fuera de la pantalla
-            if(temp.getY() > (avionAmigo.y + (Juego1943.getInstance().getHeight())) + 25) { 
-                enemigosCreados.remove(i);
-                i--;
-                continue;
-            }
-
-            temp.avanzar();
-
-            if(temp.objetivoEnRadar(avionAmigo.y)) {
-                temp.setVelocidad(2);
-            
-                if(temp.getClass().getName().equals("AvionEnemigo"))
-                    ((AvionEnemigo)temp).seguirHorizontalmente(avionAmigo);
-            }
-        }
-
-        if(tiempoEnCurso == tiempo/2) {
-            this.estado = ESTADO.TIERRA;
-        } if(tiempoEnCurso == 0) {
-            this.estado = ESTADO.FIN;
-        }
+        manejarEnemigos(avionAmigo);
     }
 
     // Hacer que no se carguen las imgs del disco a cada rato. Arreglar codigo. Implementar Interfaces
 
-    private static final int factorProb = 10; 
     private void crearEnemigos(Point avionAmigo) {
         int random = (int)(Math.floor(Math.random()*999+1));
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
@@ -101,6 +79,46 @@ public class Mision {
         }
     }
 
+    private void manejarEnemigos(Point avionAmigo) {
+        for(int i = 0; i < enemigosCreados.size(); i++) {
+            Enemigo temp = enemigosCreados.get(i);
+
+            // eliminar enemigos fuera de la pantalla
+            if(temp.getY() > (avionAmigo.y + (Juego1943.getInstance().getHeight())) + 25) { 
+                enemigosCreados.remove(i);
+                i--;
+                continue;
+            }
+
+            temp.update();
+
+            Municion m = temp.disparar();
+
+            if(m != null)
+                balasEnCurso.add(m);
+
+            balasEnCurso.forEach(bala -> {
+                bala.update();
+            });
+            // temp.avanzar();
+
+            // if(temp.objetivoEnRadar(avionAmigo.y)) {
+            //     temp.setVelocidad(3);
+            
+            //     if(temp.getClass().getName().equals("AvionEnemigo")) {
+            //         ((AvionEnemigo)temp).seguirHorizontalmente(avionAmigo);
+            //         ((AvionEnemigo)temp).disparar();
+            //     }
+            // }
+        }
+
+        if(tiempoEnCurso == tiempo/2) {
+            this.estado = ESTADO.TIERRA;
+        } if(tiempoEnCurso == 0) {
+            this.estado = ESTADO.FIN;
+        }
+    }
+
     public ESTADO getEstado() {
         return estado;
     }
@@ -116,6 +134,10 @@ public class Mision {
 
         enemigosCreados.forEach(enemigo -> {
             enemigo.draw(g);
+        });
+
+        balasEnCurso.forEach(bala -> {
+            bala.draw(g);
         });
 
         if(contadorSegundo == 60) { // pensando siempre en 60 fps
