@@ -30,12 +30,12 @@ class InterfacePrinc extends JFrame implements ActionListener{
         this.setPreferredSize(new Dimension(450, 550));
         this.setResizable(false);
         this.pack();
-        
+
         fondo.setLayout(new GridBagLayout());
+        fondo.setPreferredSize(new Dimension(450, 550));
         fondo.setIcon(new ImageIcon(getClass().getResource("/imagenes/fondoPueba2.png")));
         this.add(fondo);
         this.setComponentZOrder(fondo, 0);
-
         mostrarCatalogo();
 
         this.setVisible(true);
@@ -67,27 +67,21 @@ class InterfacePrinc extends JFrame implements ActionListener{
             public void mouseClicked(MouseEvent e) {
                 JFrame frameJuego = new JFrame();
                 frameJuego.setLayout(new GridBagLayout());           //no se con layout hacerlo para que quede bien
-                Dimension dim1 = new Dimension(300,300);
+                Dimension dim1 = new Dimension(315,400);
                 frameJuego.setPreferredSize(dim1);
-                          
+                frameJuego.setLayout(new FlowLayout());
+              
              
                 JButton jugar =  new JButton("JUGAR");
-
-                InputStream is = getClass().getResourceAsStream("/font/ArcadeClassic.ttf");
-               
-                //Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-                //Font font = new Font("ArcadeClassic", 0, 12);
-                //font.deriveFont(250f);
-                //jugar.setFont(font);
+                JButton ranking = new JButton("Ver Ranking");
                 
                 jugar.addActionListener(InterfacePrinc.this);
-               // frameJuego.add(jugar, resBotonJugar); 
+                ranking.addActionListener(InterfacePrinc.this);
 
                 //menu visto en pantalla
                 menu = new JMenuBar();
 
 
-                
                 menu1 = new JMenu("Configuraciones");
                 menu2 = new JMenu("Ver");
                 
@@ -106,24 +100,23 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 item3 = new JMenuItem("Avion");     
                 item3.addActionListener(InterfacePrinc.this);    
                 menu1.add(item3);
-        
-                
-                
-                
-                JLabel pantallaJuego = new JLabel();
-                pantallaJuego.setLayout(null);
-    
-              //  pantallaJuego.setIcon(new ImageIcon(getClass().getResource("/imagenes/pantallaJuego.jpg")));
-             
-                pantallaJuego.setOpaque(true);
-                frameJuego.add(pantallaJuego);
-                frameJuego.setComponentZOrder(pantallaJuego, 0);
+ 
                 jugar.setSize(100,50);
                 jugar.setLocation(100, 150);
-                pantallaJuego.add(jugar); 
                 
+  
+                JPanel fondo= new JPanel();
+                fondo.setLayout(new BorderLayout());
+                JLabel pantallaJuego = new JLabel();
+                fondo.add(pantallaJuego, BorderLayout.CENTER);
+                pantallaJuego.setIcon(new ImageIcon(getClass().getResource("/imagenes/pantallaJuego.jpg")));
+               
+                pantallaJuego.add(jugar); 
+                pantallaJuego.add(ranking);
+
+                frameJuego.add(fondo);
                 frameJuego.setJMenuBar(menu);               
-                // frameJuego.setComponentZOrder(menu, 1);
+                frameJuego.setResizable(false);
                 
                 jugar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {

@@ -40,7 +40,7 @@ public class Juego1943 extends Juego {
             avionAmigo = new AvionAmigo(new Point(400, 300));
             animacionEnCurso = 0;
 
-            pow = new Pow("pow.jpg");
+            pow = new Pow(new Point(400, 300));
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
         }
@@ -71,7 +71,7 @@ public class Juego1943 extends Juego {
                     enemigos = new Enemigo[]{e1, e2, e3};
 
                     mision = new Mision.MisionBuilder(enemigos, null)
-                    .setTiempo(30)
+                    .setTiempo(60)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .build();
                     break;
@@ -145,6 +145,7 @@ public class Juego1943 extends Juego {
             animacion();
         }
 
+  
         cam.avanzar((AvionAmigo)avionAmigo, delta);
         mision.update(avionAmigo.getPosicion());
     }
@@ -180,7 +181,7 @@ public class Juego1943 extends Juego {
 
         mision.draw(g, (int)(mapa.getY()-(cam.getY()*2)+60));
 
-        ((Pow)pow).draw(g);
+        //((Pow)pow).draw(g);
 
         avionAmigo.draw(g);
         g.translate(-cam.getX(),-cam.getY());
