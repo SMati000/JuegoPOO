@@ -16,15 +16,13 @@ public class Juego1943 extends Juego {
     private Camara cam;
 
     private VehiculoMilitar avionAmigo;
-    private final double desplazamiento = 120.0;
+    private final double desplazamiento = 180.0;
 
     private int misionAsignada;
     private Mision mision;
     private int animacionEnCurso;
 
     Keyboard keyboard;
-
-    private Bonus pow;
 
     private Juego1943(){
         super("1943", "Juego 1943");
@@ -36,11 +34,9 @@ public class Juego1943 extends Juego {
             mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
             mapa.setTransicion("fondo1943Transicion.jpg");
 
-            cam = new Camara(desplazamiento, 0, 0);
+            cam = new Camara(120, 0, 0);
             avionAmigo = new AvionAmigo(new Point(400, 300));
             animacionEnCurso = 0;
-
-            pow = new Pow("pow.jpg");
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
         }
@@ -55,13 +51,23 @@ public class Juego1943 extends Juego {
 
         try {
             Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
-            e1.setGraficosDoblar("avionEnemigo1Izq.png", "avionEnemigo1Der.png");
+            // e1.setGraficosDoblar("avionEnemigo1Izq.png", "avionEnemigo1Der.png");
     
             Enemigo e2 = new AvionEnemigo("avionEnemigo2.png", new Point(0, 0), avionAmigo.getPosicion());
-            e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
+            // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
     
             Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
-            // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
+            for(Arma a : e3.getArmas()) {
+                a.seguir(false);
+                a.setAngulo(180);
+            }
+            
+            Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
+            jefe.setResistencia(100/50);
+            for(Arma a : jefe.getArmas()) {
+                a.setTiros(2);
+                a.setAnguloMaximo(170);
+            }
 
             misionAsignada = 1;
 
@@ -70,15 +76,15 @@ public class Juego1943 extends Juego {
                 case 1:
                     enemigos = new Enemigo[]{e1, e2, e3};
 
-                    mision = new Mision.MisionBuilder(enemigos, null)
-                    .setTiempo(30)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
+                    .setTiempo(40)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .build();
                     break;
                 case 2:
                     enemigos = new Enemigo[]{e1, e2};
 
-                    mision = new Mision.MisionBuilder(enemigos, null)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, null)
                     .setTiempo(60*7)
                     .setDificultad(Mision.DIFICULTAD.DIFICIL)
                     .build();
@@ -95,30 +101,29 @@ public class Juego1943 extends Juego {
         
     }
     
-    int posicion = 300;
     @Override 
     public void gameUpdate(double delta) {
 
         if (keyboard.isKeyPressed(Configuraciones.arriba)) {
-            if(posicion < 565) {
-                posicion += (desplazamiento * delta) - (desplazamiento * delta * 0.5);
+            if(this.getViewPort().contains(avionAmigo.getX(), avionAmigo.getY()  - avionAmigo.grafico.getHeight(), 
+                avionAmigo.grafico.getWidth(), avionAmigo.grafico.getHeight())) {
                 avionAmigo.setY(avionAmigo.getY() - (int)(desplazamiento * delta));
             } else {
-                avionAmigo.setY(avionAmigo.getY() - (int)(desplazamiento * delta * 0.5));
+                avionAmigo.setY(avionAmigo.getY() - (int)(120 * delta * 0.5));
             }
         }
         
         if (keyboard.isKeyPressed(Configuraciones.abajo)) {
-            if(posicion > 15) {
-                posicion -= (desplazamiento * delta) + (desplazamiento * delta * 0.5);
+            if(this.getViewPort().contains(avionAmigo.getX(), avionAmigo.getY() + (int)(desplazamiento * delta), 
+                avionAmigo.grafico.getWidth(), avionAmigo.grafico.getHeight())) {
                 avionAmigo.setY(avionAmigo.getY() + (int)(desplazamiento * delta));
             } else {
-                avionAmigo.setY(avionAmigo.getY() - (int)(desplazamiento * delta * 0.5));
+                avionAmigo.setY(avionAmigo.getY() - (int)(cam.getDesplazamiento() * delta * 0.5));
             }
         }
 
         if(!keyboard.isKeyPressed(Configuraciones.arriba) && !keyboard.isKeyPressed(Configuraciones.abajo)) {
-            avionAmigo.setY(avionAmigo.getY() - (int)(desplazamiento * delta * 0.5));
+            avionAmigo.setY(avionAmigo.getY() - (int)(cam.getDesplazamiento() * delta * 0.5));
         }
 
         if (keyboard.isKeyPressed(Configuraciones.izq)) {
@@ -136,7 +141,6 @@ public class Juego1943 extends Juego {
         }
         
         if(!keyboard.isKeyPressed(Configuraciones.izq) && !keyboard.isKeyPressed(Configuraciones.der)) {
-            
             if(!(animacionEnCurso > 0 && animacionEnCurso < 180))
                 ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.COMUN);
         }
@@ -146,7 +150,7 @@ public class Juego1943 extends Juego {
         }
 
         cam.avanzar((AvionAmigo)avionAmigo, delta);
-        mision.update(avionAmigo.getPosicion());
+        mision.update();
     }
 
     private void animacion() {
@@ -167,7 +171,7 @@ public class Juego1943 extends Juego {
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if(mision.getEstado() == Mision.ESTADO.FIN) {
+        if(mision.getEstado() == Mision.ESTADO.FIN || avionAmigo.getEnergia() <= 0) {
             g.drawImage(gameOver, 0, 0, null);
             gameShutdown();
             return;
@@ -177,13 +181,15 @@ public class Juego1943 extends Juego {
     
         mapa.setPosition((int)cam.getX(), (int)cam.getY());
         mapa.draw(g);
-
+        
         mision.draw(g, (int)(mapa.getY()-(cam.getY()*2)+60));
-
-        ((Pow)pow).draw(g);
-
-        avionAmigo.draw(g);
+        
         g.translate(-cam.getX(),-cam.getY());
+    }
+
+    public Rectangle getViewPort() {
+        return new Rectangle(new Point((int)cam.getX(), -(int)cam.getY()),
+            new Dimension(this.getWidth(), this.getHeight()));
     }
 
     public static Juego getInstance() {
@@ -223,6 +229,10 @@ class Camara {
 
      public void setY(double y){
     	this.y=y;
+    }
+
+    public double getDesplazamiento(){
+    	return this.desplazamiento;
     }
 
     public double getX(){

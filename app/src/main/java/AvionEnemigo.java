@@ -5,39 +5,47 @@ import java.io.IOException;
 public class AvionEnemigo extends Enemigo {
     public AvionEnemigo(String filename, Point posicion, Point objetivo) throws IOException {
         super(filename, posicion, objetivo);
+        this.resistencia = this.energia/5;
     }
     
-    public AvionEnemigo(Enemigo enemigo) throws IOException {
+    public AvionEnemigo(AvionEnemigo enemigo) throws IOException {
         super(enemigo);
+        this.resistencia = this.energia/5;
     }
     
-    public void seguirHorizontalmente() {
-        if(objetivo.x - this.posicion.x > 20) { // a la izq del objetivo
-            this.posicion.x = this.posicion.x + 1;
-            this.grafico = this.der;
-        } else if(objetivo.x - this.posicion.x < -20) { // a la der del objetivo
-            this.posicion.x = this.posicion.x - 1;
-            this.grafico = this.izq;
-        } 
+    // public void seguirHorizontalmente() {
+        // if(objetivo.x - this.posicion.x > 20) { // a la izq del objetivo
+        //     this.posicion.x = this.posicion.x + 1;
+        //     this.grafico = this.der;
+        // } else if(objetivo.x - this.posicion.x < -20) { // a la der del objetivo
+        //     this.posicion.x = this.posicion.x - 1;
+        //     this.grafico = this.izq;
+        // } 
         
         // if(!this.objetivoEnRadar(objetivo.y - 5)) { 
         //     this.grafico = this.comun;
         // }
-    }
+    // }
 
-    // public void disparar() {}
+    public Municion[] disparar() {
+        if(this.objetivoEnRadar() && 
+            Math.abs((this.posicion.x + (grafico.getWidth()/2)) - (objetivo.x + (grafico.getWidth()/2))) < 70)
+            return new Municion[]{arma.disparar()};
+         
+        return null;
+    }
     
-    @Override
-    public void update() {
-        this.avanzar();
-        arma.update();
+    // @Override
+    // public void update() {
+    //     this.avanzar();
+    //     arma.update();
 
-        if(this.objetivoEnRadar()) {
-            this.setVelocidad(3);
+    //     if(this.objetivoEnRadar()) {
+    //         this.setVelocidad(2);
         
-            this.seguirHorizontalmente();
-        }
-    }
+    //         // this.seguirHorizontalmente();
+    //     }
+    // }
     
     // public void draw(Graphics2D g) {
     //     g.drawImage(grafico, posicion.x, posicion.y, null);

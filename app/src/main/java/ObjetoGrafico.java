@@ -44,6 +44,11 @@ public abstract class ObjetoGrafico {
         return this.posicion.y;
     }
     
+    public void destruir() {
+        // this.grafico = null;
+        // this.posicion = null;
+    }
+
     public abstract void update();
     public abstract void draw(Graphics2D g);
 }

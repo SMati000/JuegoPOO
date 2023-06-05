@@ -10,44 +10,44 @@ public class Enemigo extends VehiculoMilitar {
 
     protected int velocidad, rangoDeteccion;
 
-    protected BufferedImage comun, izq, der;
+    // protected BufferedImage comun, izq, der;
 
     protected final Point objetivo;
 
     public Enemigo(String grafico, Point posicion, Point objetivo) throws IOException {
         super("enemigo", grafico, posicion);
-        this.comun = ImageIO.read(Enemigo.class.getResource("imagenes/" + grafico));
+        // this.comun = ImageIO.read(Enemigo.class.getResource("imagenes/" + grafico));
 
         this.objetivo = objetivo;
         this.velocidad = 5;
         this.rangoDeteccion = 400;
 
-        arma = new Arma(this.getPosicion(), objetivo, "armaBarco1.png");
+        arma = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2), objetivo);
     }
-
+    
     public Enemigo(Enemigo enemigo) throws IOException {
         super(enemigo.nombre, "", (Point)enemigo.getPosicion().clone());
         
         this.setGrafico(enemigo.grafico);
-        this.comun = enemigo.grafico;
-        this.izq = enemigo.izq;
-        this.der = enemigo.der;
-
+        // this.comun = enemigo.grafico;
+        // this.izq = enemigo.izq;
+        // this.der = enemigo.der;
+        
         this.objetivo = enemigo.objetivo;
         this.velocidad = 5;
-        this.rangoDeteccion = 400;
-
-        arma = new Arma(this.getPosicion(), objetivo, "armaBarco1.png");
+        this.rangoDeteccion = 600;
+        
+        arma = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2), objetivo);
     }
 
-    public void setGraficosDoblar(String izq, String der) {
-        try {
-            this.izq = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + izq));
-            this.der = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + der));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public void setGraficosDoblar(String izq, String der) {
+    //     try {
+    //         this.izq = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + izq));
+    //         this.der = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + der));
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad < 10 ? velocidad : 10;
@@ -63,24 +63,25 @@ public class Enemigo extends VehiculoMilitar {
         return distancia > 0 && distancia <= rangoDeteccion;
     }
 
+    public Arma[] getArmas() {
+        return new Arma[]{arma};
+    }
+
     @Override
-    public Municion disparar() {
+    public Municion[] disparar() {
         if(this.objetivoEnRadar())
-            return arma.disparar();
+            return new Municion[]{arma.disparar()};
          
         return null;
     }
 
     @Override
-    public void destruir() {}
-
-    @Override
     public void update() {
         this.avanzar();
-        arma.update();
+        arma.update(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2));
 
         if(this.objetivoEnRadar()) {
-            this.setVelocidad(3);
+            this.setVelocidad(2);
         }
     }
 
