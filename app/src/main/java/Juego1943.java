@@ -57,10 +57,10 @@ public class Juego1943 extends Juego {
             // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
     
             Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
-            for(Arma a : e3.getArmas()) {
-                a.seguir(false);
-                a.setAngulo(180);
-            }
+            // for(Arma a : e3.getArmas()) {
+            //     a.seguir(false);
+            //     a.setAngulo(180);
+            // }
             
             Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
             jefe.setResistencia(100/50);
@@ -149,6 +149,7 @@ public class Juego1943 extends Juego {
             animacion();
         }
 
+  
         cam.avanzar((AvionAmigo)avionAmigo, delta);
         mision.update();
     }

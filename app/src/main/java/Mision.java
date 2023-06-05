@@ -18,13 +18,13 @@ public class Mision { // pair, destruir, objetografico/interfaces,
             this.dif = dif;
         }
     }
-
     private ESTADO estado;
     private final int factorProb = 10; 
     private final DIFICULTAD dificultad;
 
     private final AvionAmigo heroe;
     private final Enemigo[] enemigos;
+    private Bonus[] bonus;
     private final Enemigo jefe;
     
     private final int apareceJefe = 30;
@@ -36,14 +36,16 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                               // enemigo, colisionDetectada 
     private final ArrayList<Pair<Enemigo, Boolean>> enemigosCreados;
     private final ArrayList<Pair<Municion, Boolean>> balasEnCurso;
+    private final ArrayList<Bonus> bonusCreados; 
     private final ArrayList<Impacto> impactos;
 
     private Mision(MisionBuilder builder) {
         enemigosCreados = new ArrayList<Pair<Enemigo, Boolean>>();
         balasEnCurso = new ArrayList<Pair<Municion, Boolean>>();
+        bonusCreados = new ArrayList<Bonus>();
         impactos = new ArrayList<Impacto>();
         
-        estado = ESTADO.TIERRA;
+        estado = ESTADO.AIRE;
 
         this.dificultad = builder.dificultad;
 
@@ -53,10 +55,24 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
         this.tiempo = builder.tiempo;
         this.tiempoEnCurso = this.tiempo;
+        try{
+            bonus = new Bonus[]{new Pow("pow.png", new Point(0, 0)), new Auto("auto.png", new Point(0, 0)),
+                                new EstrellaNinja("estrellaNinja.png", new Point(0, 0)),
+                                new SuperShell("SuperShell.png", new Point(0, 0)),
+                                new Refuerzos( "refuerzo.png", new Point(0, 0))
+                                };
+
+        }catch(IOException e){
+            System.out.println("error al crear el bonus");
+        }
+        
     }
 
     public void update() {
         crearEnemigos();
+        crearBonus();
+        
+        manejarBonus(); 
         manejarEnemigos();
         manejarImpactos();
 
@@ -70,6 +86,40 @@ public class Mision { // pair, destruir, objetografico/interfaces,
             // manejarJefe();
         }
     }
+ 
+    private void crearBonus(){
+        int random = (int)(Math.floor(Math.random()*999+1));
+        // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
+        if(bonusCreados.size() < 1/dificultad.dif && random < 10/dificultad.dif ) { 
+
+            try {
+                int randomBonus = (int)(Math.floor(Math.random()*(bonus.length-1-0+1)+0));
+             
+                Bonus b = null;
+                if(bonus[randomBonus].getClass().getName().equals("Pow")){
+                    b = new Pow(bonus[randomBonus]);
+                }else if(bonus[randomBonus].getClass().getName().equals("Auto")){ 
+                    b = new Auto(bonus[randomBonus]);
+                }else if(bonus[randomBonus].getClass().getName().equals("EstrellaNinja")){
+                    b = new EstrellaNinja(bonus[randomBonus]);
+                }else if(bonus[randomBonus].getClass().getName().equals("SuperShell")){
+                    b = new SuperShell(bonus[randomBonus]);
+                }else if(bonus[randomBonus].getClass().getName().equals("Refuerzos")){
+                    b = new Refuerzos(bonus[randomBonus]);
+                }else{
+                    return;
+                }
+                b.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
+                b.setY(heroe.getY()-500);
+                bonusCreados.add(b);
+            } catch (IOException e) {
+                System.out.println("No se pudo crear el bonus");
+            }
+        }
+    }
+
+
+    // Hacer que no se carguen las imgs del disco a cada rato. Arreglar codigo. Implementar Interfaces
 
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
@@ -77,11 +127,11 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         if(enemigosCreados.size() < 10*dificultad.dif && random < factorProb*dificultad.dif) { 
 
             try {
-                int nuevoEnemigo = (int)(random/(enemigos.length*dificultad.dif+1));
+                int nuevoEnemigo = (int)(Math.floor(Math.random()*(enemigos.length-1-0+1)+0));
 
                 Enemigo e = null;
                 
-                if(enemigos[nuevoEnemigo].getClass().getName().equals("AvionEnemigo") && false)
+                if(enemigos[nuevoEnemigo].getClass().getName().equals("AvionEnemigo"))
                     e = new AvionEnemigo((AvionEnemigo)enemigos[nuevoEnemigo]);
                 else if(enemigos[nuevoEnemigo].getClass().getName().equals("Barco") && this.estado == ESTADO.TIERRA)
                     e = new Barco((Barco)enemigos[nuevoEnemigo]);
@@ -136,6 +186,19 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    
+    private void manejarBonus() {
+        for(int i = 0; i < bonusCreados.size(); i++) {
+            Bonus temp = bonusCreados.get(i);
+
+            // eliminar enemigos fuera de la pantalla
+            if(temp.getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) { 
+                bonusCreados.remove(i);
+                i--;
+                continue;
             }
         }
     }
@@ -274,6 +337,11 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         }
         
         heroe.draw(g);
+        
+        bonusCreados.forEach(bonus -> {
+            bonus.draw(g);
+            
+        });
 
         balasEnCurso.forEach(bala -> {
             bala.getKey().draw(g);
