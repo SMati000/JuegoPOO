@@ -19,7 +19,7 @@ public class Municion extends ObjetoGrafico {
     }
 
     private void avanzar() {
-        if(angulo != 0) {    
+        if(angulo%Math.PI != 0) {    
             if(Math.sin(angulo) < 0)
                 this.posicion.x += 1 + Math.abs(Math.sin(angulo)) * velocidad;
             else 

@@ -13,12 +13,14 @@ public class Barco extends Enemigo {
         arma.seguir(true);
         arma.setFrecuenciaDisparos(40);
 
-        arma1 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2-70), this.objetivo);
+        arma1 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2-70));
+        arma1.setObjetivo(this.objetivo);
         arma1.setGrafico("armaBarco1.png");
         arma1.seguir(true);
         arma1.setFrecuenciaDisparos(40);
         
-        arma2 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2+70), this.objetivo);
+        arma2 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2+70));
+        arma2.setObjetivo(this.objetivo);
         arma2.setGrafico("armaBarco1.png");
         arma2.seguir(true);
         arma2.setFrecuenciaDisparos(40);

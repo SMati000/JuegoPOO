@@ -17,6 +17,10 @@ public class AvionAmigo extends VehiculoMilitar {
     public AvionAmigo(Point posicion) throws IOException {
         super("Avion Amigo", "avionAmigo.png", posicion);
         this.resistencia = this.energia/50;
+
+        this.arma.seguir(false);
+        this.arma.setAngulo(180);
+        this.arma.setFrecuenciaDisparos(7);
     }
 
     public void setIcon(Iconos ICONO) {
@@ -29,13 +33,9 @@ public class AvionAmigo extends VehiculoMilitar {
 
     @Override
     public Municion[] disparar() {
-        return null;
+        return new Municion[]{arma.disparar()};
     }
 
     @Override
     public void destruir() {}
-
-    @Override
-    public void update() {}
-    
 }

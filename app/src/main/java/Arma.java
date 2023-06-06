@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 
 public class Arma extends ObjetoGrafico {
-    private final Point objetivo;
+    private Point objetivo;
 
     private int frecuenciaDisparo, velocidadGiro;
     private boolean seguir;
@@ -15,19 +15,28 @@ public class Arma extends ObjetoGrafico {
 
     private double angulo;
     
-    public Arma(Point posicion, Point objetivo) throws IOException {
+    public Arma(Point posicion) throws IOException {
         super("Arma", null, posicion);
-
-        this.objetivo = objetivo;
-        this.posPrevia = (Point) this.objetivo.clone();
 
         this.velocidadGiro = 6;
         this.angulo = 0;
 
-        this.frecuenciaDisparo = 15; // cada 15 frames
+        this.frecuenciaDisparo = 25; // cada 15 frames
         this.seguir = false;
         this.cantTiros = 1;
         this.anguloMax = 90;
+    }
+
+    // public Arma(Point posicion, Point objetivo) throws IOException {
+    //     this(posicion);
+
+    //     this.objetivo = objetivo;
+    //     this.posPrevia = (Point) this.objetivo.clone();
+    // }
+
+    public void setObjetivo(Point objetivo) {
+        this.objetivo = objetivo;
+        this.posPrevia = (Point) this.objetivo.clone();
     }
 
     public Arma(Arma arma) throws IOException {
@@ -102,7 +111,7 @@ public class Arma extends ObjetoGrafico {
             if(contadorFrecDisp == this.frecuenciaDisparo) {
                 contadorFrecDisp = 0;
 
-                angulo = seguir ? angulo : 0;
+                // angulo = seguir ? angulo : 0;
 
                 Municion muni = new Municion("municion1.png", this.posicion.getLocation(), angulo);
                 muni.setTiros(cantTiros);
@@ -128,11 +137,18 @@ public class Arma extends ObjetoGrafico {
 
         if(seguir) {           // 60 fps
             if(contadorVelGiro == 60/this.velocidadGiro) {
-                posPrevia = (Point) this.objetivo.clone();
+                
+                if(this.objetivo != null) {
+                    posPrevia = (Point) this.objetivo.clone();
+                }
+
                 contadorVelGiro = 0;
             }
             
-            this.rotar();
+            if(posPrevia != null) {
+                this.rotar();
+            }
+            
             contadorVelGiro++;
         }
     }

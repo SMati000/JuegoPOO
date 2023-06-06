@@ -56,7 +56,7 @@ public class Impacto {
 
     public void draw(Graphics2D g) {
         if(puntero < tipo.secuencia.length) {
-            g.drawImage(impactos[tipo.secuencia[puntero]-1], objetivo.x+12, objetivo.y+7, null);
+            g.drawImage(impactos[tipo.secuencia[puntero]-1], objetivo.x, objetivo.y, null);
         }
         
         if(contador == 5) {

@@ -34,18 +34,20 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     private int contadorSegundo = 0; 
 
                               // enemigo, colisionDetectada 
-    private final ArrayList<Pair<Enemigo, Boolean>> enemigosCreados;
-    private final ArrayList<Pair<Municion, Boolean>> balasEnCurso;
+    private final ArrayList<Enemigo> enemigosCreados;
+    private final ArrayList<Municion> balasEnCurso;
+    private final ArrayList<Municion> balasHeroe;
     private final ArrayList<Bonus> bonusCreados; 
     private final ArrayList<Impacto> impactos;
 
     private Mision(MisionBuilder builder) {
-        enemigosCreados = new ArrayList<Pair<Enemigo, Boolean>>();
-        balasEnCurso = new ArrayList<Pair<Municion, Boolean>>();
+        enemigosCreados = new ArrayList<Enemigo>();
+        balasEnCurso = new ArrayList<Municion>();
+        balasHeroe = new ArrayList<Municion>();
         bonusCreados = new ArrayList<Bonus>();
         impactos = new ArrayList<Impacto>();
         
-        estado = ESTADO.AIRE;
+        estado = ESTADO.TIERRA;
 
         this.dificultad = builder.dificultad;
 
@@ -69,6 +71,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     }
 
     public void update() {
+        heroe.update();
         crearEnemigos();
         crearBonus();
         
@@ -182,7 +185,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
                 e.setVelocidad((int)(Math.floor(Math.random()*(10-2+1)+2)));
 
-                enemigosCreados.add(new Pair<Enemigo,Boolean>(e, false));
+                enemigosCreados.add(e);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -205,7 +208,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
     private void manejarEnemigos() {
         for(int i = 0; i < enemigosCreados.size(); i++) {
-            Enemigo temp = enemigosCreados.get(i).getKey();
+            Enemigo temp = enemigosCreados.get(i);
 
             temp.update();
 
@@ -221,21 +224,35 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
             if(ms != null) {
                 for(Municion m : ms) {
-                    if(m != null)
-                        balasEnCurso.add(new Pair<Municion, Boolean>(m, false));
+                    if(m != null) {
+                        balasEnCurso.add(m);
+                    }
                 }
             }
         }
 
         for(int i = 0; i < balasEnCurso.size(); i++) {
-            Municion temp = balasEnCurso.get(i).getKey();
+            Municion temp = balasEnCurso.get(i);
             
             temp.update();
 
             // eliminar balas fuera de la pantalla
             if(temp.getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) { 
-                temp.destruir();
                 balasEnCurso.remove(i);
+                i--;
+                continue;
+            }
+        }
+
+        for(int i = 0; i < balasHeroe.size(); i++) {
+            Municion temp = balasHeroe.get(i);
+            
+            temp.update();
+
+            // eliminar balas fuera de la pantalla
+            if(!((Juego1943)(Juego1943.getInstance())).getViewPort().contains(
+                    new Rectangle(temp.getPosicion(), new Dimension(temp.grafico.getWidth(), temp.grafico.getHeight())))) { 
+                balasHeroe.remove(i);
                 i--;
                 continue;
             }
@@ -261,7 +278,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         if(ms != null) {
             for(Municion m : ms) {
                 if(m != null)
-                    balasEnCurso.add(new Pair<Municion, Boolean>(m, false));
+                    balasEnCurso.add(m);
             }
         }
     }
@@ -270,29 +287,56 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         Rectangle avionAmigo = new Rectangle(heroe.getPosicion(), new Dimension(heroe.grafico.getWidth(), heroe.grafico.getHeight()));
 
         for(int i = 0; i < balasEnCurso.size(); i++) {
-            Municion bala = balasEnCurso.get(i).getKey();
+            Municion bala = balasEnCurso.get(i);
 
             if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
-            .intersects(avionAmigo) && !balasEnCurso.get(i).getValue()) {
+            .intersects(avionAmigo)) {
                 try {
                     impactos.add(new Impacto(heroe.getPosicion(), Impacto.tipoImpacto.DISPARO));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 
-                // bala.destruir();
                 balasEnCurso.remove(i);
 
                 heroe.modificarEnergia(-heroe.getResistencia());
             }
         }
         
+        for(int i = 0; i < balasHeroe.size(); i++) {
+            Municion bala = balasHeroe.get(i);
+
+            for(int j = 0; j < enemigosCreados.size(); j++) {
+                Enemigo enemigo = enemigosCreados.get(j);
+                Rectangle e = new Rectangle(enemigo.getPosicion(), 
+                    new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()));
+
+                if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
+                .intersects(e)) {
+                    try {
+                        impactos.add(new Impacto(new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2), 
+                            Impacto.tipoImpacto.DISPARO));
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                    
+                    balasHeroe.remove(i);
+    
+                    enemigo.modificarEnergia(-enemigo.getResistencia());
+
+                    if(enemigo.getEnergia() <= 0) {
+                        enemigosCreados.remove(j);
+                    }
+                }
+            }
+        }
+
         for(int i = 0; i < enemigosCreados.size(); i++) {
-            Enemigo enemigo = enemigosCreados.get(i).getKey();
+            Enemigo enemigo = enemigosCreados.get(i);
             
             if(enemigo.getClass().getName().equals("AvionEnemigo") && 
             new Rectangle(enemigo.getPosicion(), new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()))
-            .intersects(avionAmigo) && !enemigosCreados.get(i).getValue()) {
+            .intersects(avionAmigo)) {
                 try {
                     impactos.add(new Impacto(heroe.getPosicion(), Impacto.tipoImpacto.COLISION));
                     impactos.add(new Impacto(enemigo.getPosicion(), Impacto.tipoImpacto.COLISION));
@@ -301,12 +345,15 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 }
 
                 enemigosCreados.remove(i);
-                enemigosCreados.add(i, new Pair<Enemigo, Boolean>(enemigo, true));
                 
                 enemigo.modificarEnergia(-100);
                 heroe.modificarEnergia(-heroe.getResistencia()*2);
             }
         }
+    }
+
+    public void disparoHeroe(Municion bala) {
+        balasHeroe.add(bala);
     }
 
     public ESTADO getEstado() {
@@ -328,8 +375,12 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
         // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
         
-        enemigosCreados.forEach(dupla -> {
-            dupla.getKey().draw(g);
+        bonusCreados.forEach(bonus -> {
+            bonus.draw(g);
+        });
+
+        enemigosCreados.forEach(enemigo -> {
+            enemigo.draw(g);
         });
 
         if(tiempoEnCurso <= apareceJefe) {
@@ -337,14 +388,13 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         }
         
         heroe.draw(g);
-        
-        bonusCreados.forEach(bonus -> {
-            bonus.draw(g);
-            
-        });
 
         balasEnCurso.forEach(bala -> {
-            bala.getKey().draw(g);
+            bala.draw(g);
+        });
+
+        balasHeroe.forEach(bala -> {
+            bala.draw(g);
         });
 
         impactos.forEach(impacto -> {

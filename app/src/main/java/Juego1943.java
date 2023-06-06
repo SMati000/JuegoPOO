@@ -57,13 +57,11 @@ public class Juego1943 extends Juego {
             // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
     
             Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
-            // for(Arma a : e3.getArmas()) {
-            //     a.seguir(false);
-            //     a.setAngulo(180);
-            // }
             
             Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
+            
             jefe.setResistencia(100/50);
+            
             for(Arma a : jefe.getArmas()) {
                 a.setTiros(2);
                 a.setAnguloMaximo(170);
@@ -77,7 +75,7 @@ public class Juego1943 extends Juego {
                     enemigos = new Enemigo[]{e1, e2, e3};
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
-                    .setTiempo(40)
+                    .setTiempo(60)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .build();
                     break;
@@ -143,6 +141,14 @@ public class Juego1943 extends Juego {
         if(!keyboard.isKeyPressed(Configuraciones.izq) && !keyboard.isKeyPressed(Configuraciones.der)) {
             if(!(animacionEnCurso > 0 && animacionEnCurso < 180))
                 ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.COMUN);
+        }
+
+        if (keyboard.isKeyPressed(Configuraciones.disparo)) {
+            Municion[] balas = avionAmigo.disparar();
+
+            for(Municion bala : balas) 
+                if(bala != null)
+                    mision.disparoHeroe(bala);
         }
         
         if(mision.getEstado() == Mision.ESTADO.TIERRA && animacionEnCurso < 180) {

@@ -6,8 +6,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Enemigo extends VehiculoMilitar {
-    protected Arma arma;
-
     protected int velocidad, rangoDeteccion;
 
     // protected BufferedImage comun, izq, der;
@@ -22,11 +20,11 @@ public class Enemigo extends VehiculoMilitar {
         this.velocidad = 5;
         this.rangoDeteccion = 400;
 
-        arma = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2), objetivo);
+        arma.setObjetivo(objetivo);
     }
     
     public Enemigo(Enemigo enemigo) throws IOException {
-        super(enemigo.nombre, "", (Point)enemigo.getPosicion().clone());
+        super(enemigo.nombre, null, (Point)enemigo.getPosicion().clone());
         
         this.setGrafico(enemigo.grafico);
         // this.comun = enemigo.grafico;
@@ -37,7 +35,7 @@ public class Enemigo extends VehiculoMilitar {
         this.velocidad = 5;
         this.rangoDeteccion = 600;
         
-        arma = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2), objetivo);
+        arma.setObjetivo(enemigo.objetivo);
     }
 
     // public void setGraficosDoblar(String izq, String der) {
