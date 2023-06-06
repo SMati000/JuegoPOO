@@ -49,6 +49,9 @@ public abstract class ObjetoGrafico {
         // this.posicion = null;
     }
 
+    public String getNombre(){
+        return nombre;
+    }
     public abstract void update();
     public abstract void draw(Graphics2D g);
 }

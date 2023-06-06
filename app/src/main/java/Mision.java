@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-import javafx.util.Pair;
+
 
 import java.awt.*;
 import java.io.IOException;
@@ -58,10 +58,15 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         this.tiempo = builder.tiempo;
         this.tiempoEnCurso = this.tiempo;
         try{
-            bonus = new Bonus[]{new Pow("pow.png", new Point(0, 0)), new Auto("auto.png", new Point(0, 0)),
+            bonus = new Bonus[]{new Pow("pow.png", new Point(0, 0)),
+                                new Auto("auto.png", new Point(0, 0)),
                                 new EstrellaNinja("estrellaNinja.png", new Point(0, 0)),
                                 new SuperShell("SuperShell.png", new Point(0, 0)),
-                                new Refuerzos( "refuerzo.png", new Point(0, 0))
+                                new Refuerzos( "refuerzo.png", new Point(0, 0)),
+                                new AmetralladoraTresCañones( "ametralladora.png", new Point(0, 0)),
+                                new Laser( "laser.png", new Point(0, 0)),
+                                new Escopeta( "escopeta.png", new Point(0, 0)),
+
                                 };
 
         }catch(IOException e){
@@ -73,7 +78,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     public void update() {
         heroe.update();
         crearEnemigos();
-        crearBonus();
+        crearBonus(null);
         
         manejarBonus(); 
         manejarEnemigos();
@@ -90,25 +95,33 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         }
     }
  
-    private void crearBonus(){
+    private void crearBonus(String nombreBonus){
         int random = (int)(Math.floor(Math.random()*999+1));
         // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
         if(bonusCreados.size() < 1/dificultad.dif && random < 10/dificultad.dif ) { 
-
             try {
                 int randomBonus = (int)(Math.floor(Math.random()*(bonus.length-1-0+1)+0));
-             
                 Bonus b = null;
-                if(bonus[randomBonus].getClass().getName().equals("Pow")){
+                if(bonus[randomBonus].getClass().getName().equals("Pow") &&
+                         !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
                     b = new Pow(bonus[randomBonus]);
-                }else if(bonus[randomBonus].getClass().getName().equals("Auto")){ 
+
+                }else if(bonus[randomBonus].getClass().getName().equals("Auto")&&
+                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){ 
                     b = new Auto(bonus[randomBonus]);
-                }else if(bonus[randomBonus].getClass().getName().equals("EstrellaNinja")){
+
+                }else if(bonus[randomBonus].getClass().getName().equals("EstrellaNinja")&&
+                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
                     b = new EstrellaNinja(bonus[randomBonus]);
-                }else if(bonus[randomBonus].getClass().getName().equals("SuperShell")){
+
+                }else if(bonus[randomBonus].getClass().getName().equals("SuperShell") &&
+                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
                     b = new SuperShell(bonus[randomBonus]);
-                }else if(bonus[randomBonus].getClass().getName().equals("Refuerzos")){
+
+                }else if(bonus[randomBonus].getClass().getName().equals("Refuerzos")&&
+                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
                     b = new Refuerzos(bonus[randomBonus]);
+                    
                 }else{
                     return;
                 }
@@ -196,7 +209,14 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     private void manejarBonus() {
         for(int i = 0; i < bonusCreados.size(); i++) {
             Bonus temp = bonusCreados.get(i);
+            Rectangle bonusRectangle = new Rectangle(temp.getPosicion(), 
+                    new Dimension(temp.grafico.getWidth(), temp.grafico.getHeight()));
 
+            if(new Rectangle(heroe.getPosicion(), new Dimension(heroe.grafico.getWidth(),heroe.grafico.getHeight()))
+            .intersects(bonusRectangle)) {
+                temp.AsignarBonus(heroe);
+                bonusCreados.remove(i);
+            }
             // eliminar enemigos fuera de la pantalla
             if(temp.getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) { 
                 bonusCreados.remove(i);
@@ -302,34 +322,69 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 heroe.modificarEnergia(-heroe.getResistencia());
             }
         }
-        
-        for(int i = 0; i < balasHeroe.size(); i++) {
-            Municion bala = balasHeroe.get(i);
-
-            for(int j = 0; j < enemigosCreados.size(); j++) {
-                Enemigo enemigo = enemigosCreados.get(j);
-                Rectangle e = new Rectangle(enemigo.getPosicion(), 
-                    new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()));
-
-                if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
-                .intersects(e)) {
-                    try {
-                        impactos.add(new Impacto(new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2), 
-                            Impacto.tipoImpacto.DISPARO));
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
+     
                     
-                    balasHeroe.remove(i);
-    
-                    enemigo.modificarEnergia(-enemigo.getResistencia());
+           for(int i = 0; i < balasHeroe.size(); i++) {
+                Municion bala = balasHeroe.get(i);
 
-                    if(enemigo.getEnergia() <= 0) {
-                        enemigosCreados.remove(j);
+                for(int j = 0; j < enemigosCreados.size(); j++) {
+                    Enemigo enemigo = enemigosCreados.get(j);
+                    Rectangle e = new Rectangle(enemigo.getPosicion(), 
+                        new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()));
+
+                    if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
+                    .intersects(e)) {
+                        try {
+                            impactos.add(new Impacto(new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2), 
+                                Impacto.tipoImpacto.DISPARO));
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                        
+                        balasHeroe.remove(i);
+        
+                        enemigo.modificarEnergia(-enemigo.getResistencia());
+
+                        if(enemigo.getEnergia() <= 0) {
+                            enemigosCreados.remove(j);
+                        }
                     }
                 }
-            }
-        }
+            }        
+        
+            for ( int i = 0; i < bonusCreados.size(); i++) {
+                Bonus b = bonusCreados.get(i);
+                for (int j = 0; j < balasHeroe.size(); j++) {
+                    Municion bala = balasHeroe.get(j);
+                    Rectangle bonusRectangle = new Rectangle(b.getPosicion(), 
+                        new Dimension(b.grafico.getWidth(), b.grafico.getHeight()));
+
+                    if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
+                    .intersects(bonusRectangle)) {
+                       
+                        try {
+                            impactos.add(new Impacto(new Point(b.getX()+ b.grafico.getWidth()/2, b.getY()+b.grafico.getHeight()/2),
+                                Impacto.tipoImpacto.DISPARO));
+                               
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                        balasHeroe.remove(j);
+        
+                        b.modificarVida(-b.getResistencia());
+                       
+
+                        if(b.getVida() <= 0) {  
+                            crearBonus(b.getNombre());
+                            System.out.println("se rompio: " + b.getNombre());
+                            bonusCreados.remove(i);
+                        }
+                    }
+                    
+                }
+           }
+
+
 
         for(int i = 0; i < enemigosCreados.size(); i++) {
             Enemigo enemigo = enemigosCreados.get(i);

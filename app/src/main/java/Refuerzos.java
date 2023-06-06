@@ -16,9 +16,8 @@ public class Refuerzos extends Bonus {
     }
 
     @Override
-    public void AsignarBonus() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'AsignarBonus'");
+    public void AsignarBonus(AvionAmigo avionAmigo) {
+        System.out.println("refuerzos asignados");
     }
 
     @Override
