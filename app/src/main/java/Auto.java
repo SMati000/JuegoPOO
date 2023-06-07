@@ -4,18 +4,20 @@ import java.io.IOException;
 public class Auto extends PowerUp {
     public Auto(Bonus bonus) throws IOException {
         super(bonus);
-        this.vidaBonus = 130;
+      
     }
 
     public Auto(String filename, Point posicion) throws IOException {
         super(filename, posicion);
-        this.vidaBonus = 130;
+        
     }
 
     public Auto(Point posicion) throws IOException {
         super("auto.png", posicion);
-        this.vidaBonus = 130;
+      
     }
-    
+    public void AsignarBonus(AvionAmigo avion) {
+        System.out.println("auto asignado");
+    }
     
 }
