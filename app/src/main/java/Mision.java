@@ -63,9 +63,9 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                                 new EstrellaNinja("estrellaNinja.png", new Point(0, 0)),
                                 new SuperShell("SuperShell.png", new Point(0, 0)),
                                 new Refuerzos( "refuerzo.png", new Point(0, 0)),
-                                new AmetralladoraTresCañones( "ametralladora.png", new Point(0, 0)),
-                                new Laser( "laser.png", new Point(0, 0)),
-                                new Escopeta( "escopeta.png", new Point(0, 0)),
+                                // new AmetralladoraTresCañones( "ametralladora.png", new Point(0, 0)),
+                                // new Laser( "laser.png", new Point(0, 0)),
+                                // new Escopeta( "escopeta.png", new Point(0, 0)),
 
                                 };
 
@@ -77,8 +77,8 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
     public void update() {
         heroe.update();
-        crearEnemigos();
-        crearBonus(null);
+        // crearEnemigos();
+        crearBonus();
         
         manejarBonus(); 
         manejarEnemigos();
@@ -95,47 +95,74 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         }
     }
  
-    private void crearBonus(String nombreBonus){
+    private void crearBonus(){
         int random = (int)(Math.floor(Math.random()*999+1));
-        // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
-        if(bonusCreados.size() < 1/dificultad.dif && random < 10/dificultad.dif ) { 
-            try {
-                int randomBonus = (int)(Math.floor(Math.random()*(bonus.length-1-0+1)+0));
-                Bonus b = null;
-                if(bonus[randomBonus].getClass().getName().equals("Pow") &&
-                         !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
-                    b = new Pow(bonus[randomBonus]);
-
-                }else if(bonus[randomBonus].getClass().getName().equals("Auto")&&
-                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){ 
-                    b = new Auto(bonus[randomBonus]);
-
-                }else if(bonus[randomBonus].getClass().getName().equals("EstrellaNinja")&&
-                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
-                    b = new EstrellaNinja(bonus[randomBonus]);
-
-                }else if(bonus[randomBonus].getClass().getName().equals("SuperShell") &&
-                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
-                    b = new SuperShell(bonus[randomBonus]);
-
-                }else if(bonus[randomBonus].getClass().getName().equals("Refuerzos")&&
-                        !bonus[randomBonus].getClass().getName().equals(nombreBonus)){
-                    b = new Refuerzos(bonus[randomBonus]);
-                    
-                }else{
-                    return;
-                }
-                b.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
-                b.setY(heroe.getY()-500);
+        
+        if(bonusCreados.size() < 1/dificultad.dif && random < 10/dificultad.dif ) {
+            Bonus b = generarBonus();
+            
+            if(b != null) {
                 bonusCreados.add(b);
-            } catch (IOException e) {
-                System.out.println("No se pudo crear el bonus");
             }
         }
     }
+    
+    private void reemplazarBonus(Bonus bn) {
+        Bonus b = generarBonus();
 
+        if(b == null) {
+            bn.modificarVida(100);
+            return;
+        }
 
-    // Hacer que no se carguen las imgs del disco a cada rato. Arreglar codigo. Implementar Interfaces
+        int i = 0;
+        while(b.getClass().equals(bn.getClass()) && i < 10) {
+            b = generarBonus();
+            i++;
+        }
+
+        b.setX(bn.getX());
+        b.setY(bn.getY());
+
+        int index = bonusCreados.indexOf(bn);
+        bonusCreados.remove(index);
+        bonusCreados.add(index, b);
+    }
+        
+    private Bonus generarBonus() {
+        try {
+            int randomBonus = (int)(Math.floor(Math.random()*((bonus.length-1)+1)));
+            Bonus b = null;
+
+            switch(bonus[randomBonus].getClass().getName()) {
+                case "Pow":
+                    b = new Pow(bonus[randomBonus]);
+                    break;
+                case "Auto":
+                    b = new Auto(bonus[randomBonus]);
+                    break;
+                case "EstrellaNinja":
+                    b = new EstrellaNinja(bonus[randomBonus]);
+                    break;
+                case "SuperShell":
+                    b = new SuperShell(bonus[randomBonus]);
+                    break;
+                case "Refuerzos":
+                    b = new Refuerzos(bonus[randomBonus]);
+                    break;
+                default:
+                    return null;
+            }
+
+            b.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
+            b.setY(heroe.getY()-500);    
+
+            return b;
+        } catch (IOException e) {
+            System.out.println("No se pudo crear el bonus");
+            return null;
+        }
+    }
 
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
@@ -375,9 +402,8 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                        
 
                         if(b.getVida() <= 0) {  
-                            crearBonus(b.getNombre());
+                            reemplazarBonus(b);
                             System.out.println("se rompio: " + b.getNombre());
-                            bonusCreados.remove(i);
                         }
                     }
                     
