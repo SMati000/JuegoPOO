@@ -15,7 +15,7 @@ public abstract class ObjetoGrafico {
         
         if(grafico != null)
             this.grafico = ImageIO.read(this.getClass().getResource("imagenes/" + grafico));
-                
+
         if(posicion != null)
             this.posicion = (Point) posicion.clone();
     }

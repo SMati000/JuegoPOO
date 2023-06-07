@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.IOException;
@@ -34,6 +35,10 @@ public class Municion extends ObjetoGrafico {
             this.velocidad = velocidad;
     }
 
+    public int getTiros() {
+        return tiros;
+    }
+
     @Override
     public void update() {
         avanzar();
@@ -45,23 +50,23 @@ public class Municion extends ObjetoGrafico {
         if(this.posicion != null) {
             Graphics2D g1 = (Graphics2D)g.create();
 
-            int x = (posicion.x - this.grafico.getWidth()/2);
+            int x = posicion.x;
             int y = posicion.y;
-
-            if(angulo < 0)
-                y += (int)(this.grafico.getHeight()/2 * Math.sin(angulo));
-
+            
             g1.rotate(angulo, x, y);
 
+            // if(angulo < 0) 
+                y += (int)(this.grafico.getHeight()/2 /** Math.sin(angulo)*/);
+
+            x -= this.grafico.getWidth()/2;
+
             for(int i = -(int)Math.floor(tiros/2); i < (int)Math.ceil((double)(tiros)/2); i++) {
-
-                if(i >= 0 && tiros%2 == 0)
+                if(i >= 0 && tiros%2 == 0) {
                     g1.drawImage(grafico, x + gap * (i+1), y, null);
-                else
+                } else {
                     g1.drawImage(grafico, x + gap * i, y, null);
+                }
             }
-
-            g1.rotate(0, x, y);
         }
     }
 }

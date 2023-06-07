@@ -2,6 +2,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import javax.imageio.ImageIO;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
 
@@ -21,18 +23,11 @@ public class Arma extends ObjetoGrafico {
         this.velocidadGiro = 6;
         this.angulo = 0;
 
-        this.frecuenciaDisparo = 25; // cada 15 frames
+        this.frecuenciaDisparo = 25; // cada 25 frames
         this.seguir = false;
         this.cantTiros = 1;
         this.anguloMax = 90;
     }
-
-    // public Arma(Point posicion, Point objetivo) throws IOException {
-    //     this(posicion);
-
-    //     this.objetivo = objetivo;
-    //     this.posPrevia = (Point) this.objetivo.clone();
-    // }
 
     public void setObjetivo(Point objetivo) {
         this.objetivo = objetivo;
@@ -52,7 +47,11 @@ public class Arma extends ObjetoGrafico {
         this.seguir = arma.seguir;
         this.cantTiros = arma.cantTiros;
         this.anguloMax = arma.anguloMax;
-        grafico = arma.grafico;
+        this.grafico = arma.grafico;
+    }
+
+    public void setPosicion(Point posicion) {
+        this.posicion = (Point) posicion.clone();
     }
 
     public void setGrafico(String filename) {
@@ -113,7 +112,18 @@ public class Arma extends ObjetoGrafico {
 
                 // angulo = seguir ? angulo : 0;
 
-                Municion muni = new Municion("municion1.png", this.posicion.getLocation(), angulo);
+                Point tempPos = new Point(this.posicion.x, this.posicion.y);
+
+                if(grafico != null) {
+                    tempPos.y -= this.grafico.getHeight()/2;
+                }
+
+                Municion muni = new Municion(
+                    "municion1.png", 
+                    tempPos, 
+                    angulo
+                );
+                
                 muni.setTiros(cantTiros);
 
                 return muni;
@@ -134,6 +144,11 @@ public class Arma extends ObjetoGrafico {
     private int contadorVelGiro = 0;
     public void update(Point posicion) {
         this.posicion = (Point) posicion.clone();
+
+        if(grafico != null) {
+            this.posicion.x += this.grafico.getWidth()/2;
+            this.posicion.y += this.grafico.getHeight()/2;
+        }
 
         if(seguir) {           // 60 fps
             if(contadorVelGiro == 60/this.velocidadGiro) {
@@ -157,15 +172,12 @@ public class Arma extends ObjetoGrafico {
     public void draw(Graphics2D g) {
         Graphics2D g1 = (Graphics2D)g.create();
 
-        int x = this.posicion.x;
-        int y = this.posicion.y;
-
+        g1.rotate(angulo, posicion.x, posicion.y);
+        
         if(this.grafico != null) {
-            g1.rotate(angulo, x+this.grafico.getWidth()/2, y+this.grafico.getHeight()/2);
+            g1.drawImage(grafico, posicion.x - this.grafico.getWidth()/2, posicion.y-this.grafico.getHeight()/2, null);
         } else {
-            g1.rotate(angulo, x, y);
+            g1.drawImage(grafico, posicion.x, posicion.y, null);
         }
-
-        g1.drawImage(grafico, x, y, null);
     }
 }

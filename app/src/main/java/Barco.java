@@ -9,21 +9,22 @@ public class Barco extends Enemigo {
         super(grafico, posicion, objetivo);
         this.rangoDeteccion = 800;
     
+        arma.setPosicion(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2-20));
         arma.setGrafico("armaBarco1.png");
         arma.seguir(true);
-        arma.setFrecuenciaDisparos(40);
+        arma.setFrecuenciaDisparos(60);
 
-        arma1 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2-70));
+        arma1 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2-70));
         arma1.setObjetivo(this.objetivo);
         arma1.setGrafico("armaBarco1.png");
         arma1.seguir(true);
-        arma1.setFrecuenciaDisparos(40);
+        arma1.setFrecuenciaDisparos(60);
         
-        arma2 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2+70));
+        arma2 = new Arma(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2+30));
         arma2.setObjetivo(this.objetivo);
         arma2.setGrafico("armaBarco1.png");
         arma2.seguir(true);
-        arma2.setFrecuenciaDisparos(40);
+        arma2.setFrecuenciaDisparos(60);
 
         this.resistencia = this.energia/8;
     }
@@ -57,9 +58,9 @@ public class Barco extends Enemigo {
     @Override
     public void update() {
         this.avanzar();
-        arma.update(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2));
-        arma1.update(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2-70));
-        arma2.update(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2+70));
+        arma.update(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2-20));
+        arma1.update(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2-70));
+        arma2.update(new Point(this.getX()+this.grafico.getWidth()/2-10, this.getY()+this.grafico.getHeight()/2+30));
 
         if(this.objetivoEnRadar()) {
             this.setVelocidad(2);

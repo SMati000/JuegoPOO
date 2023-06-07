@@ -20,7 +20,9 @@ public class AvionAmigo extends VehiculoMilitar {
 
         this.arma.seguir(false);
         this.arma.setAngulo(180);
-        this.arma.setFrecuenciaDisparos(7);
+        this.arma.setFrecuenciaDisparos(5);
+        this.arma.setTiros(2);
+        // this.arma.setGrafico("armaBarco1.png");
     }
 
     public void setIcon(Iconos ICONO) {

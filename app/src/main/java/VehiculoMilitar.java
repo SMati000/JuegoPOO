@@ -53,13 +53,14 @@ public abstract class VehiculoMilitar extends ObjetoGrafico implements Disparabl
     
     @Override
     public void update() {
-        if(grafico != null)
-            arma.update(new Point(this.getX()+this.grafico.getWidth()/2, this.getY()+this.grafico.getHeight()/2));
+        if(this.grafico != null)
+            arma.update(new Point(posicion.x+this.grafico.getWidth()/2, posicion.y+this.grafico.getHeight()/2));
         else
             arma.update(new Point(this.getX(), this.getY()));
     }
 
     public void draw(Graphics2D g) {
         g.drawImage(grafico, posicion.x, posicion.y, null);
+        arma.draw(g);
     }
 }

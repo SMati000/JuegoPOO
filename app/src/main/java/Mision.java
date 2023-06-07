@@ -292,14 +292,17 @@ public class Mision { // pair, destruir, objetografico/interfaces,
             if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
             .intersects(avionAmigo)) {
                 try {
-                    impactos.add(new Impacto(heroe.getPosicion(), Impacto.tipoImpacto.DISPARO));
+                    impactos.add(new Impacto(
+                        new Point(heroe.getX()+heroe.grafico.getWidth()/2, heroe.getY()+heroe.grafico.getHeight()/2-5), 
+                        Impacto.tipoImpacto.DISPARO)
+                    );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 
+                heroe.modificarEnergia(-heroe.getResistencia() * bala.getTiros());
+                
                 balasEnCurso.remove(i);
-
-                heroe.modificarEnergia(-heroe.getResistencia());
             }
         }
         
@@ -314,15 +317,17 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
                 .intersects(e)) {
                     try {
-                        impactos.add(new Impacto(new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2), 
-                            Impacto.tipoImpacto.DISPARO));
+                        impactos.add(new Impacto(
+                            new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2+5), 
+                            Impacto.tipoImpacto.DISPARO)
+                        );
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
                     
+                    enemigo.modificarEnergia(-enemigo.getResistencia() * bala.getTiros());
+                    
                     balasHeroe.remove(i);
-    
-                    enemigo.modificarEnergia(-enemigo.getResistencia());
 
                     if(enemigo.getEnergia() <= 0) {
                         enemigosCreados.remove(j);
@@ -338,8 +343,15 @@ public class Mision { // pair, destruir, objetografico/interfaces,
             new Rectangle(enemigo.getPosicion(), new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()))
             .intersects(avionAmigo)) {
                 try {
-                    impactos.add(new Impacto(heroe.getPosicion(), Impacto.tipoImpacto.COLISION));
-                    impactos.add(new Impacto(enemigo.getPosicion(), Impacto.tipoImpacto.COLISION));
+                    impactos.add(new Impacto(
+                        new Point(heroe.getX()+heroe.grafico.getWidth()/2, heroe.getY()+heroe.grafico.getHeight()/2-5), 
+                        Impacto.tipoImpacto.COLISION)
+                    );
+                    
+                        impactos.add(new Impacto(
+                            new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2+5), 
+                            Impacto.tipoImpacto.COLISION)
+                        );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -347,7 +359,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 enemigosCreados.remove(i);
                 
                 enemigo.modificarEnergia(-100);
-                heroe.modificarEnergia(-heroe.getResistencia()*2);
+                heroe.modificarEnergia(-heroe.getResistencia()*2); 
             }
         }
     }

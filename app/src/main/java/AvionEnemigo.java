@@ -5,11 +5,13 @@ public class AvionEnemigo extends Enemigo {
     public AvionEnemigo(String filename, Point posicion, Point objetivo) throws IOException {
         super(filename, posicion, objetivo);
         this.resistencia = this.energia/5;
+        this.arma.setFrecuenciaDisparos(30);
     }
     
     public AvionEnemigo(AvionEnemigo enemigo) throws IOException {
         super(enemigo);
-        this.resistencia = this.energia/5;
+        this.resistencia = enemigo.resistencia;
+        this.arma = enemigo.arma;
     }
     
     // public void seguirHorizontalmente() {
