@@ -47,7 +47,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         bonusCreados = new ArrayList<Bonus>();
         impactos = new ArrayList<Impacto>();
         
-        estado = ESTADO.TIERRA;
+        estado = ESTADO.AIRE;
 
         this.dificultad = builder.dificultad;
 
@@ -91,7 +91,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         }
 
         if(tiempoEnCurso <= apareceJefe) {
-            // manejarJefe();
+            manejarJefe();
         }
     }
  
@@ -167,7 +167,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
-        if(enemigosCreados.size() < 10*dificultad.dif && random < factorProb*dificultad.dif) { 
+        if(enemigosCreados.size() < 1 && random < factorProb*dificultad.dif) { 
 
             try {
                 int nuevoEnemigo = (int)(Math.floor(Math.random()*(enemigos.length-1-0+1)+0));
@@ -182,46 +182,9 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                     return;
 
                 int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
-                // int tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));
 
-                // Rectangle nuevoE = new Rectangle(tempX, 0, e.grafico.getWidth(), e.grafico.getHeight());
-                // // int contador = 0;
-                // for(int contador = 0, i = 0; i < enemigosCreados.size(); i++) {
-                //     Rectangle enemigo = new Rectangle(
-                //         enemigosCreados.get(i).getKey().getPosicion().x, 0, 
-                //         enemigosCreados.get(i).getKey().grafico.getWidth(), 
-                //         enemigosCreados.get(i).getKey().grafico.getHeight()
-                //     );
-
-                //     if(enemigo.intersects(nuevoE)) {
-                //         tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
-                //         // tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));
-
-                //         if(contador == 5) // para asegurar q no se quede en un bucle infinito
-                //             return;
-
-                //         contador++;
-                //     }
-
-                    e.setX(tempX);
-                    e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
-                    
-                    // Enemigo temp = enemigosCreados.get(i).getKey();
-
-                    // if(tempX > temp.getX() - temp.grafico.getWidth()/2 - e.grafico.getWidth()/2 &&
-                    //     tempX < temp.getX() + temp.grafico.getWidth()/2 + e.grafico.getWidth()/2) {
-                    //         tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
-                    //         i = 0;
-
-                    //         if(contador == 5) // para asegurar q no se quede en un bucle infinito
-                    //             return;
-
-                    //         contador++;
-                    //     } else {
-                    //         e.setX(tempX);
-                    //     }
-                // }
-
+                e.setX(tempX);
+                e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
 
                 e.setVelocidad((int)(Math.floor(Math.random()*(10-2+1)+2)));
 
@@ -267,12 +230,16 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 continue;
             }
 
-            Municion ms[] = temp.disparar();
+            Municion municiones[][] = temp.disparar();
 
-            if(ms != null) {
-                for(Municion m : ms) {
-                    if(m != null) {
-                        balasEnCurso.add(m);
+            if(municiones != null) {
+                for(Municion[] ms : municiones) {
+                    if(ms != null) {
+                        for(Municion m : ms) {
+                            if(m != null) {
+                                balasEnCurso.add(m);
+                            }
+                        }
                     }
                 }
             }
@@ -320,12 +287,17 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
         jefe.update();
 
-        Municion ms[] = jefe.disparar();
+        Municion municiones[][] = jefe.disparar();
 
-        if(ms != null) {
-            for(Municion m : ms) {
-                if(m != null)
-                    balasEnCurso.add(m);
+        if(municiones != null) {
+            for(Municion[] ms : municiones) {
+                if(ms != null) {
+                    for(Municion m : ms) {
+                        if(m != null) {
+                            balasEnCurso.add(m);
+                        }
+                    }
+                }
             }
         }
     }
@@ -347,7 +319,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                     e.printStackTrace();
                 }
                 
-                heroe.modificarEnergia(-heroe.getResistencia() * bala.getTiros());
+                heroe.modificarEnergia(-heroe.getResistencia());
                 
                 balasEnCurso.remove(i);
             }
@@ -374,13 +346,33 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                         ioe.printStackTrace();
                     }
                     
-                    enemigo.modificarEnergia(-enemigo.getResistencia() * bala.getTiros());
+                    enemigo.modificarEnergia(-enemigo.getResistencia());
                     
                     balasHeroe.remove(i);
 
                     if(enemigo.getEnergia() <= 0) {
                         enemigosCreados.remove(j);
                     }
+                }
+            }
+
+            if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
+                .intersects(new Rectangle(this.jefe.getPosicion(), new Dimension(this.jefe.grafico.getWidth(), this.jefe.grafico.getHeight())))) {
+                try {
+                    impactos.add(new Impacto(
+                        new Point(this.jefe.getX()+this.jefe.grafico.getWidth()/2, this.jefe.getY()+this.jefe.grafico.getHeight()/2+5), 
+                        Impacto.tipoImpacto.DISPARO)
+                    );
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+                
+                this.jefe.modificarEnergia(-this.jefe.getResistencia());
+                
+                balasHeroe.remove(i);
+
+                if(this.jefe.getEnergia() <= 0) {
+                    this.estado = ESTADO.FIN;
                 }
             }
         }        
@@ -405,7 +397,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
                     balasHeroe.remove(j);
     
-                    b.modificarVida(-b.getResistencia() * bala.getTiros());
+                    b.modificarVida(-b.getResistencia());
                     
                     if(b.getVida() <= 0) {  
                         reemplazarBonus(b);
@@ -451,20 +443,6 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     }
 
     public void draw(Graphics2D g, int pos) {
-        String t = tiempoEnCurso/60 + ":" + tiempoEnCurso%60;
-
-        g.setColor(Color.black);
-        g.drawString("Tiempo restante: " + t, 11, pos+1);
-        g.drawRect(11, pos+23, 200, 15);
-        g.fillRect(11, pos+23, (int)heroe.getEnergia()*2, 15);
-        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 11, pos+18);
-        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 11, pos+16);
-        
-        g.setColor(Color.white);
-        g.drawString("Tiempo restante: " + t, 10, pos);
-        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
-        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
-        
         bonusCreados.forEach(bonus -> {
             bonus.draw(g);
         });
@@ -491,6 +469,20 @@ public class Mision { // pair, destruir, objetografico/interfaces,
             impacto.draw(g);
         });
 
+        String t = tiempoEnCurso/60 + ":" + tiempoEnCurso%60;
+
+        g.setColor(Color.black);
+        g.drawString("Tiempo restante: " + t, 11, pos+1);
+        g.drawRect(11, pos+23, 200, 15);
+        g.fillRect(11, pos+23, (int)heroe.getEnergia()*2, 15);
+        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 11, pos+18);
+        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 11, pos+16);
+        
+        g.setColor(Color.white);
+        g.drawString("Tiempo restante: " + t, 10, pos);
+        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
+        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
+    
         if(contadorSegundo == 60) { // pensando siempre en 60 fps
             heroe.modificarEnergia(-0.01);
             

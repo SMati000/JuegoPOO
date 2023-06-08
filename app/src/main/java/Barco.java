@@ -48,9 +48,9 @@ public class Barco extends Enemigo {
     }
 
     @Override
-    public Municion[] disparar() {
+    public Municion[][] disparar() {
         if(this.objetivoEnRadar())
-            return new Municion[]{arma.disparar(), arma1.disparar(), arma2.disparar()};
+            return new Municion[][]{arma.disparar(), arma1.disparar(), arma2.disparar()};
          
         return null;
     }

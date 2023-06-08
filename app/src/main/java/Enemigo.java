@@ -61,14 +61,10 @@ public class Enemigo extends VehiculoMilitar {
         return distancia > 0 && distancia <= rangoDeteccion;
     }
 
-    public Arma[] getArmas() {
-        return new Arma[]{arma};
-    }
-
     @Override
-    public Municion[] disparar() {
+    public Municion[][] disparar() {
         if(this.objetivoEnRadar())
-            return new Municion[]{arma.disparar()};
+            return new Municion[][]{arma.disparar()};
          
         return null;
     }

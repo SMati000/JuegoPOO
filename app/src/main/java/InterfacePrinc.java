@@ -117,7 +117,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
                 frameJuego.add(fondo);
                 frameJuego.setJMenuBar(menu);               
                 frameJuego.setResizable(false);
-                
+
                 jugar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if(evt.getSource() == jugar){

@@ -28,10 +28,10 @@ public class AvionEnemigo extends Enemigo {
         // }
     // }
 
-    public Municion[] disparar() {
+    public Municion[][] disparar() {
         if(this.objetivoEnRadar() && 
             Math.abs((this.posicion.x + (grafico.getWidth()/2)) - (objetivo.x + (grafico.getWidth()/2))) < 70)
-            return new Municion[]{arma.disparar()};
+            return new Municion[][]{arma.disparar()};
          
         return null;
     }

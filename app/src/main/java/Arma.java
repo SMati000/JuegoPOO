@@ -1,21 +1,19 @@
 import java.awt.Point;
-import java.awt.Rectangle;
-
 import javax.imageio.ImageIO;
-
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Arma extends ObjetoGrafico {
     private Point objetivo;
 
     private int frecuenciaDisparo, velocidadGiro;
-    private boolean seguir;
-    private int cantTiros;
+    private boolean seguir, rafaga;
     private double anguloMax;
-
-    private double angulo;
+    private double angulo; // angulo de cada tiro
+    
+    private int cantTiros;
+    private double[] angulos; // angulo del arma
     
     public Arma(Point posicion) throws IOException {
         super("Arma", null, posicion);
@@ -24,9 +22,11 @@ public class Arma extends ObjetoGrafico {
         this.angulo = 0;
 
         this.frecuenciaDisparo = 25; // cada 25 frames
-        this.seguir = false;
-        this.cantTiros = 1;
+        this.seguir = this.rafaga = false;
         this.anguloMax = 90;
+
+        this.cantTiros = 1;
+        this.angulos = new double[]{this.angulo};
     }
 
     public void setObjetivo(Point objetivo) {
@@ -41,13 +41,15 @@ public class Arma extends ObjetoGrafico {
         this.posPrevia = (Point) arma.objetivo.clone();
 
         this.velocidadGiro = arma.velocidadGiro;
-        this.angulo = arma.angulo;
+        this.angulo = arma.angulo; 
 
         this.frecuenciaDisparo = arma.frecuenciaDisparo; // cada 15 frames
         this.seguir = arma.seguir;
-        this.cantTiros = arma.cantTiros;
+        this.rafaga = arma.rafaga;
         this.anguloMax = arma.anguloMax;
         this.grafico = arma.grafico;
+        this.cantTiros = arma.cantTiros;
+        this.angulos = Arrays.copyOf(arma.angulos, arma.angulos.length);
     }
 
     public void setPosicion(Point posicion) {
@@ -62,12 +64,25 @@ public class Arma extends ObjetoGrafico {
         }
     }
 
+    public void setModoDisparo(boolean rafaga) {
+        this.rafaga = rafaga;
+    }
+
     public void seguir(boolean seguir) {
         this.seguir = seguir;
     }
 
-    public void setTiros(int cantidad) {
+    public void setTiros(int cantidad, double[] angulos) {
+        if(cantidad != angulos.length) {
+            return;
+        }
+
         this.cantTiros = cantidad > 0 ? cantidad : 1;
+        this.angulos = new double[angulos.length];
+
+        for(int i = 0; i < angulos.length; i++) {
+            this.angulos[i] = this.angulo + Math.toRadians(angulos[i]);
+        }
     }
 
     public void setFrecuenciaDisparos(int frecuenciaDisparo) {
@@ -81,6 +96,8 @@ public class Arma extends ObjetoGrafico {
 
     public void setAngulo(double angulo) {
         this.angulo = Math.toRadians(angulo);
+
+        setTiros(cantTiros, angulos);
     }
 
     private void rotar() {
@@ -97,20 +114,29 @@ public class Arma extends ObjetoGrafico {
                 tempAng = -tempAng; 
             }
 
-            // if(Math.toDegrees(tempAng) < anguloMax /* && y < -10 */) {
-                // angulo = tempAng;
-                angulo = Math.abs(Math.toDegrees(tempAng)) < anguloMax ? tempAng : angulo;
-            // }
+            tempAng = Math.abs(Math.toDegrees(tempAng)) < anguloMax ? tempAng : angulo;
+            
+            for(int i = 0; i < this.angulos.length; i++) {
+                this.angulos[i] -= angulo - tempAng;
+            }
+
+            this.angulo = tempAng;
         }
     }
 
     private int contadorFrecDisp = 0;
-    public Municion disparar() {
+    private int contadorRafaga = 0;
+    public Municion[] disparar() {
         try {
+            if(this.rafaga && contadorRafaga > 6 && contadorRafaga < 20) {
+                contadorRafaga++;
+                return null;
+            } else if(contadorRafaga > 12) {
+                contadorRafaga = 0;
+            }
+
             if(contadorFrecDisp == this.frecuenciaDisparo) {
                 contadorFrecDisp = 0;
-
-                // angulo = seguir ? angulo : 0;
 
                 Point tempPos = new Point(this.posicion.x, this.posicion.y);
 
@@ -118,17 +144,30 @@ public class Arma extends ObjetoGrafico {
                     tempPos.y -= this.grafico.getHeight()/2;
                 }
 
-                Municion muni = new Municion(
-                    "municion1.png", 
-                    tempPos, 
-                    angulo
-                );
+                Municion muni[] = new Municion[this.cantTiros];
                 
-                muni.setTiros(cantTiros);
+                int gap = 12;
+                for(int i = -(int)Math.floor(cantTiros/2); i < (int)Math.ceil((double)(cantTiros)/2); i++) {
+                    tempPos.x = this.posicion.x;
 
+                    if(i >= 0 && cantTiros%2 == 0) {
+                        tempPos.x += gap * (i+1);
+                    } else {
+                        tempPos.x += gap * i;
+                    }
+
+                    muni[i + (int)Math.floor(cantTiros/2)] = new Municion(
+                        "municion1.png", 
+                        tempPos, 
+                        this.angulos[i + (int)Math.floor(cantTiros/2)]
+                    );
+                }
+
+                contadorRafaga++;
+                
                 return muni;
             }
-
+            
             contadorFrecDisp++;
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class Juego1943 extends Juego {
             jefe.setResistencia(100/50);
             
             for(Arma a : jefe.getArmas()) {
-                a.setTiros(2);
+                a.setTiros(2, new double[]{0, 0});
                 a.setAnguloMaximo(170);
             }
 
@@ -144,11 +143,17 @@ public class Juego1943 extends Juego {
         }
 
         if (keyboard.isKeyPressed(Configuraciones.disparo)) {
-            Municion[] balas = avionAmigo.disparar();
+            Municion[][] balas = avionAmigo.disparar();
 
-            for(Municion bala : balas) 
-                if(bala != null)
-                    mision.disparoHeroe(bala);
+            for(Municion[] bala : balas) {
+                if(bala != null) {
+                    for(Municion b : bala) {
+                        if(b != null) {
+                            mision.disparoHeroe(b);
+                        }
+                    }
+                }
+            }
         }
         
         if(mision.getEstado() == Mision.ESTADO.TIERRA && animacionEnCurso < 180) {

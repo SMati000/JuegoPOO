@@ -21,8 +21,10 @@ public class AvionAmigo extends VehiculoMilitar {
         this.arma.seguir(false);
         this.arma.setAngulo(180);
         this.arma.setFrecuenciaDisparos(5);
-        this.arma.setTiros(2);
-        // this.arma.setGrafico("armaBarco1.png");
+        this.arma.setTiros(2, new double[]{0, 0});
+
+        // this.arma.setTiros(4, new double[]{-20, 0, 0, 20});
+        // this.arma.setModoDisparo(true);
     }
 
     public void setIcon(Iconos ICONO) {
@@ -34,8 +36,8 @@ public class AvionAmigo extends VehiculoMilitar {
     }
 
     @Override
-    public Municion[] disparar() {
-        return new Municion[]{arma.disparar()};
+    public Municion[][] disparar() {
+        return new Municion[][]{arma.disparar()};
     }
 
     @Override

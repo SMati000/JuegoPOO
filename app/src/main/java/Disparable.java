@@ -1,3 +1,3 @@
 public interface Disparable {
-    Municion[] disparar();
+    Municion[][] disparar();
 }

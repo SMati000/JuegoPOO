@@ -37,6 +37,10 @@ public abstract class VehiculoMilitar extends ObjetoGrafico implements Disparabl
         energia = 100;
     }
 
+    public Arma[] getArmas() {
+        return new Arma[]{arma};
+    }
+
     public void modificarEnergia(double deltaE) {
         if((energia + deltaE) <= 100)
             energia += deltaE;
