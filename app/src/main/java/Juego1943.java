@@ -1,28 +1,29 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.omg.CORBA.FloatSeqHolder;
-
 import com.entropyinteractive.Keyboard;
 
 public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
 
+    private ArrayList<Suscriber> suscribers;
     private BufferedImage gameOver;
     private Mapa mapa;
     private Camara cam;
-    private boolean terminado;
-    String nombreJugador;
+    private String nombreJugador;
 
     private VehiculoMilitar avionAmigo;
     private final double desplazamiento = 180.0;
@@ -35,6 +36,9 @@ public class Juego1943 extends Juego implements ActionListener {
 
     private Juego1943(){
         super("1943", "Juego 1943");
+        
+        suscribers = new ArrayList<Suscriber>();
+
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
         
         try {
@@ -49,7 +53,14 @@ public class Juego1943 extends Juego implements ActionListener {
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
         }
-        
+    }
+
+    public void addSuscriber(Suscriber nuevo) {
+        suscribers.add(nuevo);
+    }
+
+    public String getNombreJugador() {
+        return nombreJugador;
     }
 
     @Override
@@ -188,56 +199,60 @@ public class Juego1943 extends Juego implements ActionListener {
 
         animacionEnCurso++;
     }
-
-
     
-    public String terminarJuego(){
-        terminado = true;       //booleano para no repetir la condicion
-        if(/* mision.getEstado() == Mision.ESTADO.FIN ||*/  avionAmigo.getEnergia() <= 0) {
-            
-            animacionEnCurso = 0;
+    public void terminarJuego(){
+            String text = "Ingrese su nombre";
+
+            this.animacionEnCurso = 0;
+
             JFrame frameTerminado = new JFrame();
             frameTerminado.setLayout(new FlowLayout());
 
             JLabel score = new JLabel("aca va el score del avion amigo");
-            JTextField ingresarNom = new JTextField("Ingrese su nombre");
-
+            JTextField ingresarNom = new JTextField(text);
 
             ingresarNom.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                         
-                        if(!ingresarNom.getText().equals(null) ){
-                           nombreJugador = ingresarNom.getText();
-                        }else{
-                            nombreJugador = null;
-                        }
-                        
+                    if(ingresarNom.getText() != null){
+                        nombreJugador = ingresarNom.getText();
+                    } else{
+                        nombreJugador = null;
+                    }
+                    
+                    suscribers.forEach(suscriber -> suscriber.update());
+                }
+            });
 
-                     }
-                });
+            ingresarNom.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if(ingresarNom.getText().equals(text)){
+                        ingresarNom.setText("");
+                    }
+                }
+            });
            
             frameTerminado.add(ingresarNom);
             frameTerminado.add(score);
             frameTerminado.setVisible(true);
             frameTerminado.setResizable(false);
             frameTerminado.pack();
-            return nombreJugador;
-
-        }else{
-            return null;
-        }
-        
     }
     
    
     @Override
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        System.out.println("estado" + mision.getEstado());
-
-        if(terminado) {
+        
+        if(mision.getEstado() == Mision.ESTADO.FIN ||  avionAmigo.getEnergia() <= 0) {
             g.drawImage(gameOver, 0, 0, null);
-            gameShutdown();
+            
+            if(misionAsignada != -1) {
+                terminarJuego();
+                misionAsignada = -1;
+            }
+            
             return;
         }
 

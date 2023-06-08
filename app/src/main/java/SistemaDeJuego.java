@@ -4,20 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
-class SistemaDeJuego extends JFrame implements ActionListener{
+class SistemaDeJuego extends JFrame {
     JLabel img1943;
     JLabel fondo = new JLabel();
    
-   
-   
-
     public static void main(String[] args) {  
         new SistemaDeJuego();
     } 
 
     public SistemaDeJuego() {
-      
-
         this.setPreferredSize(new Dimension(450, 550));
         this.setResizable(false);
         this.pack();
@@ -90,23 +85,18 @@ class SistemaDeJuego extends JFrame implements ActionListener{
             }
         }
     }
-
-    public void actionPerformed(ActionEvent evento){
-
-    }
-     
 }
 
 class JPanelBackgroundImage extends JPanel{
 	private String nombreImagen;
 	Image bgImage;
 	public JPanelBackgroundImage(String nombreImagen){
-
         this.nombreImagen=nombreImagen;
         ImageIcon tmp = new ImageIcon(getClass().getResource(this.nombreImagen));
 
 		bgImage=tmp.getImage();
 	}
+
 	public void paintComponent (Graphics g){
   			super.paintComponent(g);
   			Graphics2D g2d = (Graphics2D) g;
@@ -116,7 +106,7 @@ class JPanelBackgroundImage extends JPanel{
 
 
 
-class FrameJuego extends JFrame implements ActionListener{
+class FrameJuego extends JFrame implements ActionListener, Suscriber {
     JMenuBar menu;
     JMenu menu1, menu2;
     JMenuItem item1, item2, item3;
@@ -206,15 +196,20 @@ class FrameJuego extends JFrame implements ActionListener{
 
        
     }
+
     public void abrir(){
         this.setVisible(true);
-
     }
 
     public boolean abierto(){
         return this.isVisible();
     }
-
+    
+    @Override
+    public void update() {
+        String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();            
+        System.out.println("Nombre: " + nombre);
+    }
 
     private JPanel setScreen1(){
         JPanelBackgroundImage  fondoPanel=new JPanelBackgroundImage("imagenes/pantallaJuego.jpg");
@@ -242,17 +237,16 @@ class FrameJuego extends JFrame implements ActionListener{
     
     public void actionPerformed(ActionEvent evento) {
 
-        if (evento.getActionCommand()==jugar.getActionCommand()){
+        if (evento.getActionCommand() == jugar.getActionCommand()){
             Juego juego = Juego1943.getInstance();
+            ((Juego1943)juego).addSuscriber(this);
+
             Thread t = new Thread() {
                 public void run(){
                     juego.run(1.0 / 60.0);
                 }
             };
             
-            String nombre = ((Juego1943) juego).terminarJuego();
-            
-            System.out.println("nombre"+ nombre);
             t.start();
         }
 

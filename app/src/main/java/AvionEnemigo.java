@@ -35,6 +35,19 @@ public class AvionEnemigo extends Enemigo {
          
         return null;
     }
+
+    @Override
+    public Enemigo clone() {
+        AvionEnemigo temp = null;
+
+        try {
+            temp = new AvionEnemigo(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return temp;
+    }
     
     // @Override
     // public void update() {

@@ -130,69 +130,38 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     }
         
     private Bonus generarBonus() {
-        try {
-            int randomBonus = (int)(Math.floor(Math.random()*((bonus.length-1)+1)));
-            Bonus b = null;
+        int randomBonus = (int)(Math.floor(Math.random()*((bonus.length-1)+1)));
+        Bonus b = bonus[randomBonus].clone();
 
-            switch(bonus[randomBonus].getClass().getName()) {
-                case "Pow":
-                    b = new Pow(bonus[randomBonus]);
-                    break;
-                case "Auto":
-                    b = new Auto(bonus[randomBonus]);
-                    break;
-                case "EstrellaNinja":
-                    b = new EstrellaNinja(bonus[randomBonus]);
-                    break;
-                case "SuperShell":
-                    b = new SuperShell(bonus[randomBonus]);
-                    break;
-                case "Refuerzos":
-                    b = new Refuerzos(bonus[randomBonus]);
-                    break;
-                default:
-                    return null;
-            }
+        b.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
+        b.setY(heroe.getY()-500);    
 
-            b.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
-            b.setY(heroe.getY()-500);    
-
-            return b;
-        } catch (IOException e) {
-            System.out.println("No se pudo crear el bonus");
-            return null;
-        }
+        return b;
+        
     }
 
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
-        if(enemigosCreados.size() < 1 && random < factorProb*dificultad.dif) { 
+        if(enemigosCreados.size() < 10*dificultad.dif && random < factorProb*dificultad.dif) { 
 
-            try {
-                int nuevoEnemigo = (int)(Math.floor(Math.random()*(enemigos.length-1-0+1)+0));
-
-                Enemigo e = null;
-                
-                if(enemigos[nuevoEnemigo].getClass().getName().equals("AvionEnemigo"))
-                    e = new AvionEnemigo((AvionEnemigo)enemigos[nuevoEnemigo]);
-                else if(enemigos[nuevoEnemigo].getClass().getName().equals("Barco") && this.estado == ESTADO.TIERRA)
-                    e = new Barco((Barco)enemigos[nuevoEnemigo]);
-                else
+            int nuevoEnemigo = (int)(Math.floor(Math.random()*(enemigos.length-1-0+1)+0));
+            
+            if(enemigos[nuevoEnemigo].getClass().getName().equals("Barco") 
+                && this.estado != ESTADO.TIERRA) {
                     return;
+                }
 
-                int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
+            Enemigo e = enemigos[nuevoEnemigo].clone();
 
-                e.setX(tempX);
-                e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
+            int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
 
-                e.setVelocidad((int)(Math.floor(Math.random()*(10-2+1)+2)));
+            e.setX(tempX);
+            e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
 
-                enemigosCreados.add(e);
+            e.setVelocidad((int)(Math.floor(Math.random()*(10-2+1)+2)));
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            enemigosCreados.add(e);
         }
     }
     

@@ -36,7 +36,7 @@ public class Barco extends Enemigo {
         arma1 = new Arma(enemigo.arma1);
         arma2 = new Arma(enemigo.arma2);
 
-        this.resistencia = this.energia/8;
+        this.resistencia = enemigo.resistencia;
     }
 
     public void setVelocidad(int velocidad) {
@@ -73,6 +73,19 @@ public class Barco extends Enemigo {
         arma.draw(g);
         arma1.draw(g);
         arma2.draw(g);
+    }
+
+    @Override
+    public Enemigo clone() {
+        Barco temp = null;
+
+        try {
+            temp = new Barco(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return temp;
     }
 
 }

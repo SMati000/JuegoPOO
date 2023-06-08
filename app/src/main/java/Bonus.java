@@ -5,12 +5,12 @@ import java.io.IOException;
 public abstract class Bonus extends ObjetoGrafico{
     private int tiempo;                 //tiempo que dura en en el avion
     private boolean visible;
-    protected double vidaBonus= 100;
-    protected double resistenciaBonus;
+    protected double vidaBonus, resistenciaBonus;
     
     public Bonus(String nombre, String grafico, Point posicion) throws IOException {
         super(nombre, grafico, posicion);
-        resistenciaBonus = vidaBonus/5;
+        this.vidaBonus = 100;
+        this.resistenciaBonus = vidaBonus/5;
     }
 
     public void draw(Graphics2D g) {
@@ -34,7 +34,7 @@ public abstract class Bonus extends ObjetoGrafico{
         return this.vidaBonus;
     }
    
-    
+    public abstract Bonus clone();
  
     public abstract void AsignarBonus(AvionAmigo avion);
 }
