@@ -27,6 +27,76 @@ public class Configuraciones {
         cargarSonido();
     }
 
+    public void Ranking(String Nombre, int Score){
+        
+        try{    
+            String sql = "Insert into Ranking(Nombre, Score) VALUES (?,?)";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, Nombre);
+            pstmt.setInt(2, Score);
+            pstmt.executeUpdate();
+                    
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+            
+        }
+        
+
+    }
+
+    public void verRanking(){
+        try{    
+                //se obtiene la cantiada para usarla en el for que se muestra el ranking
+                // ver si se necesita
+            String cant = "Select COUNT(*) from Ranking";
+            rs  = stmt.executeQuery(cant);
+            int i = rs.getInt(cant);
+
+            System.out.println("Ranking");
+            String sql = "Select Nombre, Score from Ranking;";
+            rs  = stmt.executeQuery(sql);
+            String nombre;
+            int score;
+
+            for (int j=0; j < i; j++) {
+              nombre = rs.getString("Nombre");
+              score = rs.getInt("Score");
+              System.out.println("Jugador:" + nombre + "Puntaje: " + score);
+            }
+
+
+            
+            
+            
+
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+            
+        }
+    }
+
+
+
+
+
+
+
     //agregar String que devuelva la letra
     //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto
     public void selecTeclas(String TeclaSelect, int nroChoice, int codLetra){
