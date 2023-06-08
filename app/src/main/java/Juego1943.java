@@ -1,19 +1,28 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+import org.omg.CORBA.FloatSeqHolder;
 
 import com.entropyinteractive.Keyboard;
 
-public class Juego1943 extends Juego {
+public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
 
     private BufferedImage gameOver;
     private Mapa mapa;
     private Camara cam;
+    private boolean terminado;
+    String nombreJugador;
 
     private VehiculoMilitar avionAmigo;
     private final double desplazamiento = 180.0;
@@ -174,11 +183,53 @@ public class Juego1943 extends Juego {
         animacionEnCurso++;
     }
 
+
+    
+    public String terminarJuego(){
+        terminado = true;       //booleano para no repetir la condicion
+        if(/* mision.getEstado() == Mision.ESTADO.FIN ||*/  avionAmigo.getEnergia() <= 0) {
+            
+            animacionEnCurso = 0;
+            JFrame frameTerminado = new JFrame();
+            frameTerminado.setLayout(new FlowLayout());
+
+            JLabel score = new JLabel("aca va el score del avion amigo");
+            JTextField ingresarNom = new JTextField("Ingrese su nombre");
+
+
+            ingresarNom.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                        
+                        if(!ingresarNom.getText().equals(null) ){
+                           nombreJugador = ingresarNom.getText();
+                        }else{
+                            nombreJugador = null;
+                        }
+                        
+
+                     }
+                });
+           
+            frameTerminado.add(ingresarNom);
+            frameTerminado.add(score);
+            frameTerminado.setVisible(true);
+            frameTerminado.setResizable(false);
+            frameTerminado.pack();
+            return nombreJugador;
+
+        }else{
+            return null;
+        }
+        
+    }
+    
+   
     @Override
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        System.out.println("estado" + mision.getEstado());
 
-        if(mision.getEstado() == Mision.ESTADO.FIN || avionAmigo.getEnergia() <= 0) {
+        if(terminado) {
             g.drawImage(gameOver, 0, 0, null);
             gameShutdown();
             return;
@@ -202,6 +253,11 @@ public class Juego1943 extends Juego {
     public static Juego getInstance() {
         return instance;
     }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) { }  
+    
 }
 
 class Camara {
@@ -218,7 +274,6 @@ class Camara {
 
 	public void avanzar(AvionAmigo avion, double delta){
 		this.y += desplazamiento * delta * 0.5;
-        // System.out.println(y);
     }
 
 	public void setViewPort(double x,double y){

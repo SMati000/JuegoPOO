@@ -1,31 +1,22 @@
 import javax.swing.*;
-//import FXPlayer.Volume;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 
-class InterfacePrinc extends JFrame implements ActionListener{
+class SistemaDeJuego extends JFrame implements ActionListener{
     JLabel img1943;
     JLabel fondo = new JLabel();
-    JMenuBar menu;
-    JMenu menu1, menu2;
-    JMenuItem item1, item2, item3;
-    Configuraciones conf;
+   
+   
    
 
     public static void main(String[] args) {  
-        new InterfacePrinc();
+        new SistemaDeJuego();
     } 
 
-    public InterfacePrinc() {
-        try {
-            conf = new Configuraciones();
-        } catch (SQLException e) {
-            System.out.println("Error al crear el objeto de Configuraciones\n" + e.getMessage());
-        }
+    public SistemaDeJuego() {
+      
 
         this.setPreferredSize(new Dimension(450, 550));
         this.setResizable(false);
@@ -62,93 +53,14 @@ class InterfacePrinc extends JFrame implements ActionListener{
         img1943.setOpaque(true);
 
         img1943.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
         //se aprieta varias veces, fijarme como llamar al frame anterior del juego, con un metodo puede ser
         img1943.addMouseListener(new MouseAdapter() {
+            FrameJuego fj = new FrameJuego();
             public void mouseClicked(MouseEvent e) {
-                JFrame frameJuego = new JFrame();
-                frameJuego.setLayout(new GridBagLayout());           //no se con layout hacerlo para que quede bien
-                Dimension dim1 = new Dimension(315,400);
-                frameJuego.setPreferredSize(dim1);
-                frameJuego.setLayout(new FlowLayout());
-              
-             
-                JButton jugar =  new JButton("JUGAR");
-                JButton ranking = new JButton("Ver Ranking");
-                
-                jugar.addActionListener(InterfacePrinc.this);
-                ranking.addActionListener(InterfacePrinc.this);
-
-                //menu visto en pantalla
-                menu = new JMenuBar();
-
-
-                menu1 = new JMenu("Configuraciones");
-                menu2 = new JMenu("Ver");
-                
-                menu.add(menu1); 
-                menu.add(menu2); 
-
-                //item dentro de configuraciones
-                item1 = new JMenuItem("Teclado");
-                item1.addActionListener(InterfacePrinc.this);
-                menu1.add(item1);
-
-                item2 = new JMenuItem("Sonido");
-                item2.addActionListener(InterfacePrinc.this);
-                menu1.add(item2);
-
-                item3 = new JMenuItem("Avion");     
-                item3.addActionListener(InterfacePrinc.this);    
-                menu1.add(item3);
- 
-                jugar.setSize(100,50);
-                jugar.setLocation(100, 150);
-                
-  
-                JPanel fondo= new JPanel();
-                fondo.setLayout(new BorderLayout());
-                JLabel pantallaJuego = new JLabel();
-                fondo.add(pantallaJuego, BorderLayout.CENTER);
-                pantallaJuego.setIcon(new ImageIcon(getClass().getResource("/imagenes/pantallaJuego.jpg")));
-               
-                pantallaJuego.add(jugar); 
-                pantallaJuego.add(ranking);
-
-                frameJuego.add(fondo);
-                frameJuego.setJMenuBar(menu);               
-                frameJuego.setResizable(false);
-                
-                jugar.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if(evt.getSource() == jugar){
-                            Juego juego = Juego1943.getInstance();
-                            Thread t = new Thread() {
-                                public void run() {
-                                    juego.run(1.0 / 60.0);
-
-                                }
-                            };
-                
-                            t.start();
-                        }
-                    }
-                });
-                
-                if(Configuraciones.sonidoBD.equals("CHASE")){
-                    FXPlayer.CHASE.play();
+                if(!fj.abierto()){
+                    fj.abrir();
                 }
-                if(Configuraciones.sonidoBD.equals("ROBO_COP")){
-                    FXPlayer.ROBO_COP.play();
-                } 
-                if(Configuraciones.sonidoBD.equals("DRAMATIC")){
-                    FXPlayer.DRAMATIC.play();
-                } 
-                if(Configuraciones.sonidoBD.equals("FIGHT")){
-                    FXPlayer.FIGHT.play();
-                } 
-
-                frameJuego.setVisible(true);
-                frameJuego.pack();
                 
             }
             
@@ -180,13 +92,180 @@ class InterfacePrinc extends JFrame implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent evento){
-               
+
+    }
+     
+}
+
+class JPanelBackgroundImage extends JPanel{
+	private String nombreImagen;
+	Image bgImage;
+	public JPanelBackgroundImage(String nombreImagen){
+
+        this.nombreImagen=nombreImagen;
+        ImageIcon tmp = new ImageIcon(getClass().getResource(this.nombreImagen));
+
+		bgImage=tmp.getImage();
+	}
+	public void paintComponent (Graphics g){
+  			super.paintComponent(g);
+  			Graphics2D g2d = (Graphics2D) g;
+  			g2d.drawImage(bgImage, 0, 0, null);
+  		}
+}
+
+
+
+class FrameJuego extends JFrame implements ActionListener{
+    JMenuBar menu;
+    JMenu menu1, menu2;
+    JMenuItem item1, item2, item3;
+    Configuraciones conf;
+    JButton jugar;
+    JButton ranking;
+    
+
+    public FrameJuego(){
+        try {
+            conf = new Configuraciones();
+        } catch (SQLException e) {
+            System.out.println("Error al crear el objeto de Configuraciones\n" + e.getMessage());
+        }       
+        
+        this.setLayout(new BorderLayout());          
+     
+
+        this.getContentPane().add(this.setScreen1(),BorderLayout.CENTER);
+        this.validate();
+        this.repaint();
+
+        this.getContentPane().setBackground(Color.decode("#141414")); 
+		this.setTitle("1943");
+        this.setSize(300, 350);
+       // this.setVisible(true);
+        this.setLocationRelativeTo(null); //Centra la Ventana 
+        
+        
+        
+        //menu visto en pantalla
+        menu = new JMenuBar();
+
+
+        menu1 = new JMenu("Configuraciones");
+        menu2 = new JMenu("Ver");
+        
+        menu.add(menu1); 
+        menu.add(menu2); 
+
+        //item dentro de configuraciones
+        item1 = new JMenuItem("Teclado");
+        item1.addActionListener(this);
+        menu1.add(item1);
+
+        item2 = new JMenuItem("Sonido");
+        item2.addActionListener(this);
+        menu1.add(item2);
+
+        item3 = new JMenuItem("Avion");     
+        item3.addActionListener(this);    
+        menu1.add(item3);
+
+      
+        this.setJMenuBar(menu);             
+        this.setResizable(false);
+      /*   
+        jugar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                if(evt.getSource() == jugar){
+                    Juego juego = Juego1943.getInstance();
+                    Thread t = new Thread() {
+                        public void run() {
+        
+                            juego.run(1.0 / 60.0);
+
+                        }
+                    };
+        
+                    t.start();
+                }
+            }
+        });
+       */ 
+        if(Configuraciones.sonidoBD.equals("CHASE")){
+            FXPlayer.CHASE.play();
+        }
+        if(Configuraciones.sonidoBD.equals("ROBO_COP")){
+            FXPlayer.ROBO_COP.play();
+        } 
+        if(Configuraciones.sonidoBD.equals("DRAMATIC")){
+            FXPlayer.DRAMATIC.play();
+        } 
+        if(Configuraciones.sonidoBD.equals("FIGHT")){
+            FXPlayer.FIGHT.play();
+        } 
+
+       
+    }
+    public void abrir(){
+        this.setVisible(true);
+
+    }
+
+    public boolean abierto(){
+        return this.isVisible();
+    }
+
+
+    private JPanel setScreen1(){
+        JPanelBackgroundImage  fondoPanel=new JPanelBackgroundImage("imagenes/pantallaJuego.jpg");
+        JPanelBackgroundSemiOpaco botonesPanel=new JPanelBackgroundSemiOpaco();
+
+        botonesPanel.setLayout(new GridLayout(2,1,10,50));
+        botonesPanel.setBorder(new EmptyBorder(60, 60, 60, 60));
+        jugar=new JButton("Jugar");
+        ranking=new JButton("Ver Ranking");
+
+        botonesPanel.add(jugar);
+        botonesPanel.add(ranking);
+
+        jugar.addActionListener(this);
+        ranking.addActionListener(this);
+
+
+        fondoPanel.add(botonesPanel);
+
+
+        return fondoPanel;
+
+    }
+
+    
+    public void actionPerformed(ActionEvent evento) {
+
+        if (evento.getActionCommand()==jugar.getActionCommand()){
+            Juego juego = Juego1943.getInstance();
+            Thread t = new Thread() {
+                public void run(){
+                    juego.run(1.0 / 60.0);
+                }
+            };
+            
+            String nombre = ((Juego1943) juego).terminarJuego();
+            
+            System.out.println("nombre"+ nombre);
+            t.start();
+        }
+
+
+        if(evento.getSource()== ranking){
+            System.out.println("mostrar ranking");
+        }
+
         if (evento.getSource()==item1) {
             JFrame framConfTecla;
             JLabel lb1, lb2, lb3, lb4, lb5, lb6, lb7;
             Choice ch1, ch2, ch3, ch4, ch5, ch6, ch7;
             JButton defecto = new JButton("Defecto");
-           // conf = new Configuraciones();
 
             String opciones[] = {"a","b", "c", "d" ,"e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
         
@@ -321,7 +400,7 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfTecla.pack();
 
         }
-      //ver como poner arriba sonido por defect, y abajo cambiar y donde se acepta la url
+
         if(evento.getSource()== item2){
             FXPlayer.init();
             FXPlayer.volume = FXPlayer.Volume.LOW;
@@ -378,7 +457,20 @@ class InterfacePrinc extends JFrame implements ActionListener{
             framConfSonido.pack();
 
         }
-
-    }
+    }   
+}
+class JPanelBackgroundSemiOpaco extends JPanel{
+	 
+	public void paintComponent(Graphics g) {
      
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setComposite(AlphaComposite.getInstance(
+            AlphaComposite.SRC_OVER, 0.50f));
+       // g2d.setColor(Color.black);
+        //g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10); 
+     
+	}
 }
