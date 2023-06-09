@@ -46,9 +46,6 @@ public abstract class VehiculoMilitar extends ObjetoGrafico implements Disparabl
             energia += deltaE;
         else
             energia = 100;
-
-        if(energia <= 0)
-            this.destruir();
     }
 
     public double getEnergia() {

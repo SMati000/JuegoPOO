@@ -3,11 +3,11 @@ import java.io.IOException;
 
 public class EstrellaNinja extends PowerUp {
     public EstrellaNinja(Point posicion) throws IOException {
-        super("estrellaNinja.png", posicion);
+        super("Estrella Ninja", "estrellaNinja.png", posicion);
     }
 
     public EstrellaNinja(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Estrella Ninja", filename, posicion);
     }
 
     public EstrellaNinja(EstrellaNinja bonus) throws IOException {
@@ -16,8 +16,20 @@ public class EstrellaNinja extends PowerUp {
 
     @Override
     public void AsignarBonus(AvionAmigo avion) {
-        avion.modificarEnergia(99);
+        avion.llenarEnergia();
     }
+
+    public void activar() {
+        if(tiempo == -1) { // el bonus nunca se uso
+            this.tiempo = 5;
+        }
+    }
+
+    public String toString() {
+        return "Energia restablecida al maximo!";
+    }
+
+    public void destruir() {}
 
     @Override
     public EstrellaNinja clone() {

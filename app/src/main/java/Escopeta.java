@@ -2,12 +2,14 @@ import java.awt.Point;
 import java.io.IOException;
 
 public class Escopeta extends ArmadeFuego {
+    AvionAmigo avion;
+
     public Escopeta(Point posicion) throws IOException {
-        super("pow.png", posicion);
+        super("Escopeta", "pow.png", posicion);
     }
 
     public Escopeta(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Escopeta", filename, posicion);
     }
        
     public Escopeta(Escopeta bonus) throws IOException {
@@ -15,8 +17,27 @@ public class Escopeta extends ArmadeFuego {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo amigo) {
+    public void AsignarBonus(AvionAmigo avion) {
+        this.avion = avion;
+        avion.arma.setTipoMunicion(Arma.MUNICION.ESCOPETA);
+        avion.arma.setFrecuenciaDisparos(20);
+        avion.arma.setModoDisparo(true);
+    }
     
+    @Override
+    public void update() {
+        super.update();
+        if(!this.activo()) {
+            destruir();
+        }
+    }
+
+    public void destruir() {
+        if(avion != null) {
+            avion.arma.setTipoMunicion(Arma.MUNICION.COMUN);
+            avion.arma.setFrecuenciaDisparos(6);
+            avion.arma.setModoDisparo(false);
+        }
     }
 
     @Override

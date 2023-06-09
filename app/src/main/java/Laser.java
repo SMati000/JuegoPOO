@@ -2,12 +2,14 @@ import java.awt.Point;
 import java.io.IOException;
 
 public class Laser extends ArmadeFuego {
+    AvionAmigo avion;
+
     public Laser(Point posicion) throws IOException {
-        super("pow.png", posicion);
+        super("Laser", "pow.png", posicion);
     }
 
     public Laser(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Laser", filename, posicion);
     }
 
     public Laser(Laser bonus) throws IOException {
@@ -15,8 +17,25 @@ public class Laser extends ArmadeFuego {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo amigo) {
-       
+    public void AsignarBonus(AvionAmigo avion) {
+        this.avion = avion;
+        avion.arma.setTipoMunicion(Arma.MUNICION.LASER);
+        avion.arma.setTiros(1, new double[]{0});
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        if(!this.activo()) {
+            destruir();
+        }
+    }
+    
+    public void destruir() {
+        if(avion != null) {
+            avion.arma.setTipoMunicion(Arma.MUNICION.COMUN);
+            avion.arma.setTiros(2, new double[]{0, 0});
+        }
     }
 
     @Override

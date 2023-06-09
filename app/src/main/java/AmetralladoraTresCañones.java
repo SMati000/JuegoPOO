@@ -2,12 +2,14 @@ import java.awt.Point;
 import java.io.IOException;
 
 public class AmetralladoraTresCañones extends ArmadeFuego {
+    AvionAmigo avion;
+
     public AmetralladoraTresCañones(Point posicion) throws IOException {
-        super("pow.png", posicion);
+        super("Ametralladora 3 caños", "pow.png", posicion);
     }
    
     public AmetralladoraTresCañones(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Ametralladora 3 caños", filename, posicion);
     }
     
     public AmetralladoraTresCañones(AmetralladoraTresCañones bonus) throws IOException {
@@ -16,9 +18,26 @@ public class AmetralladoraTresCañones extends ArmadeFuego {
 
     @Override
     public void AsignarBonus(AvionAmigo avion) {
-        System.out.println("Ametralladora asignada");
+        this.avion = avion;
+        avion.arma.setTipoMunicion(Arma.MUNICION.TRESCANOS);
+        avion.arma.setTiros(3, new double[]{-20, 0, 20});
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        if(!this.activo()) {
+            destruir();
+        }
     }
 
+    public void destruir() {
+        if(avion != null) {
+            avion.arma.setTipoMunicion(Arma.MUNICION.COMUN);
+            avion.arma.setTiros(2, new double[]{0, 0});
+        }
+    }
+    
     @Override
     public AmetralladoraTresCañones clone() {
         AmetralladoraTresCañones temp = null;

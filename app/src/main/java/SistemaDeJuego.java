@@ -180,7 +180,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
                 }
             }
         });
-       */ 
+       */
         if(Configuraciones.sonidoBD.equals("CHASE")){
             FXPlayer.CHASE.play();
         }
@@ -208,7 +208,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     @Override
     public void update() {
         String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();            
-        System.out.println("Nombre: " + nombre);
+        System.out.println("lalala Nombre: " + nombre);
     }
 
     private JPanel setScreen1(){

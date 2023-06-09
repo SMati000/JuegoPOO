@@ -9,17 +9,12 @@ public abstract class ArmadeFuego extends Bonus {
     }
 
     
-    public ArmadeFuego(String grafico, Point posicion) throws IOException {
-        super("Arma de fuego", grafico, posicion);
+    public ArmadeFuego(String nombre, String grafico, Point posicion) throws IOException {
+        super(nombre, grafico, posicion);
     }
    
     @Override
     public void update() {
-        
+        super.update();
     }
-
-
-
-
-    
 }

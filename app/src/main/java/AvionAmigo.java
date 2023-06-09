@@ -14,9 +14,12 @@ public class AvionAmigo extends VehiculoMilitar {
         }
     }
 
+    private Iconos icono;
+
     public AvionAmigo(Point posicion) throws IOException {
         super("Avion Amigo", "avionAmigo.png", posicion);
         this.resistencia = this.energia/50;
+        this.icono = Iconos.COMUN;
 
         this.arma.seguir(false);
         this.arma.setAngulo(180);
@@ -30,16 +33,18 @@ public class AvionAmigo extends VehiculoMilitar {
     public void setIcon(Iconos ICONO) {
         try {
             this.setGrafico(ImageIO.read(AvionAmigo.class.getResource("imagenes/" + ICONO.filename)));
+            this.icono = ICONO;
         } catch (IOException e) {
             System.out.println("Error animacion avion amigo en metodo setIcon");
         }
+    }
+
+    public Iconos getIcon() {
+        return this.icono;
     }
 
     @Override
     public Municion[][] disparar() {
         return new Municion[][]{arma.disparar()};
     }
-
-    @Override
-    public void destruir() {}
 }

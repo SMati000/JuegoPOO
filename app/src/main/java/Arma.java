@@ -5,8 +5,23 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Arma extends ObjetoGrafico {
+    public enum MUNICION {
+        COMUN("municion1.png", false, 1), ESCOPETA("municion2.png", true, 2),
+        LASER("laserM.png", false, 3), TRESCANOS("3canos.png", false, 1);
+
+        private String municionFile;
+        private boolean destructora;
+        private int dano;
+        private MUNICION(String municionFile, boolean destructora, int dano) {
+            this.municionFile = municionFile;
+            this.destructora = destructora;
+            this.dano = dano;
+        }
+    }
+
     private Point objetivo;
 
+    private MUNICION municion;
     private int frecuenciaDisparo, velocidadGiro;
     private boolean seguir, rafaga;
     private double anguloMax;
@@ -18,6 +33,7 @@ public class Arma extends ObjetoGrafico {
     public Arma(Point posicion) throws IOException {
         super("Arma", null, posicion);
 
+        this.municion = MUNICION.COMUN;
         this.velocidadGiro = 6;
         this.angulo = 0;
 
@@ -37,6 +53,7 @@ public class Arma extends ObjetoGrafico {
     public Arma(Arma arma) throws IOException {
         super("Arma", null, arma.posicion);
 
+        this.municion = arma.municion;
         this.objetivo = arma.objetivo;
         this.posPrevia = (Point) arma.objetivo.clone();
 
@@ -54,6 +71,10 @@ public class Arma extends ObjetoGrafico {
 
     public void setPosicion(Point posicion) {
         this.posicion = (Point) posicion.clone();
+    }
+
+    public void setTipoMunicion(MUNICION tipo) {
+        this.municion = tipo;
     }
 
     public void setGrafico(String filename) {
@@ -156,11 +177,16 @@ public class Arma extends ObjetoGrafico {
                         tempPos.x += gap * i;
                     }
 
-                    muni[i + (int)Math.floor(cantTiros/2)] = new Municion(
-                        "municion1.png", 
+                    Municion tempMuni = new Municion(
+                        municion.municionFile, 
                         tempPos, 
                         this.angulos[i + (int)Math.floor(cantTiros/2)]
                     );
+
+                    tempMuni.setDestructora(municion.destructora);
+                    tempMuni.setDano(municion.dano);
+
+                    muni[i + (int)Math.floor(cantTiros/2)] = tempMuni;
                 }
 
                 contadorRafaga++;

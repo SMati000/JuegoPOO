@@ -7,14 +7,13 @@ public abstract class PowerUp extends Bonus {
         super(bonus.nombre, "", (Point)bonus.getPosicion().clone());
         setGrafico(bonus.grafico);
     }
-
     
-    
-    public PowerUp(String grafico, Point posicion) throws IOException {
-        super("bonus", grafico, posicion);
+    public PowerUp(String nombre, String grafico, Point posicion) throws IOException {
+        super(nombre, grafico, posicion);
     }
-    @Override
-    public void update() {}
 
-  
+    @Override
+    public void update() {
+        super.update();
+    }
 }

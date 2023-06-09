@@ -17,7 +17,7 @@ public abstract class Enemigo extends VehiculoMilitar {
         // this.comun = ImageIO.read(Enemigo.class.getResource("imagenes/" + grafico));
 
         this.objetivo = objetivo;
-        this.velocidad = 5;
+        this.velocidad = 2;
         this.rangoDeteccion = 400;
 
         arma.setObjetivo(objetivo);

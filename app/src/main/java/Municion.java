@@ -3,20 +3,34 @@ import java.awt.Point;
 import java.io.IOException;
 
 public class Municion extends ObjetoGrafico {
-    private int velocidad/*, tiros*/;
+    private int velocidad, dano;
     private double angulo;
+    private boolean destructora;
 
     public Municion(String filename, Point posicion, double angulo) throws IOException {
         super("Municion", filename, posicion);
     
+        this.dano = 1;
         this.angulo = angulo;
         this.velocidad = 6;
-        // this.tiros = 1;
+        this.destructora = false;
     }
 
-    // public void setTiros(int cantidad) {
-    //     this.tiros = cantidad > 0 ? cantidad : 1;
-    // }
+    public void setDestructora(boolean destructora) {
+        this.destructora = destructora;
+    }
+
+    public void setDano(int dano) {
+        this.dano = dano;
+    }
+
+    public int getDano() {
+        return this.dano;
+    }
+
+    public boolean esDestructora() {
+        return this.destructora;
+    }
 
     private void avanzar() {
         if(angulo%Math.PI != 0) {    
@@ -34,10 +48,6 @@ public class Municion extends ObjetoGrafico {
             this.velocidad = velocidad;
     }
 
-    // public int getTiros() {
-    //     return tiros;
-    // }
-
     @Override
     public void update() {
         avanzar();
@@ -54,9 +64,7 @@ public class Municion extends ObjetoGrafico {
             
             g1.rotate(angulo, x, y);
 
-            // if(angulo < 0) 
-                y += (int)(this.grafico.getHeight()/2 /** Math.sin(angulo)*/);
-
+            y += (int)(this.grafico.getHeight()/2);
             x -= this.grafico.getWidth()/2;
 
             g1.drawImage(grafico, x, y, null);

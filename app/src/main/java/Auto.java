@@ -2,12 +2,14 @@ import java.awt.Point;
 import java.io.IOException;
 
 public class Auto extends PowerUp {
+    AvionAmigo avion;
+
     public Auto(Point posicion) throws IOException {
-        super("auto.png", posicion);
+        super("Auto", "auto.png", posicion);
     }
 
     public Auto(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Auto", filename, posicion);
     }
 
     public Auto(Auto bonus) throws IOException {
@@ -15,7 +17,22 @@ public class Auto extends PowerUp {
     }
 
     public void AsignarBonus(AvionAmigo avion) {
-        System.out.println("auto asignado");
+        this.avion = avion;
+        avion.arma.setModoDisparo(true);
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        if(!this.activo()) {
+            destruir();
+        }
+    }
+
+    public void destruir() {
+        if(avion != null) {
+            avion.arma.setModoDisparo(false);
+        }
     }
 
     @Override

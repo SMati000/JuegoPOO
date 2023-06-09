@@ -43,11 +43,6 @@ public abstract class ObjetoGrafico {
     public int getY() {
         return this.posicion.y;
     }
-    
-    public void destruir() {
-        // this.grafico = null;
-        // this.posicion = null;
-    }
 
     public String getNombre(){
         return nombre;

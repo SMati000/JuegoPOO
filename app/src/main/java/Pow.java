@@ -1,14 +1,15 @@
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.IOException;
 
 
 public class Pow extends PowerUp {
     public Pow(Point posicion) throws IOException {
-        super("pow.png", posicion);
+        super("Pow", "pow.png", posicion);
     }
 
     public Pow(String filename, Point posicion) throws IOException {
-        super(filename, posicion);
+        super("Pow", filename, posicion);
     }
       
     public Pow(Pow bonus) throws IOException {
@@ -18,6 +19,18 @@ public class Pow extends PowerUp {
     @Override
     public void AsignarBonus(AvionAmigo avion) {
         avion.modificarEnergia(30);
+    }
+
+    public void activar() {
+        if(tiempo == -1) { // el bonus nunca se uso
+            this.tiempo = 5;
+        }
+    }
+
+    public void destruir() {}
+
+    public String toString() {
+        return "30 puntos de energia restablecida!";
     }
 
     @Override
