@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +22,8 @@ public class Juego1943 extends Juego implements ActionListener {
     private BufferedImage gameOver;
     private Mapa mapa;
     private Camara cam;
-    private String nombreJugador;
+
+    Jugador1943 jugador = new Jugador1943(); //esta instancia es para llevar el puntaje a la sist de juego
 
     private VehiculoMilitar avionAmigo;
     private final double desplazamiento = 180.0;
@@ -60,8 +60,14 @@ public class Juego1943 extends Juego implements ActionListener {
     }
 
     public String getNombreJugador() {
-        return nombreJugador;
+        return jugador.getNombre();
     }
+
+    public int getPuntajeJugador() {
+        System.out.println("puntaje: "+ jugador.getPuntaje());
+        return jugador.getPuntaje();
+    }
+
 
     @Override
     public void gameStartup() {
@@ -206,6 +212,7 @@ public class Juego1943 extends Juego implements ActionListener {
             this.animacionEnCurso = 0;
 
             JFrame frameTerminado = new JFrame();
+            frameTerminado.setPreferredSize(new Dimension(200, 100));
             frameTerminado.setLayout(new FlowLayout());
 
             JLabel score = new JLabel("aca va el score del avion amigo");
@@ -215,9 +222,10 @@ public class Juego1943 extends Juego implements ActionListener {
                 public void actionPerformed(ActionEvent evt) {
                         
                     if(ingresarNom.getText() != null){
-                        nombreJugador = ingresarNom.getText();
+                        jugador.setNombre(ingresarNom.getText());
+   
                     } else{
-                        nombreJugador = null;
+                        jugador.setNombre(null); 
                     }
                     
                     suscribers.forEach(suscriber -> suscriber.update());
@@ -238,7 +246,7 @@ public class Juego1943 extends Juego implements ActionListener {
             frameTerminado.setVisible(true);
             frameTerminado.setResizable(false);
             frameTerminado.pack();
-    }
+        }
     
    
     @Override

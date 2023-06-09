@@ -15,7 +15,7 @@ public class Auto extends PowerUp {
     }
 
     public void AsignarBonus(AvionAmigo avion) {
-        System.out.println("auto asignado");
+       avion.modificarArma(true);
     }
 
     @Override

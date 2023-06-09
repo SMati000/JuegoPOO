@@ -207,8 +207,12 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     
     @Override
     public void update() {
-        String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();            
+        String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();     
+        int puntos =((Juego1943)Juego1943.getInstance()).getPuntajeJugador();     
         System.out.println("Nombre: " + nombre);
+        System.out.println("Puntaje " + puntos);
+
+        //aca va se llama el ranking de conf
     }
 
     private JPanel setScreen1(){
@@ -240,7 +244,6 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         if (evento.getActionCommand() == jugar.getActionCommand()){
             Juego juego = Juego1943.getInstance();
             ((Juego1943)juego).addSuscriber(this);
-
             Thread t = new Thread() {
                 public void run(){
                     juego.run(1.0 / 60.0);

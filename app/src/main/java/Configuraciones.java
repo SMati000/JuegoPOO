@@ -1,3 +1,4 @@
+import java.rmi.server.SocketSecurityException;
 import java.sql.*;
 
 public class Configuraciones {
@@ -27,14 +28,14 @@ public class Configuraciones {
         cargarSonido();
     }
 
-    public void Ranking(String Nombre, int Score){
-        
+    public void Ranking(String nombre, int score){
+        System.out.println("nombre: "+ nombre);
         try{    
             String sql = "Insert into Ranking(Nombre, Score) VALUES (?,?)";
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, Nombre);
-            pstmt.setInt(2, Score);
+            pstmt.setString(1, nombre);
+            pstmt.setInt(2, score);
             pstmt.executeUpdate();
                     
         }catch (SQLException e) {

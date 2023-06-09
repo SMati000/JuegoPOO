@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.util.Random;
 
-
+import javax.imageio.ImageIO;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     private final Enemigo[] enemigos;
     private Bonus[] bonus;
     private final Enemigo jefe;
-    
+    private Rectangle r;
     private final int apareceJefe = 30;
 
     private final int tiempo; // en segundos
@@ -79,7 +80,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         heroe.update();
         crearEnemigos();
         crearBonus();
-        
+                
         manejarBonus(); 
         manejarEnemigos();
         manejarImpactos();
@@ -139,6 +140,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         return b;
         
     }
+
 
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
@@ -319,8 +321,12 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                     
                     balasHeroe.remove(i);
 
+
+//en este metodo se haria el modificar puntaje
                     if(enemigo.getEnergia() <= 0) {
-                        enemigosCreados.remove(j);
+                        System.out.println("puntaje que pasa: "+ enemigo.puntajeDado());
+                        heroe.pasarPuntaje(enemigo.puntajeDado());
+                        enemigosCreados.remove(j);        
                     }
                 }
             }

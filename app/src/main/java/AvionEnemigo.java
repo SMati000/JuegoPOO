@@ -48,6 +48,10 @@ public class AvionEnemigo extends Enemigo {
 
         return temp;
     }
+
+    public int puntajeDado(){
+        return 100;
+    }
     
     // @Override
     // public void update() {
