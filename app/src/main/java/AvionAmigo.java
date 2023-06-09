@@ -4,6 +4,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class AvionAmigo extends VehiculoMilitar {
+    Jugador1943 jugador;
     
     public static enum Iconos {
         COMUN("avionAmigo.png"), IZQ("avionAmigoIzq.png"), DER("avionAmigoDer.png"),
@@ -15,10 +16,9 @@ public class AvionAmigo extends VehiculoMilitar {
         }
     }
 
-    Jugador1943 jugador = new Jugador1943();  //esta instancia es para poder pasar el puntaje al jugador
-
     public AvionAmigo(Point posicion) throws IOException {
         super("Avion Amigo", "avionAmigo.png", posicion);
+        this.jugador = ((Juego1943)Juego1943.getInstance()).getJugador();  //esta instancia es para poder pasar el puntaje al jugador
         this.resistencia = this.energia/50;
 
         this.arma.seguir(false);
@@ -33,8 +33,6 @@ public class AvionAmigo extends VehiculoMilitar {
     public void modificarArma(boolean b){
         this.arma.setModoDisparo(b);
     }
-    
-
 
     public void setIcon(Iconos ICONO) {
         try {
@@ -44,11 +42,9 @@ public class AvionAmigo extends VehiculoMilitar {
         }
     }
 
-
     public void pasarPuntaje(int puntos){
         jugador.setPuntaje(puntos);
     }
-
 
     @Override
     public Municion[][] disparar() {

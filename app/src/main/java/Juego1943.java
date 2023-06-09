@@ -23,7 +23,7 @@ public class Juego1943 extends Juego implements ActionListener {
     private Mapa mapa;
     private Camara cam;
 
-    Jugador1943 jugador = new Jugador1943(); //esta instancia es para llevar el puntaje a la sist de juego
+    Jugador1943 jugador; //esta instancia es para llevar el puntaje a la sist de juego
 
     private VehiculoMilitar avionAmigo;
     private final double desplazamiento = 180.0;
@@ -47,8 +47,9 @@ public class Juego1943 extends Juego implements ActionListener {
             mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
             mapa.setTransicion("fondo1943Transicion.jpg");
 
+            jugador = new Jugador1943();
+
             cam = new Camara(120, 0, 0);
-            avionAmigo = new AvionAmigo(new Point(400, 300));
             animacionEnCurso = 0;
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
@@ -59,18 +60,16 @@ public class Juego1943 extends Juego implements ActionListener {
         suscribers.add(nuevo);
     }
 
-    public String getNombreJugador() {
-        return jugador.getNombre();
+    public Jugador1943 getJugador() {
+        return jugador;
     }
-
-    public int getPuntajeJugador() {
-        System.out.println("puntaje: "+ jugador.getPuntaje());
-        return jugador.getPuntaje();
-    }
-
 
     @Override
     public void gameStartup() {
+        try {
+            avionAmigo = new AvionAmigo(new Point(400, 300));
+        } catch (IOException e) {}
+        
         keyboard = this.getKeyboard();
 
         cam.setRegionVisible(800, 600);
@@ -101,7 +100,7 @@ public class Juego1943 extends Juego implements ActionListener {
                     enemigos = new Enemigo[]{e1, e2, e3};
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
-                    .setTiempo(60)
+                    .setTiempo(20)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .build();
                     break;
@@ -207,46 +206,46 @@ public class Juego1943 extends Juego implements ActionListener {
     }
     
     public void terminarJuego(){
-            String text = "Ingrese su nombre";
+        String text = "Ingrese su nombre";
 
-            this.animacionEnCurso = 0;
+        this.animacionEnCurso = 0;
 
-            JFrame frameTerminado = new JFrame();
-            frameTerminado.setPreferredSize(new Dimension(200, 100));
-            frameTerminado.setLayout(new FlowLayout());
+        JFrame frameTerminado = new JFrame();
+        frameTerminado.setPreferredSize(new Dimension(200, 100));
+        frameTerminado.setLayout(new FlowLayout());
 
-            JLabel score = new JLabel("aca va el score del avion amigo");
-            JTextField ingresarNom = new JTextField(text);
+        JLabel score = new JLabel("aca va el score del avion amigo");
+        JTextField ingresarNom = new JTextField(text);
 
-            ingresarNom.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                        
-                    if(ingresarNom.getText() != null){
-                        jugador.setNombre(ingresarNom.getText());
-   
-                    } else{
-                        jugador.setNombre(null); 
-                    }
+        ingresarNom.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                     
-                    suscribers.forEach(suscriber -> suscriber.update());
-                }
-            });
+                if(ingresarNom.getText() != null){
+                    jugador.setNombre(ingresarNom.getText());
 
-            ingresarNom.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if(ingresarNom.getText().equals(text)){
-                        ingresarNom.setText("");
-                    }
+                } else{
+                    jugador.setNombre(null); 
                 }
-            });
-           
-            frameTerminado.add(ingresarNom);
-            frameTerminado.add(score);
-            frameTerminado.setVisible(true);
-            frameTerminado.setResizable(false);
-            frameTerminado.pack();
-        }
+                
+                suscribers.forEach(suscriber -> suscriber.update());
+            }
+        });
+
+        ingresarNom.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(ingresarNom.getText().equals(text)){
+                    ingresarNom.setText("");
+                }
+            }
+        });
+        
+        frameTerminado.add(ingresarNom);
+        frameTerminado.add(score);
+        frameTerminado.setVisible(true);
+        frameTerminado.setResizable(false);
+        frameTerminado.pack();
+    }
     
    
     @Override
@@ -282,7 +281,6 @@ public class Juego1943 extends Juego implements ActionListener {
     public static Juego getInstance() {
         return instance;
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) { }  

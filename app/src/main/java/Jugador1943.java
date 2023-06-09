@@ -1,19 +1,10 @@
 public class Jugador1943 extends Jugador {
     private int puntaje;
-    public String nombre;
 
     public Jugador1943(){
-        super(null);
+        super("");
+        this.puntaje = 0;
     }
-
-    public String getNombre(){
-        return nombre;
-    }
-
-    public void setNombre(String nombre){
-        this.nombre = nombre;
-    }
-
 
     public void setPuntaje(int puntos){
         this.puntaje = this.puntaje + puntos;

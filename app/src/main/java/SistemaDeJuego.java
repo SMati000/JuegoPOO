@@ -207,8 +207,10 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     
     @Override
     public void update() {
-        String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();     
-        int puntos =((Juego1943)Juego1943.getInstance()).getPuntajeJugador();     
+        Jugador1943 jugador = ((Juego1943)Juego1943.getInstance()).getJugador();
+
+        String nombre = jugador.getNombre();     
+        int puntos = jugador.getPuntaje(); 
         System.out.println("Nombre: " + nombre);
         System.out.println("Puntaje " + puntos);
 
@@ -230,9 +232,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         jugar.addActionListener(this);
         ranking.addActionListener(this);
 
-
         fondoPanel.add(botonesPanel);
-
 
         return fondoPanel;
 
