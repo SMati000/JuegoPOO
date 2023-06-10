@@ -3,6 +3,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 class SistemaDeJuego extends JFrame {
     JLabel img1943;
@@ -207,8 +208,13 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     
     @Override
     public void update() {
-        String nombre = ((Juego1943)Juego1943.getInstance()).getNombreJugador();            
-        System.out.println("lalala Nombre: " + nombre);
+        Jugador1943 jugador = ((Juego1943)Juego1943.getInstance()).getJugador();
+
+        String nombre = jugador.getNombre();     
+        int puntos = jugador.getPuntaje(); 
+        conf.Ranking(nombre, puntos);
+
+        //aca va se llama el ranking de conf
     }
 
     private JPanel setScreen1(){
@@ -226,9 +232,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         jugar.addActionListener(this);
         ranking.addActionListener(this);
 
-
         fondoPanel.add(botonesPanel);
-
 
         return fondoPanel;
 
@@ -240,7 +244,6 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         if (evento.getActionCommand() == jugar.getActionCommand()){
             Juego juego = Juego1943.getInstance();
             ((Juego1943)juego).addSuscriber(this);
-
             Thread t = new Thread() {
                 public void run(){
                     juego.run(1.0 / 60.0);
@@ -252,7 +255,32 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
 
 
         if(evento.getSource()== ranking){
-            System.out.println("mostrar ranking");
+            ArrayList<String[]> arr = new ArrayList<>();
+           arr = conf.verRanking();
+
+           JFrame frameRank = new JFrame();
+           frameRank.setLayout(new GridLayout(0, 2));
+           frameRank.setTitle("Ranking");
+           frameRank.setPreferredSize(new Dimension(100, (arr.size()+1)*40));
+           
+           JLabel nombre = new JLabel("Nombre");
+           JLabel score = new JLabel("Score");
+
+
+           frameRank.add(nombre);
+           frameRank.add(score);
+           
+           
+
+            for (int i = 0; i < arr.size(); i++) {
+                frameRank.add(new JLabel(arr.get(i)[0]));
+                frameRank.add(new JLabel(arr.get(i)[1]));
+            }
+
+            frameRank.setLocationRelativeTo(null);
+            frameRank.setVisible(true);
+            frameRank.pack();
+
         }
 
         if (evento.getSource()==item1) {

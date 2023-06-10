@@ -1,9 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 
 public abstract class Enemigo extends VehiculoMilitar {
     protected int velocidad, rangoDeteccion;
@@ -23,6 +21,13 @@ public abstract class Enemigo extends VehiculoMilitar {
         arma.setObjetivo(objetivo);
     }
     
+
+    //puntaje que se da por destruir
+    public int puntajeDado(){
+        return 0; //no se si va el 0, lo puse porque despues se sobreescribe
+    }
+
+
     public Enemigo(Enemigo enemigo) throws IOException {
         super(enemigo.nombre, null, (Point)enemigo.getPosicion().clone());
         

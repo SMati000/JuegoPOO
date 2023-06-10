@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +20,11 @@ public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
 
     private ArrayList<Suscriber> suscribers;
-    private BufferedImage gameOver;
-    private AtaqueEspecial ataqueEspecial;
+    private BufferedImage fotoFin;
     private Mapa mapa;
     private Camara cam;
-    private String nombreJugador;
+    private boolean terminado= false;
+    Jugador1943 jugador; //esta instancia es para llevar el puntaje a la sist de juego
 
     private VehiculoMilitar avionAmigo;
     private final double desplazamiento = 180.0;
@@ -44,13 +43,14 @@ public class Juego1943 extends Juego implements ActionListener {
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
         
         try {
-            gameOver = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
+            
 
             mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
             mapa.setTransicion("fondo1943Transicion.jpg");
 
+            jugador = new Jugador1943();
+
             cam = new Camara(120, 0, 0);
-            avionAmigo = new AvionAmigo(new Point(400, 300));
             animacionEnCurso = 0;
         } catch (IOException e) {
             System.out.println("No se pudo crear avion amigo");
@@ -61,15 +61,12 @@ public class Juego1943 extends Juego implements ActionListener {
         suscribers.add(nuevo);
     }
 
-    public String getNombreJugador() {
-        return nombreJugador;
+    public Jugador1943 getJugador() {
+        return jugador;
     }
 
-    @Override
-    public void gameStartup() {
-        keyboard = this.getKeyboard();
-
-        cam.setRegionVisible(800, 600);
+    private void asiganarMision(int misionAsignada){
+        this.misionAsignada = misionAsignada;
 
         try {
             Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
@@ -89,7 +86,6 @@ public class Juego1943 extends Juego implements ActionListener {
                 a.setAnguloMaximo(170);
             }
 
-            misionAsignada = 1;
 
             Enemigo enemigos[];
             switch(misionAsignada) {
@@ -103,17 +99,29 @@ public class Juego1943 extends Juego implements ActionListener {
                     break;
                 case 2:
                     enemigos = new Enemigo[]{e1, e2};
-
-                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, null)
-                    .setTiempo(60*7)
-                    .setDificultad(Mision.DIFICULTAD.DIFICIL)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
+                    .setTiempo(60)
+                    .setDificultad(Mision.DIFICULTAD.FACIL)         //cambiar a dificl
                     .build();
                     break;
             }
+           
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void gameStartup() {
+        try {
+            avionAmigo = new AvionAmigo(new Point(400, 300));
+        } catch (IOException e) {}
+        
+        keyboard = this.getKeyboard();
+
+        cam.setRegionVisible(800, 600);
+        asiganarMision(1);
     }
 
     @Override
@@ -123,6 +131,46 @@ public class Juego1943 extends Juego implements ActionListener {
     
     @Override 
     public void gameUpdate(double delta) {
+
+
+        //poner if chequeando la tecla de presion, si es estado fin y presiona asignarmision(1)
+        //si es estado gana y presiona asignarmision(2)
+        //si es misionAsignada = 2 llame al terminar juego
+        try {
+
+            if(mision.getEstado() == Mision.ESTADO.GANA && misionAsignada == 1){
+                
+                fotoFin =  ImageIO.read(getClass().getResource("imagenes/win.png"));
+                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                    asiganarMision(2);
+                }
+            }
+
+            if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 1){
+                fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
+                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                    asiganarMision(1);
+                }
+            }
+
+            if(mision.getEstado() == Mision.ESTADO.GANA && misionAsignada == 2){
+                fotoFin = ImageIO.read(getClass().getResource("imagenes/win2.png"));
+                if(terminado == false){                
+                    terminarJuego();
+                    terminado = true;
+                }
+                
+                return;
+            }
+            
+            if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 2){
+                fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
+                    asiganarMision(2);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }  
 
         if (keyboard.isKeyPressed(Configuraciones.arriba)) {
             if(this.getViewPort().contains(avionAmigo.getX(), avionAmigo.getY()  - avionAmigo.grafico.getHeight(), 
@@ -165,7 +213,7 @@ public class Juego1943 extends Juego implements ActionListener {
                 ((AvionAmigo)avionAmigo).setIcon(AvionAmigo.Iconos.COMUN);
         }
 
-        if (keyboard.isKeyPressed(Configuraciones.disparo)) {
+        if (keyboard.isKeyPressed(Configuraciones.disparo) && !((AvionAmigo)avionAmigo).isEsquivando()) {
             Municion[][] balas = avionAmigo.disparar();
 
             for(Municion[] bala : balas) {
@@ -179,7 +227,9 @@ public class Juego1943 extends Juego implements ActionListener {
             }
         }
 
-        if(keyboard.isKeyPressed(KeyEvent.VK_Z)) {
+        if(keyboard.isKeyPressed(KeyEvent.VK_X) && keyboard.isKeyPressed(KeyEvent.VK_Z)) {
+            ((AvionAmigo)avionAmigo).esquivar();
+        } else if(keyboard.isKeyPressed(KeyEvent.VK_Z) && !((AvionAmigo)avionAmigo).isEsquivando()) {
             mision.ataqueEspecial();
         }
         
@@ -189,6 +239,9 @@ public class Juego1943 extends Juego implements ActionListener {
 
         cam.avanzar((AvionAmigo)avionAmigo, delta);
         mision.update();
+
+       
+        
     }
 
     private void animacion() {
@@ -206,43 +259,47 @@ public class Juego1943 extends Juego implements ActionListener {
     }
     
     public void terminarJuego(){
-            String text = "Ingrese su nombre";
+        String text = "Ingrese su nombre";
 
-            this.animacionEnCurso = 0;
+        this.animacionEnCurso = 0;
 
-            JFrame frameTerminado = new JFrame();
-            frameTerminado.setLayout(new FlowLayout());
+        JFrame frameTerminado = new JFrame();
+        frameTerminado.setPreferredSize(new Dimension(200, 100));
+        frameTerminado.setLayout(new FlowLayout());
 
-            JLabel score = new JLabel("aca va el score del avion amigo");
-            JTextField ingresarNom = new JTextField(text);
+        JLabel score = new JLabel("Score: "+ String.valueOf(jugador.getPuntaje()));
+        JTextField ingresarNom = new JTextField(text);
 
-            ingresarNom.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                        
-                    if(ingresarNom.getText() != null){
-                        nombreJugador = ingresarNom.getText();
-                    } else{
-                        nombreJugador = null;
-                    }
+        ingresarNom.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                     
-                    suscribers.forEach(suscriber -> suscriber.update());
-                }
-            });
+                if(ingresarNom.getText() != null){
+                    jugador.setNombre(ingresarNom.getText());
 
-            ingresarNom.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if(ingresarNom.getText().equals(text)){
-                        ingresarNom.setText("");
-                    }
+                } else{
+                    jugador.setNombre(null); 
                 }
-            });
-           
-            frameTerminado.add(ingresarNom);
-            frameTerminado.add(score);
-            frameTerminado.setVisible(true);
-            frameTerminado.setResizable(false);
-            frameTerminado.pack();
+                
+                suscribers.forEach(suscriber -> suscriber.update());
+            }
+        });
+
+        ingresarNom.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(ingresarNom.getText().equals(text)){
+                    ingresarNom.setText("");
+                }
+            }
+        });
+
+
+        frameTerminado.setLocationRelativeTo(null);
+        frameTerminado.add(ingresarNom);
+        frameTerminado.add(score);
+        frameTerminado.setVisible(true);
+        frameTerminado.setResizable(false);
+        frameTerminado.pack();
     }
     
    
@@ -250,14 +307,22 @@ public class Juego1943 extends Juego implements ActionListener {
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        if(mision.getEstado() == Mision.ESTADO.FIN ||  avionAmigo.getEnergia() <= 0) {
-            g.drawImage(gameOver, 0, 0, null);
-            
-            if(misionAsignada != -1) {
-                terminarJuego();
-                misionAsignada = -1;
-            }
-            
+        if(mision.getEstado() == Mision.ESTADO.FIN || mision.getEstado() == Mision.ESTADO.GANA 
+                ||  avionAmigo.getEnergia() <= 0) {
+            g.drawImage(fotoFin, 0, 0, null);
+
+
+            // if(misionAsignada != -1) {
+            //     if(misionAsignada == 1){
+            //        //misionAsignada=2;
+            //         asiganarMision(2);
+            //     }else{
+            //         asiganarMision(-1);
+            //         terminarJuego();
+            //     }
+                
+            // }
+
             return;
         }
 
@@ -268,10 +333,6 @@ public class Juego1943 extends Juego implements ActionListener {
         
         mision.draw(g, (int)(mapa.getY()-(cam.getY()*2)+60));
 
-        if(ataqueEspecial != null) {
-            ataqueEspecial.draw(g);
-        }
-        
         g.translate(-cam.getX(),-cam.getY());
     }
 
@@ -283,7 +344,6 @@ public class Juego1943 extends Juego implements ActionListener {
     public static Juego getInstance() {
         return instance;
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) { }  
@@ -343,3 +403,4 @@ class Camara {
     	return this.resY;
     }
 }
+

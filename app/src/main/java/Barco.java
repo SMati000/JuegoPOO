@@ -67,6 +67,12 @@ public class Barco extends Enemigo {
         }
     }
 
+//puntaje que otorga si se destruye
+    public int puntajeDado(){
+        return 150;
+    }
+
+
     @Override
     public void draw(Graphics2D g) {
         g.drawImage(grafico, posicion.x, posicion.y, null);

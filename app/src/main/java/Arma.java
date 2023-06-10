@@ -117,7 +117,6 @@ public class Arma extends ObjetoGrafico {
 
     public void setAngulo(double angulo) {
         this.angulo = Math.toRadians(angulo);
-
         setTiros(cantTiros, angulos);
     }
 

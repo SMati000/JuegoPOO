@@ -1,4 +1,6 @@
+import java.rmi.server.SocketSecurityException;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Configuraciones {
     //teclas por defecto
@@ -27,14 +29,16 @@ public class Configuraciones {
         cargarSonido();
     }
 
-    public void Ranking(String Nombre, int Score){
-        
+    public void Ranking(String nombre, int score){
+        System.out.println("nombre: "+ nombre);
+        System.out.println("Puntaje " + score);
+
         try{    
             String sql = "Insert into Ranking(Nombre, Score) VALUES (?,?)";
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, Nombre);
-            pstmt.setInt(2, Score);
+            pstmt.setString(1, nombre);
+            pstmt.setInt(2, score);
             pstmt.executeUpdate();
                     
         }catch (SQLException e) {
@@ -52,31 +56,33 @@ public class Configuraciones {
 
     }
 
-    public void verRanking(){
+    public ArrayList<String[]> verRanking(){
         try{    
                 //se obtiene la cantiada para usarla en el for que se muestra el ranking
                 // ver si se necesita
-            String cant = "Select COUNT(*) from Ranking";
-            rs  = stmt.executeQuery(cant);
-            int i = rs.getInt(cant);
-
-            System.out.println("Ranking");
-            String sql = "Select Nombre, Score from Ranking;";
-            rs  = stmt.executeQuery(sql);
+            ArrayList<String[]> rank = new ArrayList<>();  
+            String sql = "Select * from Ranking order by score desc;";
             String nombre;
             int score;
+            int i=0;
+            
+            rs  = stmt.executeQuery(sql);
+            while(rs.next()) {
+                String[] contenedor = new String[2];
+                
+                nombre = rs.getString("Nombre");
+                score = rs.getInt("Score");
 
-            for (int j=0; j < i; j++) {
-              nombre = rs.getString("Nombre");
-              score = rs.getInt("Score");
-              System.out.println("Jugador:" + nombre + "Puntaje: " + score);
+                contenedor[i] = nombre;
+                contenedor[i+1] = String.valueOf(score) ;
+                
+
+                rank.add(contenedor);
+
+                //System.out.println("Jugador: " + nombre + " Puntaje: " + score);
             }
 
-
-            
-            
-            
-
+            return rank;
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -87,7 +93,7 @@ public class Configuraciones {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-            
+            return null;
         }
     }
 

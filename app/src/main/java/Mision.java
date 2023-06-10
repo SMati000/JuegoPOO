@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Mision {
     public enum ESTADO {
-        AIRE, TIERRA, FIN;
+        AIRE, TIERRA, FIN, GANA;
     }
 
     public enum DIFICULTAD {
@@ -24,7 +24,6 @@ public class Mision {
     private final Enemigo[] enemigos;
     private Bonus[] bonus;
     private final Enemigo jefe;
-    
     private final int apareceJefe = 30;
 
     private final int tiempo; // en segundos
@@ -80,7 +79,7 @@ public class Mision {
         heroe.update();
         crearEnemigos();
         crearBonus();
-        
+                
         manejarBonus(); 
         manejarEnemigos();
         manejarImpactos();
@@ -277,6 +276,7 @@ public class Mision {
         }
     }
 
+
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
@@ -451,7 +451,10 @@ public class Mision {
             Rectangle balaR = new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()));
 
             if(balaR.intersects(avionAmigo)) {
-                anadirImpacto(avionAmigo, Impacto.tipoImpacto.DISPARO);
+                if(!heroe.isEsquivando()) {
+                    anadirImpacto(avionAmigo, Impacto.tipoImpacto.DISPARO);
+                }
+                
                 heroe.modificarEnergia(-heroe.getResistencia());
                 balasEnCurso.remove(i);
             }
@@ -490,8 +493,11 @@ public class Mision {
                     
                     balasHeroe.remove(i);
 
+
+//en este metodo se haria el modificar puntaje
                     if(enemigo.getEnergia() <= 0) {
-                        enemigosCreados.remove(j);
+                        heroe.pasarPuntaje(enemigo.puntajeDado());
+                        enemigosCreados.remove(j);        
                     }
                 }
             }
@@ -516,7 +522,7 @@ public class Mision {
                 balasHeroe.remove(i);
 
                 if(this.jefe.getEnergia() <= 0) {
-                    this.estado = ESTADO.FIN;
+                    this.estado = ESTADO.GANA;
                 }
             }
         }        
@@ -658,6 +664,10 @@ public class Mision {
         g.drawString("Tiempo restante: " + t, 10, pos);
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
         // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
+    
+
+        Juego juego = Juego1943.getInstance();
+        g.drawString("Score: "+ String.valueOf(heroe.PuntajeJugador()), (juego.getWidth()/2)-5, pos);
     } 
 
     public static class MisionBuilder {

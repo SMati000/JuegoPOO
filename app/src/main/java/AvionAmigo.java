@@ -1,10 +1,13 @@
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 public class AvionAmigo extends VehiculoMilitar {
+    Jugador1943 jugador;
+    
     public static enum Iconos {
         COMUN("avionAmigo.png"), IZQ("avionAmigoIzq.png"), DER("avionAmigoDer.png"),
         BAJANDO1("avionAmigoBajando1.png"), BAJANDO2("avionAmigoBajando2.png");
@@ -21,6 +24,7 @@ public class AvionAmigo extends VehiculoMilitar {
 
     public AvionAmigo(Point posicion) throws IOException {
         super("Avion Amigo", "avionAmigo.png", posicion);
+        this.jugador = ((Juego1943)Juego1943.getInstance()).getJugador();  //esta instancia es para poder pasar el puntaje al jugador
         this.resistencia = this.energia/50;
         this.icono = Iconos.COMUN;
         this.angulo = 0;
@@ -30,9 +34,6 @@ public class AvionAmigo extends VehiculoMilitar {
         this.arma.setAngulo(180);
         this.arma.setFrecuenciaDisparos(5);
         this.arma.setTiros(2, new double[]{0, 0});
-
-        // this.arma.setTiros(4, new double[]{-20, 0, 0, 20});
-        // this.arma.setModoDisparo(true);
     }
 
     public void setIcon(Iconos ICONO) {
@@ -63,10 +64,28 @@ public class AvionAmigo extends VehiculoMilitar {
                 angulo = 0;
                 contador = 0;
                 esquivando = false;
+
+                Rectangle pantalla = ((Juego1943)Juego1943.getInstance()).getViewPort();
+
+                if(this.getX() < 0) {
+                    this.posicion.x = 0;
+                } else if(this.getX() > pantalla.getWidth()) {
+                    this.posicion.x = (int)(pantalla.getWidth() - (int)this.grafico.getWidth());
+                }
+
+                if(this.getY() > pantalla.getY() + pantalla.getHeight()) {
+                    this.posicion.y = (int)(pantalla.getY() + pantalla.getHeight() - this.grafico.getHeight());
+                } else if(this.getY() + this.grafico.getHeight() < pantalla.getY()) {
+                    this.posicion.y = (int)(pantalla.getY() + this.grafico.getHeight());
+                }
             }
     
             contador++;
         }
+    }
+
+    public boolean isEsquivando() {
+        return esquivando;
     }
 
     public void esquivar() {
@@ -93,6 +112,14 @@ public class AvionAmigo extends VehiculoMilitar {
 
     public Iconos getIcon() {
         return this.icono;
+    }
+
+    public void pasarPuntaje(int puntos){
+        jugador.setPuntaje(puntos);
+    }
+
+    public int PuntajeJugador(){
+        return jugador.getPuntaje();
     }
 
     @Override
