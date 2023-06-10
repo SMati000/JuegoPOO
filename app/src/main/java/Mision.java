@@ -1,14 +1,10 @@
 import java.util.ArrayList;
-import java.util.Random;
-
-import javax.imageio.ImageIO;
-
 import java.awt.*;
 import java.io.IOException;
 
 public class Mision { // pair, destruir, objetografico/interfaces, 
     public enum ESTADO {
-        AIRE, TIERRA, FIN;
+        AIRE, TIERRA, FIN, GANA;
     }
 
     public enum DIFICULTAD {
@@ -27,7 +23,6 @@ public class Mision { // pair, destruir, objetografico/interfaces,
     private final Enemigo[] enemigos;
     private Bonus[] bonus;
     private final Enemigo jefe;
-    private Rectangle r;
     private final int apareceJefe = 30;
 
     private final int tiempo; // en segundos
@@ -48,7 +43,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         bonusCreados = new ArrayList<Bonus>();
         impactos = new ArrayList<Impacto>();
         
-        estado = ESTADO.AIRE;
+        estado = ESTADO.TIERRA;
 
         this.dificultad = builder.dificultad;
 
@@ -324,7 +319,6 @@ public class Mision { // pair, destruir, objetografico/interfaces,
 
 //en este metodo se haria el modificar puntaje
                     if(enemigo.getEnergia() <= 0) {
-                        System.out.println("puntaje que pasa: "+ enemigo.puntajeDado());
                         heroe.pasarPuntaje(enemigo.puntajeDado());
                         enemigosCreados.remove(j);        
                     }
@@ -347,7 +341,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                 balasHeroe.remove(i);
 
                 if(this.jefe.getEnergia() <= 0) {
-                    this.estado = ESTADO.FIN;
+                    this.estado = ESTADO.GANA;
                 }
             }
         }        
@@ -397,6 +391,7 @@ public class Mision { // pair, destruir, objetografico/interfaces,
                             new Point(enemigo.getX()+enemigo.grafico.getWidth()/2, enemigo.getY()+enemigo.grafico.getHeight()/2+5), 
                             Impacto.tipoImpacto.COLISION)
                         );
+                        heroe.pasarPuntaje(enemigo.puntajeDado());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -458,6 +453,10 @@ public class Mision { // pair, destruir, objetografico/interfaces,
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
         // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
     
+
+        Juego juego = Juego1943.getInstance();
+        g.drawString("Score: "+ String.valueOf(heroe.PuntajeJugador()), (juego.getWidth()/2)-5, pos);
+
         if(contadorSegundo == 60) { // pensando siempre en 60 fps
             heroe.modificarEnergia(-0.01);
             

@@ -46,6 +46,10 @@ public class AvionAmigo extends VehiculoMilitar {
         jugador.setPuntaje(puntos);
     }
 
+    public int PuntajeJugador(){
+        return jugador.getPuntaje();
+    }
+
     @Override
     public Municion[][] disparar() {
         return new Municion[][]{arma.disparar()};

@@ -11,7 +11,6 @@ public class Jugador1943 extends Jugador {
     }
 
     public int getPuntaje(){
-        System.out.println("puntaje que paso: "+ puntaje);
         return this.puntaje;
     }
 
