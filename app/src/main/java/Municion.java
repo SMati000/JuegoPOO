@@ -53,7 +53,6 @@ public class Municion extends ObjetoGrafico {
         avanzar();
     }
 
-    private final int gap = grafico.getWidth() + 5;
     @Override
     public void draw(Graphics2D g) {
         if(this.posicion != null) {

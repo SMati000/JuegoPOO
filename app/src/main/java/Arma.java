@@ -156,7 +156,7 @@ public class Arma extends ObjetoGrafico {
                 contadorRafaga = 0;
             }
 
-            if(contadorFrecDisp == this.frecuenciaDisparo) {
+            if(contadorFrecDisp >= this.frecuenciaDisparo) {
                 contadorFrecDisp = 0;
 
                 Point tempPos = new Point(this.posicion.x, this.posicion.y);

@@ -11,7 +11,7 @@ public class AvionEnemigo extends Enemigo {
     public AvionEnemigo(AvionEnemigo enemigo) throws IOException {
         super(enemigo);
         this.resistencia = enemigo.resistencia;
-        this.arma = enemigo.arma;
+        this.arma = new Arma(enemigo.arma);
     }
     
     // public void seguirHorizontalmente() {

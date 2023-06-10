@@ -45,13 +45,8 @@ public class Impacto {
         this.objetivo = objetivo;
     }
 
-    public void reset() {
-        puntero = 0;
-        contador = 0;
-    }
-
-    public void disable() {
-        puntero = tipo.secuencia.length+1;
+    public boolean isEnabled() {
+        return puntero < tipo.secuencia.length;
     }
 
     public void draw(Graphics2D g) {

@@ -15,12 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.entropyinteractive.Keyboard;
+import com.sun.glass.events.KeyEvent;
 
 public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
 
     private ArrayList<Suscriber> suscribers;
     private BufferedImage gameOver;
+    private AtaqueEspecial ataqueEspecial;
     private Mapa mapa;
     private Camara cam;
     private String nombreJugador;
@@ -176,12 +178,15 @@ public class Juego1943 extends Juego implements ActionListener {
                 }
             }
         }
+
+        if(keyboard.isKeyPressed(KeyEvent.VK_Z)) {
+            mision.ataqueEspecial();
+        }
         
         if(mision.getEstado() == Mision.ESTADO.TIERRA && animacionEnCurso < 180) {
             animacion();
         }
 
-  
         cam.avanzar((AvionAmigo)avionAmigo, delta);
         mision.update();
     }
@@ -262,6 +267,10 @@ public class Juego1943 extends Juego implements ActionListener {
         mapa.draw(g);
         
         mision.draw(g, (int)(mapa.getY()-(cam.getY()*2)+60));
+
+        if(ataqueEspecial != null) {
+            ataqueEspecial.draw(g);
+        }
         
         g.translate(-cam.getX(),-cam.getY());
     }

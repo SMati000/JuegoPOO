@@ -31,8 +31,8 @@ public class Mision {
     private int tiempoEnCurso; // en segundos
     private int contadorSegundo = 0; 
 
+    private AtaqueEspecial ataqueEspecial;
     private AvionAmigo[] refuerzos;
-    private final ArrayList<Formacion> formaciones;
     private final ArrayList<Enemigo> enemigosCreados;
     private final ArrayList<Municion> balasEnCurso;
     private final ArrayList<Municion> balasHeroe;
@@ -41,7 +41,6 @@ public class Mision {
 
     private Mision(MisionBuilder builder) {
         refuerzos = new AvionAmigo[2];
-        formaciones = new ArrayList<Formacion>();
         enemigosCreados = new ArrayList<Enemigo>();
         balasEnCurso = new ArrayList<Municion>();
         balasHeroe = new ArrayList<Municion>();
@@ -86,6 +85,10 @@ public class Mision {
         manejarEnemigos();
         manejarImpactos();
 
+        if(ataqueEspecial != null) {
+            manejarAtaqueEspecial();
+        }
+
         if(tiempoEnCurso == tiempo/2) {
             this.estado = ESTADO.TIERRA;
         } if(tiempoEnCurso == 0) {
@@ -94,6 +97,16 @@ public class Mision {
 
         if(tiempoEnCurso <= apareceJefe) {
             // manejarJefe();
+        }
+
+        if(contadorSegundo == 60) { // pensando siempre en 60 fps
+            heroe.modificarEnergia(-0.01);
+            eliminarImpactos();
+            
+            tiempoEnCurso--;
+            contadorSegundo = 0;
+        } else {
+            contadorSegundo++;
         }
     }
  
@@ -204,6 +217,29 @@ public class Mision {
         }
     }
 
+    public void ataqueEspecial() {
+        try {
+            if(this.estado == ESTADO.AIRE) {
+                this.ataqueEspecial = new AtaqueEspecial(AtaqueEspecial.ATAQUE.RAYO);
+                enemigosCreados.removeIf(enemigo -> enemigo.getClass().getName().equals("AvionEnemigo"));
+            } else if(this.estado == ESTADO.TIERRA) {
+                this.ataqueEspecial = new AtaqueEspecial(AtaqueEspecial.ATAQUE.TSUNAMI);
+                enemigosCreados.removeIf(enemigo -> enemigo.getClass().getName().equals("Barco"));
+            }
+            
+            heroe.modificarEnergia(-100/5);
+            
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void manejarAtaqueEspecial() {
+        if(ataqueEspecial != null && !ataqueEspecial.isEnabled()) {
+            this.ataqueEspecial = null;
+        }
+    }
+
     private void manejarRefuerzos() {
         for(int i = 0; i < refuerzos.length; i++) {
             AvionAmigo temp = refuerzos[i];
@@ -244,11 +280,11 @@ public class Mision {
     private void crearEnemigos() {
         int random = (int)(Math.floor(Math.random()*999+1));
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
-        if(enemigosCreados.size() < 10*dificultad.dif && random < factorProb*dificultad.dif+2) {
+        if(enemigosCreados.size() < 10*dificultad.dif && random <= factorProb*dificultad.dif) {
 
-            if(random >= factorProb*dificultad.dif) {
+            if(random == factorProb*dificultad.dif) {
                 try {
-                    crearFormacion((int)(Math.floor(Math.random()*(3)+1)));
+                    crearFormacion(Formacion.getTipo((int)(Math.floor(Math.random()*(3)+1))));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -264,24 +300,21 @@ public class Mision {
         }
     }
 
-    private void crearFormacion(int tipo) throws Exception {
-        Enemigo[] integrantes = new Enemigo[5];
+    private void crearFormacion(Formacion.FORMACIONES tipo) throws Exception {
+        Enemigo[] integrantes = new Enemigo[tipo.tamano];
 
-        Enemigo temp = crearEnemigo();
+        for(int i = 0; i < tipo.tamano; i++) {
+            Enemigo temp = crearEnemigo();
 
-        int i = 0;
-        while(integrantes[4] == null) {
-            temp = crearEnemigo();
-
-            if(temp != null) {
+            if(temp != null && !temp.getClass().getName().equals("Barco")) { // formaciones solo de aviones
                 integrantes[i] = temp;
-                i++;
+                enemigosCreados.add(temp);
+            } else {
+                i--;
             }
         }
 
-        Formacion f = new Formacion(Arrays.copyOf(integrantes, tipo+2), Formacion.getTipo(tipo));
-                
-        this.formaciones.add(f);
+        Formacion.iniciar(integrantes, tipo);
     }
 
     private Enemigo crearEnemigo() {
@@ -302,6 +335,14 @@ public class Mision {
         return e;
     }
 
+    private void eliminarImpactos() {
+        for(int i = 0; i < impactos.size(); i++) {
+            if(!impactos.get(i).isEnabled()) {
+                impactos.remove(i);
+            }
+        }
+    }
+
     private void manejarEnemigos() {
         for(int i = 0; i < enemigosCreados.size(); i++) {
             Enemigo temp = enemigosCreados.get(i);
@@ -315,19 +356,7 @@ public class Mision {
                 continue;
             }
 
-            Municion municiones[][] = temp.disparar();
-
-            if(municiones != null) {
-                for(Municion[] ms : municiones) {
-                    if(ms != null) {
-                        for(Municion m : ms) {
-                            if(m != null) {
-                                balasEnCurso.add(m);
-                            }
-                        }
-                    }
-                }
-            }
+            disparar(temp);
         }
 
         for(int i = 0; i < balasEnCurso.size(); i++) {
@@ -356,17 +385,21 @@ public class Mision {
                 continue;
             }
         }
+    }
 
-        for(int i = 0; i < formaciones.size(); i++) {
-            Formacion temp = formaciones.get(i);
-            
-            if(temp.getPosicion().getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) { 
-                formaciones.remove(i);
-                i--;
-                continue;
+    private void disparar(Enemigo e) {
+        Municion municiones[][] = e.disparar();
+
+        if(municiones != null) {
+            for(Municion[] ms : municiones) {
+                if(ms != null) {
+                    for(Municion m : ms) {
+                        if(m != null) {
+                            balasEnCurso.add(m);
+                        }
+                    }
+                }
             }
-
-            temp.update();
         }
     }
 
@@ -509,7 +542,7 @@ public class Mision {
                 }
             }
         }
-
+        
         for(int i = 0; i < enemigosCreados.size(); i++) {
             Enemigo enemigo = enemigosCreados.get(i);
             Rectangle enemigoR = new Rectangle(enemigo.getPosicion(), new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()));
@@ -533,6 +566,9 @@ public class Mision {
                         anadirImpacto(r, Impacto.tipoImpacto.COLISION);
 
                         refuerzos[j] = null;
+
+                        enemigosCreados.remove(i);
+                        enemigo.modificarEnergia(-100);
                     }
                 }
             }
@@ -566,8 +602,6 @@ public class Mision {
         enemigosCreados.forEach(enemigo -> {
             enemigo.draw(g);
         });
-
-        this.formaciones.forEach(formacion -> formacion.draw(g));
 
         if(tiempoEnCurso <= apareceJefe) {
             jefe.draw(g);
@@ -607,6 +641,10 @@ public class Mision {
             impacto.draw(g);
         });
 
+        if(this.ataqueEspecial != null) {
+            this.ataqueEspecial.draw(g);
+        }
+
         String t = tiempoEnCurso/60 + ":" + tiempoEnCurso%60;
 
         g.setColor(Color.black);
@@ -620,15 +658,6 @@ public class Mision {
         g.drawString("Tiempo restante: " + t, 10, pos);
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
         // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
-    
-        if(contadorSegundo == 60) { // pensando siempre en 60 fps
-            heroe.modificarEnergia(-0.01);
-            
-            tiempoEnCurso--;
-            contadorSegundo = 0;
-        } else {
-            contadorSegundo++;
-        }
     } 
 
     public static class MisionBuilder {
