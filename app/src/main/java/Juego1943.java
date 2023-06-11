@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.entropyinteractive.Keyboard;
-import com.sun.glass.events.KeyEvent;
+
 
 public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
@@ -43,7 +43,6 @@ public class Juego1943 extends Juego implements ActionListener {
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
         
         try {
-            
 
             mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
             mapa.setTransicion("fondo1943Transicion.jpg");
@@ -78,6 +77,8 @@ public class Juego1943 extends Juego implements ActionListener {
             Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
             
             Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
+
+            AvionesRojos avionesRojos = new AvionesRojos(new Point(0, 0));
             
             jefe.setResistencia(100/50);
             
@@ -92,14 +93,14 @@ public class Juego1943 extends Juego implements ActionListener {
                 case 1:
                     enemigos = new Enemigo[]{e1, e2, e3};
 
-                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe, avionesRojos)
                     .setTiempo(60)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .build();
                     break;
                 case 2:
                     enemigos = new Enemigo[]{e1, e2};
-                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe, avionesRojos)
                     .setTiempo(60)
                     .setDificultad(Mision.DIFICULTAD.FACIL)         //cambiar a dificl
                     .build();
@@ -132,23 +133,18 @@ public class Juego1943 extends Juego implements ActionListener {
     @Override 
     public void gameUpdate(double delta) {
 
-
-        //poner if chequeando la tecla de presion, si es estado fin y presiona asignarmision(1)
-        //si es estado gana y presiona asignarmision(2)
-        //si es misionAsignada = 2 llame al terminar juego
         try {
 
             if(mision.getEstado() == Mision.ESTADO.GANA && misionAsignada == 1){
-                
                 fotoFin =  ImageIO.read(getClass().getResource("imagenes/win.png"));
-                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                if(keyboard.isKeyPressed(80)){      //80 es el codigo de VK_P
                     asiganarMision(2);
                 }
             }
 
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 1){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                if(keyboard.isKeyPressed(80)){
                     asiganarMision(1);
                 }
             }
@@ -159,7 +155,6 @@ public class Juego1943 extends Juego implements ActionListener {
                     terminarJuego();
                     terminado = true;
                 }
-                
                 return;
             }
             
@@ -167,6 +162,12 @@ public class Juego1943 extends Juego implements ActionListener {
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
                     asiganarMision(2);
             }
+
+            if(avionAmigo.getEnergia() <= 0 ){
+                fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
+            }
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,9 +228,9 @@ public class Juego1943 extends Juego implements ActionListener {
             }
         }
 
-        if(keyboard.isKeyPressed(KeyEvent.VK_X) && keyboard.isKeyPressed(KeyEvent.VK_Z)) {
+        if(keyboard.isKeyPressed(Configuraciones.disparo) && keyboard.isKeyPressed(Configuraciones.dispEspecial)) {
             ((AvionAmigo)avionAmigo).esquivar();
-        } else if(keyboard.isKeyPressed(KeyEvent.VK_Z) && !((AvionAmigo)avionAmigo).isEsquivando()) {
+        } else if(keyboard.isKeyPressed(Configuraciones.dispEspecial) && !((AvionAmigo)avionAmigo).isEsquivando()) {
             mision.ataqueEspecial();
         }
         
@@ -238,8 +239,14 @@ public class Juego1943 extends Juego implements ActionListener {
         }
 
         cam.avanzar((AvionAmigo)avionAmigo, delta);
-        mision.update();
-
+                     //se añadio en try porque en mision linea 78 se añade throws
+        try {
+            mision.update();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+      
        
         
     }
@@ -306,25 +313,30 @@ public class Juego1943 extends Juego implements ActionListener {
     @Override
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        if(mision.getEstado() == Mision.ESTADO.FIN || mision.getEstado() == Mision.ESTADO.GANA 
-                ||  avionAmigo.getEnergia() <= 0) {
-            g.drawImage(fotoFin, 0, 0, null);
+        g.drawImage(fotoFin, 0, 0, null); 
+        // if(avionAmigo.getEnergia() <= 0) {
+        //     try {
+        //         fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
 
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //     }
 
-            // if(misionAsignada != -1) {
-            //     if(misionAsignada == 1){
-            //        //misionAsignada=2;
-            //         asiganarMision(2);
-            //     }else{
-            //         asiganarMision(-1);
-            //         terminarJuego();
-            //     }
+        //     g.drawImage(fotoFin, 0, 0, null);    
+
+        //     // if(misionAsignada != -1) {
+        //     //     if(misionAsignada == 1){
+        //     //        //misionAsignada=2;
+        //     //         asiganarMision(2);
+        //     //     }else{
+        //     //         asiganarMision(-1);
+        //     //         terminarJuego();
+        //     //     }
                 
-            // }
+        //     // }
 
-            return;
-        }
+        //     return;
+        // }
 
         g.translate(cam.getX(),cam.getY());
     

@@ -164,24 +164,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
       
         this.setJMenuBar(menu);             
         this.setResizable(false);
-      /*   
-        jugar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if(evt.getSource() == jugar){
-                    Juego juego = Juego1943.getInstance();
-                    Thread t = new Thread() {
-                        public void run() {
-        
-                            juego.run(1.0 / 60.0);
-
-                        }
-                    };
-        
-                    t.start();
-                }
-            }
-        });
-       */
+   
         if(Configuraciones.sonidoBD.equals("CHASE")){
             FXPlayer.CHASE.play();
         }
