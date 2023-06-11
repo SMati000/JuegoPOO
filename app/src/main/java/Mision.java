@@ -105,7 +105,7 @@ public class Mision {
         }
 
         if(tiempoEnCurso <= apareceJefe) {
-            // manejarJefe();
+            manejarJefe();
         }
 
         if(contadorSegundo == 60) { // pensando siempre en 60 fps
@@ -122,7 +122,7 @@ public class Mision {
     private void crearBonus(){
         int random = (int)(Math.floor(Math.random()*999+1));
         
-        if(bonusEnPantalla.size() < 1/dificultad.dif && random < 10/dificultad.dif ) {
+        if(bonusEnPantalla.size() < 1 && random < 10/dificultad.dif ) {
             Bonus b = generarBonus();
             
             if(b != null) {
@@ -255,6 +255,10 @@ public class Mision {
             } else if(this.estado == ESTADO.TIERRA) {
                 this.ataqueEspecial = new AtaqueEspecial(AtaqueEspecial.ATAQUE.TSUNAMI);
                 enemigosCreados.removeIf(enemigo -> enemigo.getClass().getName().equals("Barco"));
+
+                if(tiempoEnCurso <= apareceJefe) {
+                    jefe.modificarEnergia(-jefe.getResistencia()*2);
+                }
             }
             
             heroe.modificarEnergia(-100/5);
@@ -312,7 +316,7 @@ public class Mision {
                          // cuanto mas alta la dificultad, mas probabilidades de q se generen enemigos
         if(enemigosCreados.size() < 10*dificultad.dif && random <= factorProb*dificultad.dif) {
 
-            if(random == factorProb*dificultad.dif) {
+            if(random >= factorProb*dificultad.dif+1-dificultad.dif) {
                 try {
                     crearFormacion(Formacion.getTipo((int)(Math.floor(Math.random()*(3)+1))));
                 } catch (Exception e) {
@@ -645,6 +649,10 @@ public class Mision {
 
         if(tiempoEnCurso <= apareceJefe) {
             jefe.draw(g);
+            g.setColor(Color.red);
+            g.drawRect(((Juego1943)Juego1943.getInstance()).getWidth()-225, pos+1, 200, 15);
+            g.fillRect(((Juego1943)Juego1943.getInstance()).getWidth()-225, pos+1, (int)jefe.getEnergia()*2, 15);
+
         }
 
         if(!bonusAsignados.isEmpty()) {

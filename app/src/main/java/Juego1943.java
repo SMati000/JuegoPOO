@@ -71,39 +71,61 @@ public class Juego1943 extends Juego implements ActionListener {
 
         try {
             Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
-            // e1.setGraficosDoblar("avionEnemigo1Izq.png", "avionEnemigo1Der.png");
-    
             Enemigo e2 = new AvionEnemigo("avionEnemigo2.png", new Point(0, 0), avionAmigo.getPosicion());
-            // e2.setGraficosDoblar("avionEnemigo2Izq.png", "avionEnemigo2Der.png");
-    
-            Enemigo e3 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
             
-            Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
+            Enemigo e3 = new AvionEnemigo("avionEnemigo3.png", new Point(0, 0), avionAmigo.getPosicion());
+            e3.arma.seguir(true);
+            e3.arma.setAnguloMaximo(75);
             
-            jefe.setResistencia(100/50);
+            Enemigo e4 = new AvionEnemigo("avionEnemigo4.png", new Point(0, 0), avionAmigo.getPosicion());
+            e4.setResistencia(100/3);
+            e4.arma.setFrecuenciaDisparos(15);
+            e4.arma.setTiros(2, new double[]{0, 0});
             
-            for(Arma a : jefe.getArmas()) {
+            Enemigo e5 = new AvionEnemigo("avionEnemigo5.png", new Point(0, 0), avionAmigo.getPosicion());
+            e4.setResistencia(100/8);
+            e5.arma.setFrecuenciaDisparos(20);
+            e5.arma.setTipoMunicion(Arma.MUNICION.ESCOPETA);
+
+            Enemigo e6 = new Barco("barco1.png", new Point(0, 0), avionAmigo.getPosicion());
+            Enemigo e7 = new Barco("barco2.png", new Point(0, 0), avionAmigo.getPosicion());
+
+            Enemigo jefe1 = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
+            
+            jefe1.setResistencia(100/45);
+            
+            for(Arma a : jefe1.getArmas()) {
+                a.setFrecuenciaDisparos(20);
+                a.setModoDisparo(true);
+                a.setAnguloMaximo(170);
+            }
+            
+            Enemigo jefe2 = new Barco("jefe2.png", new Point(0, 0), avionAmigo.getPosicion());
+            
+            jefe2.setResistencia(100/70);
+            
+            for(Arma a : jefe2.getArmas()) {
                 a.setTiros(2, new double[]{0, 0});
                 a.setAnguloMaximo(170);
             }
 
-
             Enemigo enemigos[];
             switch(misionAsignada) {
                 case 1:
-                    enemigos = new Enemigo[]{e1, e2, e3};
+                    enemigos = new Enemigo[]{e1, e2, e4, e6};
 
-                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
-                    .setTiempo(60*8)
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe1)
+                    .setTiempo(60*3)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .generarBonusSecreto(true)
                     .build();
                     break;
                 case 2:
-                    enemigos = new Enemigo[]{e1, e2};
-                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
-                    .setTiempo(60)
-                    .setDificultad(Mision.DIFICULTAD.FACIL)         //cambiar a dificl
+                    enemigos = new Enemigo[]{e1, e3, e5, e6, e7};
+
+                    mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe2)
+                    .setTiempo(80)
+                    .setDificultad(Mision.DIFICULTAD.DIFICIL)
                     .build();
                     break;
             }
@@ -123,7 +145,7 @@ public class Juego1943 extends Juego implements ActionListener {
         keyboard = this.getKeyboard();
 
         cam.setRegionVisible(800, 600);
-        asiganarMision(1);
+        asiganarMision(2);
     }
 
     @Override
