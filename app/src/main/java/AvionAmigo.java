@@ -93,9 +93,9 @@ public class AvionAmigo extends VehiculoMilitar {
     }
 
     public void modificarEnergia(double deltaE) {
-        if(!esquivando) {
-            super.modificarEnergia(deltaE);
-        }
+        // if(!esquivando) {
+        //     super.modificarEnergia(deltaE);
+        // }
     }
 
     public void setX(int x) {

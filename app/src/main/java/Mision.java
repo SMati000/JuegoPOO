@@ -1,5 +1,6 @@
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.awt.*;
 import java.io.IOException;
 
@@ -30,6 +31,9 @@ public class Mision {
     private int tiempoEnCurso; // en segundos
     private int contadorSegundo = 0; 
 
+    private boolean generarBonusSecreto, bonusSecretoAgarrado;
+    private Rectangle bonusSecreto;
+
     private AtaqueEspecial ataqueEspecial;
     private AvionAmigo[] refuerzos;
     private final ArrayList<Enemigo> enemigosCreados;
@@ -50,6 +54,8 @@ public class Mision {
         estado = ESTADO.AIRE;
 
         this.dificultad = builder.dificultad;
+        this.generarBonusSecreto = builder.generarBonusSecreto;
+        this.bonusSecretoAgarrado = false;
 
         this.heroe = builder.heroe;
         this.enemigos = builder.enemigos;
@@ -88,6 +94,10 @@ public class Mision {
             manejarAtaqueEspecial();
         }
 
+        if(bonusSecreto != null) {
+            manejarBonusSecreto();
+        }
+
         if(tiempoEnCurso == tiempo/2) {
             this.estado = ESTADO.TIERRA;
         } if(tiempoEnCurso == 0) {
@@ -118,6 +128,11 @@ public class Mision {
             if(b != null) {
                 bonusEnPantalla.add(b);
             }
+        }
+        
+        int bs = (int)(Math.floor(Math.random()*5000+1));
+        if(bs == 3121 && bonusSecreto == null && generarBonusSecreto) {
+            crearBonusSecreto();
         }
     }
     
@@ -216,6 +231,22 @@ public class Mision {
         }
     }
 
+    private void crearBonusSecreto() {
+        int x = (int)(Math.floor(Math.random()*(700-100+1)+100));
+        
+        int yMax = (int) ((Juego1943)Juego1943.getInstance()).getViewPort().getY();
+        int yMin = (int) (((Juego1943)Juego1943.getInstance()).getViewPort().getY() + ((Juego1943)Juego1943.getInstance()).getViewPort().getHeight());
+        int y = (int)(Math.floor(Math.random()*(yMax-yMin+1)+yMin));
+
+        bonusSecreto = new Rectangle(x, y, 10, 10);
+    }
+
+    private void manejarBonusSecreto() {
+        if(bonusSecreto.getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) {
+            bonusSecreto = null;
+        }
+    }
+
     public void ataqueEspecial() {
         try {
             if(this.estado == ESTADO.AIRE) {
@@ -227,7 +258,6 @@ public class Mision {
             }
             
             heroe.modificarEnergia(-100/5);
-            
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -327,9 +357,7 @@ public class Mision {
 
         Enemigo e = enemigos[nuevoEnemigo].clone();
 
-        int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
-
-        e.setX(tempX);
+        e.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
         e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
 
         return e;
@@ -579,6 +607,12 @@ public class Mision {
                 }
             }
         }
+
+        if(bonusSecreto != null) {
+            if(avionAmigo.intersects(bonusSecreto)) {
+                this.bonusSecretoAgarrado = true;
+            }
+        }
     }
 
     private void anadirImpacto(Rectangle objetivo, Impacto.tipoImpacto impacto) {
@@ -651,6 +685,23 @@ public class Mision {
             this.ataqueEspecial.draw(g);
         }
 
+        if(this.bonusSecretoAgarrado) {
+            g.setColor(Color.black);
+            g.drawString("Has agarrado el bonus secreto. Felicitaciones!!", heroe.getX()-heroe.grafico.getWidth()/2-50+1, heroe.getY()-heroe.grafico.getHeight()-10+1);
+            
+            g.setColor(Color.white);
+            g.drawString("Has agarrado el bonus secreto. Felicitaciones!!", heroe.getX()-heroe.grafico.getWidth()/2-50, heroe.getY()-heroe.grafico.getHeight()-10);
+
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    Mision.this.estado = ESTADO.GANA;
+                }
+            };
+
+            Timer timer = new Timer();            
+            timer.schedule(task, 3000);
+        }
+
         String t = tiempoEnCurso/60 + ":" + tiempoEnCurso%60;
 
         g.setColor(Color.black);
@@ -658,14 +709,11 @@ public class Mision {
         g.drawRect(11, pos+23, 200, 15);
         g.fillRect(11, pos+23, (int)heroe.getEnergia()*2, 15);
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 11, pos+18);
-        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 11, pos+16);
         
         g.setColor(Color.white);
         g.drawString("Tiempo restante: " + t, 10, pos);
         g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
-        // g.drawString("Energia: " + new String(new char[(int)(heroe.getEnergia()/2)]).replace("\0", "|"), 10, pos+15);
     
-
         Juego juego = Juego1943.getInstance();
         g.drawString("Score: "+ String.valueOf(heroe.PuntajeJugador()), (juego.getWidth()/2)-5, pos);
     } 
@@ -674,9 +722,10 @@ public class Mision {
         private final AvionAmigo heroe;
         private final Enemigo[] enemigos;
         private final Enemigo jefe;
-
+        
         private int tiempo;
         private DIFICULTAD dificultad;
+        private boolean generarBonusSecreto;
 
         public MisionBuilder(AvionAmigo heroe, Enemigo[] enemigos, Enemigo jefe) {
             this.heroe = heroe;
@@ -685,6 +734,7 @@ public class Mision {
             
             this.tiempo = 60*2;
             this.dificultad = DIFICULTAD.FACIL;
+            this.generarBonusSecreto = false;
         }
 
         public MisionBuilder setTiempo(int tiempo) {
@@ -694,6 +744,11 @@ public class Mision {
 
         public MisionBuilder setDificultad(DIFICULTAD dificultad) {
             this.dificultad = dificultad;
+            return this;
+        }
+
+        public MisionBuilder generarBonusSecreto(boolean generarBonusSecreto) {
+            this.generarBonusSecreto = generarBonusSecreto;
             return this;
         }
 

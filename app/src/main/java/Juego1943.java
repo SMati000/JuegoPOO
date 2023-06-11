@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -14,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.entropyinteractive.Keyboard;
-import com.sun.glass.events.KeyEvent;
 
 public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
@@ -32,8 +32,9 @@ public class Juego1943 extends Juego implements ActionListener {
     private int misionAsignada;
     private Mision mision;
     private int animacionEnCurso;
+    private boolean pausa;
 
-    Keyboard keyboard;
+    private Keyboard keyboard;
 
     private Juego1943(){
         super("1943", "Juego 1943");
@@ -44,7 +45,7 @@ public class Juego1943 extends Juego implements ActionListener {
         
         try {
             
-
+            pausa = false;
             mapa = new Mapa("fondo1943Aire.jpg", "fondo1943Tierra.jpg");
             mapa.setTransicion("fondo1943Transicion.jpg");
 
@@ -93,8 +94,9 @@ public class Juego1943 extends Juego implements ActionListener {
                     enemigos = new Enemigo[]{e1, e2, e3};
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe)
-                    .setTiempo(60)
+                    .setTiempo(60*8)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
+                    .generarBonusSecreto(true)
                     .build();
                     break;
                 case 2:
@@ -131,7 +133,18 @@ public class Juego1943 extends Juego implements ActionListener {
     
     @Override 
     public void gameUpdate(double delta) {
+        if(keyboard.isKeyPressed(Configuraciones.pausa)) {
+            pausa = !pausa;
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
+        if(pausa) {
+            return;
+        }
 
         //poner if chequeando la tecla de presion, si es estado fin y presiona asignarmision(1)
         //si es estado gana y presiona asignarmision(2)
@@ -238,10 +251,8 @@ public class Juego1943 extends Juego implements ActionListener {
         }
 
         cam.avanzar((AvionAmigo)avionAmigo, delta);
+        mapa.update();
         mision.update();
-
-       
-        
     }
 
     private void animacion() {

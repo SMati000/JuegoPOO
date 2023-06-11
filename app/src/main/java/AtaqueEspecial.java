@@ -6,11 +6,13 @@ import javax.imageio.ImageIO;
 
 public class AtaqueEspecial {
     public static enum ATAQUE {
-        RAYO(new int[]{1, 2, 3, 4}), TSUNAMI(new int[]{6, 7, 8, 9, 10, 11});
+        RAYO(new int[]{1, 2, 3, 4}, 2), TSUNAMI(new int[]{5, 6, 7, 8, 9, 10}, 4);
 
         private int[] secuencia;
-        private ATAQUE(int[] sec) {
+        private int frames;
+        private ATAQUE(int[] sec, int frames) {
             secuencia = sec;
+            this.frames = frames;
         }
     }
 
@@ -31,14 +33,13 @@ public class AtaqueEspecial {
         animaciones[1] = ImageIO.read(Impacto.class.getResource("imagenes/rayo2.png"));
         animaciones[2] = ImageIO.read(Impacto.class.getResource("imagenes/rayo3.png"));
         animaciones[3] = ImageIO.read(Impacto.class.getResource("imagenes/rayo4.png"));
-        // animaciones[4] = ImageIO.read(Impacto.class.getResource("imagenes/rayo5.png"));
 
-        animaciones[5] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami1.png"));
-        animaciones[6] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami2.png"));
-        animaciones[7] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami3.png"));
+        animaciones[4] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami1.png"));
+        animaciones[5] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami2.png"));
+        animaciones[6] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami3.png"));
+        animaciones[7] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami4.png"));
         animaciones[8] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami4.png"));
-        animaciones[9] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami5.png"));
-        animaciones[10] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami6.png"));
+        animaciones[9] = ImageIO.read(Impacto.class.getResource("imagenes/tsunami4.png"));
     }
 
     public boolean isEnabled() {
@@ -53,7 +54,7 @@ public class AtaqueEspecial {
                 null);
         }
         
-        if(contador == 2) {
+        if(contador == tipo.frames) {
             puntero++;
             contador = 0;
         }

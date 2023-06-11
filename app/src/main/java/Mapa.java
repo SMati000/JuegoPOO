@@ -1,20 +1,48 @@
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 
 public class Mapa extends ObjetoGrafico {
     private BufferedImage aire = null, tierra = null, transicion = null;
-	
+	private String tierraImg, transicionImg;
+	private int contador;
+
+	private TimerTask task;
+	private Timer timer;      
+
     public Mapa(String filenameAire, String filenameTierra) throws IOException {
 		super("mapa", filenameAire, new Point(0, 0));
+		timer = new Timer();  
         aire = ImageIO.read(getClass().getResource("imagenes/" + filenameAire));
 		grafico = aire;
+		contador = 1;
 
-        tierra = ImageIO.read(getClass().getResource("imagenes/" + filenameTierra));
-    }
+		this.tierraImg = filenameTierra;
+        cargarImagen(false);
+    }      
+
+	private void cargarImagen(boolean transicionB) {
+		task = new TimerTask() {
+			public void run() {
+				try {
+					if(transicionB) {
+						transicion =  ImageIO.read(getClass().getResource("imagenes/" + transicionImg));
+					} else {
+						tierra = ImageIO.read(getClass().getResource("imagenes/" + tierraImg));
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		timer.schedule(task, 1000);
+	}
 
 	public int getWidth(){
 		return grafico.getWidth();
@@ -30,11 +58,8 @@ public class Mapa extends ObjetoGrafico {
 	}
 
 	public void setTransicion(String filename) {
-		try {
-			this.transicion =  ImageIO.read(getClass().getResource("imagenes/" + filename));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.transicionImg = filename;
+		cargarImagen(true);
 	}
 
 	// private int contador = 0;
@@ -50,12 +75,22 @@ public class Mapa extends ObjetoGrafico {
 	}
 
     @Override
-    public void update() {}
-
+    public void update() {
+		Rectangle mp = new Rectangle(this.posicion.x-100, this.posicion.y+(-grafico.getHeight()+Juego1943.getInstance().getHeight()+75)*contador, 
+			grafico.getWidth()+200, grafico.getHeight());
+		
+		Rectangle temp = ((Juego1943)Juego1943.getInstance()).getViewPort();
+		Rectangle vp = new Rectangle((int)temp.getX(), (int)temp.getY()-50, (int)temp.getWidth(), (int)temp.getHeight());
+		
+		if(!mp.contains(vp)) {
+			contador++;
+		}
+	}
+	
 	@Override
-   	public void draw(Graphics2D g) {
-			g.drawImage(grafico, this.posicion.x, 
-			this.posicion.y-grafico.getHeight()+Juego1943.getInstance().getHeight()+25, null);
+	public void draw(Graphics2D g) {
+		g.drawImage(grafico, this.posicion.x, 
+			this.posicion.y+(-grafico.getHeight()+Juego1943.getInstance().getHeight()+75)*contador, null);
 	}
 
 	public int getX(){
