@@ -1,16 +1,15 @@
-import java.rmi.server.SocketSecurityException;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class Configuraciones {
     //teclas por defecto
-    static int arriba, abajo, izq, der, disparo, dispEspecial, pausa;
-    static String sonidoBD;
+    public static int arriba, abajo, izq, der, disparo, dispEspecial, pausa;
+    public static String sonidoBD;
 
-    ResultSet rs = null;
-    PreparedStatement pstmt= null;
-    Statement stmt;
-    Connection conn = null;
+    private ResultSet rs = null;
+    private PreparedStatement pstmt= null;
+    private Statement stmt;
+    private Connection conn = null;
     
     private static final String nombre_base = "./app/Teclas.db";
 
@@ -30,9 +29,6 @@ public class Configuraciones {
     }
 
     public void Ranking(String nombre, int score){
-        System.out.println("nombre: "+ nombre);
-        System.out.println("Puntaje " + score);
-
         try{    
             String sql = "Insert into Ranking(Nombre, Score) VALUES (?,?)";
             pstmt = conn.prepareStatement(sql);
@@ -52,8 +48,6 @@ public class Configuraciones {
             }
             
         }
-        
-
     }
 
     public ArrayList<String[]> verRanking(){
@@ -78,9 +72,7 @@ public class Configuraciones {
                 
 
                 rank.add(contenedor);
-
-                //System.out.println("Jugador: " + nombre + " Puntaje: " + score);
-            }
+        }
 
             return rank;
 
@@ -96,12 +88,6 @@ public class Configuraciones {
             return null;
         }
     }
-
-
-
-
-
-
 
     //agregar String que devuelva la letra
     //en este metodo me trae de la base de datos el codigo de la tecla elegida y me setea las por defecto

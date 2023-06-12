@@ -40,14 +40,13 @@ public class Mision {
     private final ArrayList<Impacto> impactos;
 
     private AvionAmigo[] refuerzos;
-    private AtaqueEspecial ataqueEspecial;
+    private AtaqueEspecial ataqueEspecial; // VER
     private AvionRojo[] avionesRojos;
     private int avionesRojosEnProceso;
 
     private Rectangle bonusSecreto;
     private boolean generarBonusSecreto, bonusSecretoAgarrado;
-    
-    
+        
     private Mision(MisionBuilder builder) {
         estado = ESTADO.AIRE;
         this.dificultad = builder.dificultad;
@@ -93,6 +92,10 @@ public class Mision {
         manejarTiempo();
 
         heroe.update();
+
+        if(heroe.getEnergia() <= 0) {
+            this.estado = ESTADO.FIN;
+        }
 
         crearEnemigos();
         crearBonus();
@@ -169,8 +172,66 @@ public class Mision {
 
         Enemigo e = repertorioEnemigos[nuevoEnemigo].clone();
 
-        e.setX((int)(Math.floor(Math.random()*(700-100+1)+100)));
-        e.setY(heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800)));
+        int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
+        int tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));
+
+        Rectangle nuevoEnemigoR = new Rectangle(new Point(tempX, tempY), e.getDimensions());
+
+        // Chequear que no aparezcan enemigos superpuestos
+        int contador = 0;
+        for(int i = 0; i < enemigosCreados.size(); i++) {
+            if(contador == 10) {
+                return null;
+            }
+            
+            Enemigo enemigo = enemigosCreados.get(i);
+            Rectangle enemigoR = new Rectangle(enemigo.getPosicion(), enemigo.getDimensions());
+            
+            if(nuevoEnemigoR.intersects(enemigoR)) {
+                tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
+                tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));                        
+                i--;
+            }
+
+            contador++;
+        }
+
+        if(tiempoEnCurso < apareceJefe) {
+            Rectangle jefeR = new Rectangle(jefe.getPosicion(), jefe.getDimensions());
+            
+            int random = (int)(Math.random()*(2)+1);
+
+            if(random <= 1) {
+                tempX = (int)(Math.floor(Math.random()*(jefeR.getX()-50-100+1)+100));
+            } else {
+                tempX = (int)(Math.floor(Math.random()*(700-(jefeR.getX()+jefeR.getWidth()+50)+1)+(jefeR.getX()+jefeR.getWidth()+50)));
+            }
+
+            tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));
+        }
+
+        contador = 0;
+        if(avionesRojosEnProceso > 0) {
+            for(int i = 0; i < avionesRojos.length; i++) {
+                if(avionesRojos[i] != null) {
+                    if(contador == 10) {
+                        return null;
+                    }
+
+                    Rectangle avionRojoR = new Rectangle(avionesRojos[i].getPosicion(), avionesRojos[i].getDimensions());
+
+                    if(nuevoEnemigoR.intersects(avionRojoR)) {
+                        tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
+                        tempY = heroe.getY()-(int)(Math.floor(Math.random()*(1300-800+1)+800));                        
+                    }
+                }
+                
+                contador++;
+            }         
+        }
+
+        e.setX(tempX);
+        e.setY(tempY);
 
         return e;
     }
@@ -178,7 +239,12 @@ public class Mision {
     private void crearFormacion(Formacion.FORMACIONES tipo) throws Exception {
         Enemigo[] integrantes = new Enemigo[tipo.tamano];
 
+        int contador = 0;
         for(int i = 0; i < tipo.tamano; i++) {
+            if(contador == 10) {
+                return;
+            }
+            
             Enemigo temp = crearEnemigo();
 
             if(temp != null && !temp.getClass().getName().equals("Barco")) { // formaciones solo de aviones
@@ -187,6 +253,8 @@ public class Mision {
             } else {
                 i--;
             }
+
+            contador++;
         }
 
         Formacion.iniciar(integrantes, tipo);

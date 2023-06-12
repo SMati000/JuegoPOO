@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 public class Impacto {
     public static enum tipoImpacto {
         DISPARO(new int[]{1, 2, 3, 4}), COLISION(new int[]{5, 6, 7, 8});
-
+        
         private int[] secuencia;
         private tipoImpacto(int[] sec) {
             secuencia = sec;

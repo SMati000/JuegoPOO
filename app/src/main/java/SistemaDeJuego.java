@@ -239,7 +239,7 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
                     juego.run(1.0 / 60.0);
                 }
             };
-            
+
             t.start();
         }
 

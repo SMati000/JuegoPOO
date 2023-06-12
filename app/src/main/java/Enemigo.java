@@ -53,7 +53,7 @@ public abstract class Enemigo extends VehiculoMilitar {
         this.velocidad = velocidad < 10 ? velocidad : 10;
     }
 
-    public void avanzar() {
+    protected void avanzar() {
         posicion.y += velocidad;
     }
 

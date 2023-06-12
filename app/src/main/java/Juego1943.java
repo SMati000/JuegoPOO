@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.annotation.processing.SupportedOptions;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -79,9 +80,13 @@ public class Juego1943 extends Juego implements ActionListener {
     private void asignarMision(int misionAsignada){
         this.misionAsignada = misionAsignada;
 
-        try {
-            avionAmigo = new AvionAmigo(AvionAmigo.SPRITES.getSprite(spriteAvionAmigoElegido), new Point(400, 300));
+        avionAmigo.setX(400);
+        avionAmigo.setY(300);
 
+        cam.setX(0);
+        cam.setY(0);
+
+        try {
             Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
             Enemigo e2 = new AvionEnemigo("avionEnemigo2.png", new Point(0, 0), avionAmigo.getPosicion());
             
@@ -128,7 +133,7 @@ public class Juego1943 extends Juego implements ActionListener {
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe1)
                     .setNombre("Mision 1")
-                    .setTiempo(80)
+                    .setTiempo(60*2)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .generarBonusSecreto(true)
                     .build();
@@ -143,8 +148,6 @@ public class Juego1943 extends Juego implements ActionListener {
                     .build();
                     break;
             }
-           
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,6 +158,12 @@ public class Juego1943 extends Juego implements ActionListener {
         keyboard = this.getKeyboard();
 
         cam.setRegionVisible(800, 600);
+
+        try {
+            avionAmigo = new AvionAmigo(AvionAmigo.SPRITES.getSprite(spriteAvionAmigoElegido), new Point(400, 300));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         asignarMision(1);
     }
@@ -194,7 +203,8 @@ public class Juego1943 extends Juego implements ActionListener {
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 1){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
                 if(keyboard.isKeyPressed(80)){
-                    asignarMision(1);
+                    gameStartup();
+                    // asignarMision(1);
                 }
             }
 
@@ -209,15 +219,8 @@ public class Juego1943 extends Juego implements ActionListener {
             
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 2){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-                    asignarMision(2);
+                asignarMision(2);
             }
-
-            if(avionAmigo.getEnergia() <= 0 ){
-                fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-            }
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }  
@@ -356,31 +359,6 @@ public class Juego1943 extends Juego implements ActionListener {
     @Override
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.drawImage(fotoFin, 0, 0, null); 
-
-        // if(avionAmigo.getEnergia() <= 0) {
-        //     try {
-        //         fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-
-        //     } catch (IOException e) {
-        //         e.printStackTrace();
-        //     }
-
-        //     g.drawImage(fotoFin, 0, 0, null);    
-
-        //     // if(misionAsignada != -1) {
-        //     //     if(misionAsignada == 1){
-        //     //        //misionAsignada=2;
-        //     //         asiganarMision(2);
-        //     //     }else{
-        //     //         asiganarMision(-1);
-        //     //         terminarJuego();
-        //     //     }
-                
-        //     // }
-
-        //     return;
-        // }
 
         g.translate(cam.getX(),cam.getY());
     
