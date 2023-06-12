@@ -107,7 +107,7 @@ public class Juego1943 extends Juego implements ActionListener {
             jefe1.setResistencia(100/45);
             
             for(Arma a : jefe1.getArmas()) {
-                a.setFrecuenciaDisparos(20);
+                a.setFrecuenciaDisparos(12);
                 a.setModoDisparo(true);
                 a.setAnguloMaximo(170);
             }
@@ -127,7 +127,8 @@ public class Juego1943 extends Juego implements ActionListener {
                     enemigos = new Enemigo[]{e1, e2, e4, e6};
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe1)
-                    .setTiempo(60*3)
+                    .setNombre("Mision 1")
+                    .setTiempo(80)
                     .setDificultad(Mision.DIFICULTAD.FACIL)
                     .generarBonusSecreto(true)
                     .build();
@@ -136,7 +137,8 @@ public class Juego1943 extends Juego implements ActionListener {
                     enemigos = new Enemigo[]{e1, e3, e5, e6, e7};
 
                     mision = new Mision.MisionBuilder((AvionAmigo)avionAmigo, enemigos, jefe2)
-                    .setTiempo(80)
+                    .setNombre("Mision 2")
+                    .setTiempo(60*5)
                     .setDificultad(Mision.DIFICULTAD.DIFICIL)
                     .build();
                     break;
@@ -346,6 +348,8 @@ public class Juego1943 extends Juego implements ActionListener {
         frameTerminado.setVisible(true);
         frameTerminado.setResizable(false);
         frameTerminado.pack();
+
+        frameTerminado.requestFocus();
     }
     
    

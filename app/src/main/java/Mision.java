@@ -24,6 +24,7 @@ public class Mision {
     private final Enemigo jefe;
     private final AvionAmigo heroe;
 
+    private final String nombre;
     private final int tiempoTotal; // en segundos
     private int tiempoEnCurso; // en segundos
     private final int factorProb = 10; // de que se generen enemigos, bonus, etc.
@@ -53,7 +54,8 @@ public class Mision {
         this.repertorioEnemigos = builder.enemigos;
         this.jefe = builder.jefe;
         this.heroe = builder.heroe;
-
+        
+        this.nombre = builder.nombre;
         this.tiempoTotal = builder.tiempo;
         this.tiempoEnCurso = this.tiempoTotal;
 
@@ -423,10 +425,10 @@ public class Mision {
             } else if(this.estado == ESTADO.TIERRA) {
                 this.ataqueEspecial = new AtaqueEspecial(AtaqueEspecial.ATAQUE.TSUNAMI);
                 enemigosCreados.removeIf(enemigo -> enemigo.getClass().getName().equals("Barco"));
+            }
 
-                if(tiempoEnCurso <= apareceJefe) {
-                    jefe.modificarEnergia(-jefe.getResistencia()*2);
-                }
+            if(tiempoEnCurso <= apareceJefe) {
+                jefe.modificarEnergia(-jefe.getResistencia()*2);
             }
             
             heroe.modificarEnergia(-100/5);
@@ -786,10 +788,10 @@ public class Mision {
         
         if(!bonusAsignados.isEmpty()) {
             g.setColor(Color.black);
-            g.drawString("Bonos Activos:", 11, pos+60);
+            g.drawString("Bonus Activos:", 11, pos+73);
 
             g.setColor(Color.white);
-            g.drawString("Bonos Activos:", 10, pos+59);
+            g.drawString("Bonus Activos:", 10, pos+72);
         }
         
         for(int i = 0; i < bonusAsignados.size(); i++) {
@@ -798,14 +800,13 @@ public class Mision {
             bonus.draw(g);
             
             g.setColor(Color.black);
-            g.drawString("    " + bonus.toString(), 11, pos+60+17*(i+1));
+            g.drawString("    " + bonus.toString(), 11, pos+73+17*(i+1));
             
             g.setColor(Color.white);
-            g.drawString("    " + bonus.toString(), 10, pos+59+17*(i+1));
+            g.drawString("    " + bonus.toString(), 10, pos+72+17*(i+1));
         }
         
         heroe.draw(g);
-
         
         balasEnCurso.forEach(bala -> {
             bala.draw(g);
@@ -843,20 +844,29 @@ public class Mision {
         String t = tiempoEnCurso/60 + ":" + tiempoEnCurso%60;
 
         g.setColor(Color.black);
-        g.drawString("Tiempo restante: " + t, 11, pos+1);
-        g.drawRect(11, pos+23, 200, 15);
-        g.fillRect(11, pos+23, (int)heroe.getEnergia()*2, 15);
-        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 11, pos+18);
+        g.drawString(this.nombre, 11, pos+1);
+
+        g.drawString("Tiempo restante: " + t, 11, pos+18);
+
+        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 11, pos+35);
+
+        g.drawRect(11, pos+40, 200, 15);
+        g.fillRect(11, pos+40, (int)heroe.getEnergia()*2, 15);
+        
+        g.drawString("Score: " + String.valueOf(heroe.PuntajeJugador()), (Juego1943.getInstance().getWidth()/2)-4, pos+1);
         
         g.setColor(Color.white);
-        g.drawString("Tiempo restante: " + t, 10, pos);
-        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+17);
+        g.drawString(this.nombre, 10, pos);
+
+        g.drawString("Tiempo restante: " + t, 10, pos+17);
+
+        g.drawString("Energia: " + String.format("%.2f", Math.floor(heroe.getEnergia())), 10, pos+34);
     
-        Juego juego = Juego1943.getInstance();
-        g.drawString("Score: "+ String.valueOf(heroe.PuntajeJugador()), (juego.getWidth()/2)-5, pos);
+        g.drawString("Score: " + String.valueOf(heroe.PuntajeJugador()), (Juego1943.getInstance().getWidth()/2)-5, pos);
     } 
 
     public static class MisionBuilder {
+        private String nombre;
         private final AvionAmigo heroe;
         private final Enemigo[] enemigos;
         private final Enemigo jefe;
@@ -870,9 +880,15 @@ public class Mision {
             this.enemigos = enemigos;
             this.jefe = jefe;
             
+            this.nombre = "Mision";
             this.tiempo = 60*2;
             this.dificultad = DIFICULTAD.FACIL;
             this.generarBonusSecreto = false;
+        }
+
+        public MisionBuilder setNombre(String nombre) {
+            this.nombre = nombre;
+            return this;
         }
 
         public MisionBuilder setTiempo(int tiempo) {
