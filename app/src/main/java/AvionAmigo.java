@@ -2,7 +2,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 public class AvionAmigo extends VehiculoMilitar {
@@ -28,11 +27,11 @@ public class AvionAmigo extends VehiculoMilitar {
     }
 
     public static enum Iconos { // agregar sprites de la 2da opcion
-        COMUN(new String[]{"avionAmigo.png", ""}),
-        IZQ(new String[]{"avionAmigoIzq.png", ""}), 
-        DER(new String[]{"avionAmigoDer.png", ""}),
-        BAJANDO1(new String[]{"avionAmigoBajando1.png", ""}), 
-        BAJANDO2(new String[]{"avionAmigoBajando2.png", ""});
+        COMUN(new String[]{"avionAmigo.png", "avionAmigo2.png"}),
+        IZQ(new String[]{"avionAmigoIzq.png", "avionAmigoIzq2.png"}), 
+        DER(new String[]{"avionAmigoDer.png", "avionAmigoDer2.png"}),
+        BAJANDO1(new String[]{"avionAmigoBajando1.png", "avionAmigo2Bajando1.png"}), 
+        BAJANDO2(new String[]{"avionAmigoBajando2.png", "avionAmigo2Bajando2.png"});
 
         private final String[] filenames;
         private Iconos(String[] filenames) {

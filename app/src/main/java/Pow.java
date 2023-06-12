@@ -1,4 +1,3 @@
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.IOException;
 
@@ -8,10 +7,6 @@ public class Pow extends PowerUp {
         super("Pow", "pow.png", posicion);
     }
 
-    public Pow(String filename, Point posicion) throws IOException {
-        super("Pow", filename, posicion);
-    }
-      
     public Pow(Pow bonus) throws IOException {
         super(bonus);
     }

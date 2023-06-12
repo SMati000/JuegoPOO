@@ -9,10 +9,6 @@ public class Refuerzos extends Bonus {
         super("Refuerzos", "refuerzo.png", posicion);
     }
 
-    public Refuerzos(String filename, Point posicion) throws IOException {
-        super("Refuerzos", filename, posicion);
-    }
-    
     public Refuerzos(Refuerzos bonus) throws IOException {
         super("Refuerzos", "refuerzo.png", new Point(0,0));
     }

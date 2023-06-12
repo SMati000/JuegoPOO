@@ -17,10 +17,9 @@ class SistemaDeJuego extends JFrame {
         this.setPreferredSize(new Dimension(450, 550));
         this.setResizable(false);
         this.pack();
-
         fondo.setLayout(new GridBagLayout());
         fondo.setPreferredSize(new Dimension(450, 550));
-        fondo.setIcon(new ImageIcon(getClass().getResource("/imagenes/fondoPueba2.png")));
+        fondo.setIcon(new ImageIcon(getClass().getResource("/imagenes/fondo.png")));
         this.add(fondo);
         this.setComponentZOrder(fondo, 0);
         mostrarCatalogo();
@@ -65,8 +64,6 @@ class SistemaDeJuego extends JFrame {
         
         
         fondo.add(img1943, c);
-        //   c.ipadx = 120;
-        // c.ipady = 180;
         String imgs[] = {"/imagenes/counter.png", "/imagenes/pes.png", "/imagenes/mario.png"};
         for(int j = 0; j <= 1; j++) {
             for(int i = j == 0 ? 2 : 1; i <= 2; i++) {
@@ -115,7 +112,8 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     Configuraciones conf;
     JButton jugar, ranking;
     JComboBox<String> personaje;
-    
+    String sonidoActivo;
+
 
     public FrameJuego(){
         try {
@@ -144,11 +142,10 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
 
 
         menu1 = new JMenu("Configuraciones");
-        menu2 = new JMenu("Ver");
+       
         
         menu.add(menu1); 
-        menu.add(menu2); 
-
+        
         //item dentro de configuraciones
         item1 = new JMenuItem("Teclado");
         item1.addActionListener(this);
@@ -158,25 +155,28 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         item2.addActionListener(this);
         menu1.add(item2);
 
-        item3 = new JMenuItem("Avion");     
-        item3.addActionListener(this);    
-        menu1.add(item3);
 
-      
         this.setJMenuBar(menu);             
         this.setResizable(false);
    
         if(Configuraciones.sonidoBD.equals("CHASE")){
             FXPlayer.CHASE.play();
+            sonidoActivo = "CHASE";
         }
         if(Configuraciones.sonidoBD.equals("ROBO_COP")){
             FXPlayer.ROBO_COP.play();
+            sonidoActivo = "ROBO_COP";
+
         } 
         if(Configuraciones.sonidoBD.equals("DRAMATIC")){
             FXPlayer.DRAMATIC.play();
+            sonidoActivo = "DRAMATIC";
+
         } 
         if(Configuraciones.sonidoBD.equals("FIGHT")){
             FXPlayer.FIGHT.play();
+            sonidoActivo = "FIGHT";
+
         } 
 
        
@@ -198,7 +198,6 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         int puntos = jugador.getPuntaje(); 
         conf.Ranking(nombre, puntos);
 
-        //aca va se llama el ranking de conf
     }
 
     private JPanel setScreen1(){
@@ -440,16 +439,25 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
             activo.setState(true);
             activo.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    if(activo.getState()){
-                        FXPlayer.volume = FXPlayer.Volume.MUTE; 
-                       // FXPlayer.CHASE.stop();
+                    activo.setState(false);
+                    if(!activo.getState()){
+                       // FXPlayer.volume = FXPlayer.Volume.MUTE; 
+                        if(sonidoActivo.equals("CHASE")){
+                            FXPlayer.CHASE.stop();
+                        }
+                        if(sonidoActivo.equals("ROBO_COP")){
+                            FXPlayer.ROBO_COP.stop();
+                        }
+                        if(sonidoActivo.equals("DRAMATIC")){
+                            FXPlayer.DRAMATIC.stop();
+                        }
+                        if(sonidoActivo.equals("FIGHT")){
+                            FXPlayer.FIGHT.stop();
+                        }
                     }
                 }
             });
 
-            //checkbox para sonidos de tiros, efectos especiales, etc.
-            Checkbox efectos = new Checkbox("Efectos");
-            efectos.setState(true);
            
             JButton defecto = new JButton("Defecto");    
             
@@ -463,7 +471,6 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
             framConfSonido.add(sonidos);
             framConfSonido.add(defecto);
             framConfSonido.add(activo);
-            framConfSonido.add(efectos);
 
             framConfSonido.setVisible(true);
             framConfSonido.pack();
@@ -477,11 +484,6 @@ class JPanelBackgroundSemiOpaco extends JPanel{
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
-        // g2d.setComposite(AlphaComposite.getInstance(
-        //     AlphaComposite.SRC_OVER, 0.50f));
-       // g2d.setColor(Color.black);
-        // g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10); 
-     
+            RenderingHints.VALUE_ANTIALIAS_ON);     
 	}
 }

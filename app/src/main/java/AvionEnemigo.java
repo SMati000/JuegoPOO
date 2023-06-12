@@ -40,29 +40,5 @@ public class AvionEnemigo extends Enemigo {
         return 100;
     }
     
-    // @Override
-    // public void update() {
-    //     this.avanzar();
-    //     arma.update();
-
-    //     if(this.objetivoEnRadar()) {
-    //         this.setVelocidad(2);
-        
-    //         // this.seguirHorizontalmente();
-    //     }
-    // }
     
-    // public void draw(Graphics2D g) {
-    //     g.drawImage(grafico, posicion.x, posicion.y, null);
-    //     arma.draw(g);
-        
-    //     // if(objetivo != null) {
-    //     //     municion.avanzar(g, objetivo);
-    //     // }
-        
-    //     // if(municion.impacto()) {
-    //     //     disparo.setObjetivo(objetivo);
-    //     //     disparo.draw(g);
-    //     // }
-    // }
 }

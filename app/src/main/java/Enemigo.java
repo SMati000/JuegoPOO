@@ -6,13 +6,11 @@ import java.io.IOException;
 public abstract class Enemigo extends VehiculoMilitar {
     protected int velocidad, rangoDeteccion;
 
-    // protected BufferedImage comun, izq, der;
 
     protected Point objetivo;
 
     public Enemigo(String grafico, Point posicion, Point objetivo) throws IOException {
         super("enemigo", grafico, posicion);
-        // this.comun = ImageIO.read(Enemigo.class.getResource("imagenes/" + grafico));
 
         this.objetivo = objetivo;
         this.velocidad = 2;
@@ -24,7 +22,7 @@ public abstract class Enemigo extends VehiculoMilitar {
 
     //puntaje que se da por destruir
     public int puntajeDado(){
-        return 0; //no se si va el 0, lo puse porque despues se sobreescribe
+        return 0; 
     }
 
 
@@ -40,14 +38,7 @@ public abstract class Enemigo extends VehiculoMilitar {
         arma.setObjetivo(enemigo.objetivo);
     }
 
-    // public void setGraficosDoblar(String izq, String der) {
-    //     try {
-    //         this.izq = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + izq));
-    //         this.der = ImageIO.read(VehiculoMilitar.class.getResource("imagenes/" + der));
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+   
 
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad < 10 ? velocidad : 10;

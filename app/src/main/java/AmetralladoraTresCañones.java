@@ -5,13 +5,9 @@ public class AmetralladoraTresCañones extends ArmadeFuego {
     AvionAmigo avion;
 
     public AmetralladoraTresCañones(Point posicion) throws IOException {
-        super("Ametralladora 3 caños", "pow.png", posicion);
+        super("Ametralladora 3 caños", "ametralladora.png", posicion);
     }
-   
-    public AmetralladoraTresCañones(String filename, Point posicion) throws IOException {
-        super("Ametralladora 3 caños", filename, posicion);
-    }
-    
+
     public AmetralladoraTresCañones(AmetralladoraTresCañones bonus) throws IOException {
         super(bonus);
     }
