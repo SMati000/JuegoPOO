@@ -3,7 +3,7 @@ import java.awt.Point;
 import java.io.IOException;
 
 public abstract class Bonus extends ObjetoGrafico {
-    protected int tiempo; // tiempo en segundosque dura en en el avion
+    protected int tiempo; // tiempo en segundos que dura en en el avion
     protected double vidaBonus, resistenciaBonus;
     
     public Bonus(String nombre, String grafico, Point posicion) throws IOException {
@@ -17,7 +17,6 @@ public abstract class Bonus extends ObjetoGrafico {
     
     public void modificarVida(double deltaE){
         if((vidaBonus + deltaE) > 0){
-            //System.out.println("entra if");
             vidaBonus +=  deltaE;
         }else { 
             vidaBonus = 0;

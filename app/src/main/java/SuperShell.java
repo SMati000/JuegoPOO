@@ -8,10 +8,6 @@ public class SuperShell extends PowerUp {
         super("Super Shell", "superShell.png", posicion);   
     }
 
-    public SuperShell(String filename, Point posicion) throws IOException {
-        super("Super Shell", filename, posicion);
-    }
-
     public SuperShell(SuperShell bonus) throws IOException {
         super(bonus);
     }

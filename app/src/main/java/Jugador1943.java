@@ -14,8 +14,4 @@ public class Jugador1943 extends Jugador {
         return this.puntaje;
     }
 
-    //este constructor no se si iria
-    // public Jugador1943(String nombre) {
-    //     super(nombre);
-    // }
 }

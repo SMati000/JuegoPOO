@@ -26,7 +26,6 @@ public class Arma extends ObjetoGrafico {
     private boolean seguir, rafaga;
     private double anguloMax;
     private double angulo; // angulo de cada tiro
-    
     private int cantTiros;
     private double[] angulos; // angulo del arma
     

@@ -5,13 +5,9 @@ public class Escopeta extends ArmadeFuego {
     AvionAmigo avion;
 
     public Escopeta(Point posicion) throws IOException {
-        super("Escopeta", "pow.png", posicion);
+        super("Escopeta", "escopeta.png", posicion);         
     }
-
-    public Escopeta(String filename, Point posicion) throws IOException {
-        super("Escopeta", filename, posicion);
-    }
-       
+     
     public Escopeta(Escopeta bonus) throws IOException {
         super(bonus);
     }

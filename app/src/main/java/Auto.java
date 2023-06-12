@@ -8,10 +8,6 @@ public class Auto extends PowerUp {
         super("Auto", "auto.png", posicion);
     }
 
-    public Auto(String filename, Point posicion) throws IOException {
-        super("Auto", filename, posicion);
-    }
-
     public Auto(Auto bonus) throws IOException {
         super(bonus);
     }

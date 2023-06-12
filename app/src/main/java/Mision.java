@@ -28,7 +28,7 @@ public class Mision {
     private final int tiempoTotal; // en segundos
     private int tiempoEnCurso; // en segundos
     private final int factorProb = 10; // de que se generen enemigos, bonus, etc.
-    private final int apareceJefe = 60; // faltando este tiempo aparecera el jefe
+    private final int apareceJefe; // faltando este tiempo aparecera el jefe
     
     private Bonus[] bonus;
     private int contadorSegundo = 0; // cuenta los frames como referencia del tiempo 
@@ -68,20 +68,21 @@ public class Mision {
         refuerzos = new AvionAmigo[2];
         avionesRojos = new AvionRojo[3];
         avionesRojosEnProceso = 0;
-        
+        apareceJefe = tiempoTotal/2-20;
+
         this.generarBonusSecreto = builder.generarBonusSecreto;
         this.bonusSecretoAgarrado = false;
 
         try{
             bonus = new Bonus[]{
-                new Pow("pow.png", new Point(0, 0)),
-                new Auto("auto.png", new Point(0, 0)),
-                new EstrellaNinja("estrellaNinja.png", new Point(0, 0)),
-                new SuperShell("SuperShell.png", new Point(0, 0)),
-                new Refuerzos( "refuerzo.png", new Point(0, 0)),
-                new AmetralladoraTresCañones( "ametralladora.png", new Point(0, 0)),
-                new Laser( "laser.png", new Point(0, 0)),
-                new Escopeta( "escopeta.png", new Point(0, 0)),
+                new Pow(new Point(0, 0)),
+                new Auto(new Point(0, 0)),
+                new EstrellaNinja(new Point(0, 0)),
+                new SuperShell(new Point(0, 0)),
+                new Refuerzos(new Point(0, 0)),
+                new AmetralladoraTresCañones(new Point(0, 0)),
+                new Laser(new Point(0, 0)),
+                new Escopeta(new Point(0, 0)),
             };
         }catch(IOException e){
             System.out.println("Error al crear el bonus");
@@ -106,6 +107,10 @@ public class Mision {
         manejarAvionesRojos();
 
         manejarImpactos();
+
+        if(heroe.getEnergia() <= 0){
+            this.estado = Mision.ESTADO.FIN;
+        }
 
         if(ataqueEspecial != null) {
             manejarAtaqueEspecial();

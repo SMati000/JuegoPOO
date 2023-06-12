@@ -28,5 +28,4 @@ abstract public class Juego extends JGame {
         }
     }
    
-    // Los metodos iniciar, finalizar, actualizar y dibujar los provee la superclase JGame.
 }

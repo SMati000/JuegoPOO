@@ -5,11 +5,7 @@ public class Laser extends ArmadeFuego {
     AvionAmigo avion;
 
     public Laser(Point posicion) throws IOException {
-        super("Laser", "pow.png", posicion);
-    }
-
-    public Laser(String filename, Point posicion) throws IOException {
-        super("Laser", filename, posicion);
+        super("Laser", "laser.png", posicion);
     }
 
     public Laser(Laser bonus) throws IOException {

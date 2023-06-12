@@ -6,10 +6,7 @@ public class EstrellaNinja extends PowerUp {
         super("Estrella Ninja", "estrellaNinja.png", posicion);
     }
 
-    public EstrellaNinja(String filename, Point posicion) throws IOException {
-        super("Estrella Ninja", filename, posicion);
-    }
-
+ 
     public EstrellaNinja(EstrellaNinja bonus) throws IOException {
         super(bonus);
     }
