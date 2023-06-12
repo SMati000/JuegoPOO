@@ -78,7 +78,7 @@ public class Juego1943 extends Juego implements ActionListener {
             
             Enemigo jefe = new Barco("jefe1.png", new Point(0, 0), avionAmigo.getPosicion());
 
-            AvionesRojos avionesRojos = new AvionesRojos(new Point(0, 0));
+            AvionRojo avionesRojos = new AvionRojo(new Point(0, 0));
             
             jefe.setResistencia(100/50);
             

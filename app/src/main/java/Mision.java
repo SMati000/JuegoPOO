@@ -18,17 +18,16 @@ public class Mision {
     private ESTADO estado;
     private final int factorProb = 10; 
     private final DIFICULTAD dificultad;
-    private AvionesRojos avionRojo;     //tener en cuenta en el diagrama
+    // private AvionesRojos avionRojo;     //tener en cuenta en el diagrama
     private final AvionAmigo heroe;
     private final Enemigo[] enemigos;
     private Bonus[] bonus;
     private final Enemigo jefe;
     private final int apareceJefe = 30;
-    int cont = 0;
     private final int tiempo; // en segundos
     private int tiempoEnCurso; // en segundos
     private int contadorSegundo = 0; 
-
+    
     private AtaqueEspecial ataqueEspecial;
     private AvionAmigo[] refuerzos;
     private final ArrayList<Enemigo> enemigosCreados;
@@ -36,17 +35,23 @@ public class Mision {
     private final ArrayList<Municion> balasHeroe;
     private final ArrayList<Bonus> bonusEnPantalla, bonusAsignados; 
     private final ArrayList<Impacto> impactos;
-    private AvionesRojos[] avionesRojos;
-
-    private Mision(MisionBuilder builder){      //throws añadido por aviones rojos
-        refuerzos = new AvionAmigo[2];
+    
+    private AvionRojo[] avionesRojos;
+    private int avionesRojosEnProceso;
+    
+    private Mision(MisionBuilder builder) {
         enemigosCreados = new ArrayList<Enemigo>();
         balasEnCurso = new ArrayList<Municion>();
         balasHeroe = new ArrayList<Municion>();
         bonusEnPantalla = new ArrayList<Bonus>();
         bonusAsignados = new ArrayList<Bonus>();
         impactos = new ArrayList<Impacto>();
-        
+
+        refuerzos = new AvionAmigo[2];
+
+        avionesRojos = new AvionRojo[3];
+        avionesRojosEnProceso = 0;
+
         estado = ESTADO.AIRE;
         
         this.dificultad = builder.dificultad;
@@ -54,17 +59,12 @@ public class Mision {
         this.heroe = builder.heroe;
         this.enemigos = builder.enemigos;
         this.jefe = builder.jefe;
-        this.avionRojo = builder.avionRojo;
+        // this.avionRojo = builder.avionRojo;
         this.tiempo = builder.tiempo;
         this.tiempoEnCurso = this.tiempo;
         
         try{
             Juego juego = Juego1943.getInstance();
-          // avionRojo= new AvionesRojos(new Point((juego.getWidth()/2)-5, heroe.getY()-500));       //ver tema posiciones
-            avionesRojos = new AvionesRojos[]{
-                new AvionesRojos(new Point((juego.getWidth()/2)-5, heroe.getY()-500)),
-                new AvionesRojos(new Point((juego.getWidth()/2)-5, heroe.getY()-500)),
-                new AvionesRojos(new Point((juego.getWidth()/2)-5, heroe.getY()-500))};
 
             bonus = new Bonus[]{
                 new Pow("pow.png", new Point(0, 0)),
@@ -84,12 +84,12 @@ public class Mision {
 
     public void update() throws IOException {       //no se porque seme pide añadir el throws
         heroe.update();
-        crearAvionRojo();        
+        crearAvionesRojos();        
         crearEnemigos();
         crearBonus();
 
 
-        manejarAvionesEspeciales();
+        manejarAvionesRojos();
         manejarBonus(); 
         manejarEnemigos();
         manejarImpactos();
@@ -131,36 +131,6 @@ public class Mision {
             }
         }
     }
-    
-
-    private void manejarAvionesEspeciales(){
-        for (int i = 0; i < avionesRojos.length; i++) {
-            if(avionesRojos.length >= 3){
-                Formacion.iniciar(avionesRojos,Formacion.FORMACIONES.SIMPLE);
-            }
-            if(avionesRojos[i] != null){
-                avionesRojos[i].update();
-            }
-        }
-    }
-
-    private void crearAvionRojo() throws IOException{
-        double num = Math.random();
-        int random = (int)(num*300+1);
-        int tempX= (int)(Math.floor(Math.random()*(700-100+1)+100));
-        if(random == 1){                                         //ver i se puede cambiar o si esta bien
-            //Juego juego = Juego1943.getInstance();
-            avionesRojos = new AvionesRojos[]{
-                new AvionesRojos(new Point(tempX, heroe.getY()-500)),
-                new AvionesRojos(new Point(tempX, heroe.getY()-500)),
-                new AvionesRojos(new Point(tempX, heroe.getY()-500))};
-           
-           System.out.println("se crea avion rojo");
-        }
-       
-    }
-
-   
 
     private void reemplazarBonus(Bonus bn) {
         Bonus b = generarBonus();
@@ -255,6 +225,54 @@ public class Mision {
         if(bonus.getClass().getName().equals("Refuerzos")) {
             this.refuerzos = ((Refuerzos)bonus).getRefuerzos();
         }
+    }
+
+    private void crearAvionesRojos() throws IOException{
+        int random = (int)(Math.random()*300+1);
+        
+        if(avionesRojosEnProceso == 0 && random == 1){
+            int tempX = (int)(Math.floor(Math.random()*(700-100+1)+100));
+            
+            avionesRojos = new AvionRojo[]{
+                new AvionRojo(new Point(tempX, heroe.getY()-650)),
+                new AvionRojo(new Point(tempX, heroe.getY()-650)),
+                new AvionRojo(new Point(tempX, heroe.getY()-650))
+            };
+
+            avionesRojosEnProceso = 3;
+
+            Formacion.iniciar(avionesRojos, Formacion.FORMACIONES.SIMPLE);
+        }
+    }
+    
+    private void manejarAvionesRojos(){
+        for (int i = 0; i < avionesRojos.length; i++) {
+            if(avionesRojos[i] != null){
+                avionesRojos[i].update();
+
+                if(avionesRojos[i].getY() > (heroe.getY() + (Juego1943.getInstance().getHeight())) + 25) { 
+                    eliminarAvionRojo(i, false);
+                    continue;
+                }
+            }
+        }
+    }
+
+    private void eliminarAvionRojo(int j, boolean darBonus) {
+        avionesRojosEnProceso--;
+
+        if(avionesRojosEnProceso == 0 && darBonus) {
+            bonusAvionesRojos(avionesRojos[j].getPosicion());
+        }
+
+        avionesRojos[j] = null;
+    }
+
+    private void bonusAvionesRojos(Point posicion){
+        Bonus b = generarBonus();
+        b.setX((int)posicion.getX());
+        b.setY((int)posicion.getY()-50);
+        bonusEnPantalla.add(b);
     }
 
     public void ataqueEspecial() {
@@ -444,13 +462,6 @@ public class Mision {
         }
     }
 
-    private void bonusAvionesRojos(Point posicion){
-        Bonus b = generarBonus();
-        System.out.println("bonus creado");
-        reemplazarBonus(b);
-
-    }
-
     private void manejarJefe() {
         if(tiempoEnCurso == apareceJefe) {
             jefe.setX(Juego1943.getInstance().getWidth()/2 - jefe.grafico.getWidth()/2);
@@ -482,11 +493,11 @@ public class Mision {
 
     private void manejarImpactos() {
         Rectangle avionAmigo = new Rectangle(heroe.getPosicion(), new Dimension(heroe.grafico.getWidth(), heroe.grafico.getHeight()));
-        
+    
         Rectangle jefeR = new Rectangle(this.jefe.getPosicion(), new Dimension(this.jefe.grafico.getWidth(), this.jefe.grafico.getHeight()));
-        
 
         Rectangle refuerzo1 = null, refuerzo2 = null;
+
         if(refuerzos[0] != null) {
             refuerzo1 = new Rectangle(refuerzos[0].getPosicion(), new Dimension(refuerzos[0].grafico.getWidth(), refuerzos[0].grafico.getHeight()));
         }
@@ -526,31 +537,6 @@ public class Mision {
         }           
     
         
-        for (int j = 0; j < avionesRojos.length; j++) {
-            Rectangle avionEspecial = new Rectangle(this.avionesRojos[j].getPosicion(), new Dimension(this.avionesRojos[j].grafico.getWidth(), this.avionesRojos[j].grafico.getHeight()));
-
-            for (int i = 0; i < balasHeroe.size(); i++) {
-                Municion bala = balasHeroe.get(i);
-    
-                if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
-                    .intersects(avionEspecial)) {
-                    anadirImpacto(avionEspecial, Impacto.tipoImpacto.DISPARO);
-                    avionesRojos[j].modificarEnergia(-avionesRojos[j].getResistencia() * bala.getDano()); 
-    
-                    if(avionesRojos[j].getEnergia() <= 0 ){      //se re bugea la imagen.
-                        cont +=1;         
-                        //   avionesRojos[j]= null;     para que se elimine la imagen.
-                        if(cont == 3 ){                // cont para chequear que se eliminen los 3
-                            //crear y manejar el bonus
-                         
-                           bonusAvionesRojos(this.avionesRojos[j].getPosicion());
-                            
-                        }
-                    }
-                }
-            }
-        }
-        
         for(int i = 0; i < balasHeroe.size(); i++) {
             Municion bala = balasHeroe.get(i);
             Rectangle balaR = new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()));
@@ -560,16 +546,14 @@ public class Mision {
                 
                 Rectangle enemigoR = new Rectangle(enemigo.getPosicion(), new Dimension(enemigo.grafico.getWidth(), enemigo.grafico.getHeight()));
 
-                if(new Rectangle(bala.getPosicion(), new Dimension(bala.grafico.getWidth(), bala.grafico.getHeight()))
-                .intersects(enemigoR)) {
+                if(balaR.intersects(enemigoR)) {
                     anadirImpacto(enemigoR, Impacto.tipoImpacto.DISPARO);
                     
                     enemigo.modificarEnergia(-enemigo.getResistencia() * bala.getDano());
                     
                     balasHeroe.remove(i);
 
-
-//en este metodo se haria el modificar puntaje
+                    //en este metodo se haria el modificar puntaje
                     if(enemigo.getEnergia() <= 0) {
                         heroe.pasarPuntaje(enemigo.puntajeDado());
                         enemigosCreados.remove(j);        
@@ -598,6 +582,30 @@ public class Mision {
 
                 if(this.jefe.getEnergia() <= 0) {
                     this.estado = ESTADO.GANA;
+                }
+            }
+
+            for (int j = 0; j < avionesRojos.length; j++) {
+                if(avionesRojos[j] == null) {
+                    continue;
+                }
+
+                Rectangle avionRojo = new Rectangle(this.avionesRojos[j].getPosicion(), new Dimension(this.avionesRojos[j].grafico.getWidth(), this.avionesRojos[j].grafico.getHeight()));
+        
+                if(balaR.intersects(avionRojo)) {
+                    anadirImpacto(avionRojo, Impacto.tipoImpacto.DISPARO);
+                    avionesRojos[j].modificarEnergia(-avionesRojos[j].getResistencia() * bala.getDano()); 
+    
+                    if(avionesRojos[j].getEnergia() <= 0 ){
+                        eliminarAvionRojo(j, true);
+                    }
+                }
+
+                if(avionRojo.intersects(avionAmigo)) {
+                    anadirImpacto(avionRojo, Impacto.tipoImpacto.COLISION);
+                    anadirImpacto(avionAmigo, Impacto.tipoImpacto.COLISION);
+
+                    eliminarAvionRojo(j, true);
                 }
             }
         }        
@@ -680,10 +688,10 @@ public class Mision {
             bonus.draw(g);
         });
 
-        avionRojo.draw(g);
-        for (int i = 0; i < avionesRojos.length; i++) {
-            if(avionesRojos[i] != null){
-                avionesRojos[i].draw(g);
+        // avionRojo.draw(g);
+        for (AvionRojo avionRojo : avionesRojos) {
+            if(avionRojo != null) {
+                avionRojo.draw(g);
             }
         }
 
@@ -755,7 +763,7 @@ public class Mision {
     } 
 
     public static class MisionBuilder {
-        public AvionesRojos avionRojo;
+        public AvionRojo avionRojo;
         private final AvionAmigo heroe;
         private final Enemigo[] enemigos;
         private final Enemigo jefe;
@@ -763,7 +771,7 @@ public class Mision {
         private int tiempo;
         private DIFICULTAD dificultad;
 
-        public MisionBuilder(AvionAmigo heroe, Enemigo[] enemigos, Enemigo jefe, AvionesRojos avionesRojos) {
+        public MisionBuilder(AvionAmigo heroe, Enemigo[] enemigos, Enemigo jefe, AvionRojo avionesRojos) {
             this.heroe = heroe;
             this.enemigos = enemigos;
             this.jefe = jefe;
