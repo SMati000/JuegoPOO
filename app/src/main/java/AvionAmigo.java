@@ -8,25 +8,55 @@ import javax.imageio.ImageIO;
 public class AvionAmigo extends VehiculoMilitar {
     Jugador1943 jugador;
     
-    public static enum Iconos {
-        COMUN("avionAmigo.png"), IZQ("avionAmigoIzq.png"), DER("avionAmigoDer.png"),
-        BAJANDO1("avionAmigoBajando1.png"), BAJANDO2("avionAmigoBajando2.png");
+    public static enum SPRITES {
+        P38(0), 
+        P39(1);
 
-        private final String filename;
-        private Iconos(String filename) {
-            this.filename = filename;
+        private final int sprite;
+        private SPRITES(int sprite) {
+            this.sprite = sprite;
+        }
+
+        public static SPRITES getSprite(int num) {
+            if(num == 0) 
+                return P38;
+            if(num == 1)
+                return P39;
+
+            return null;
+        }
+    }
+
+    public static enum Iconos { // agregar sprites de la 2da opcion
+        COMUN(new String[]{"avionAmigo.png", ""}),
+        IZQ(new String[]{"avionAmigoIzq.png", ""}), 
+        DER(new String[]{"avionAmigoDer.png", ""}),
+        BAJANDO1(new String[]{"avionAmigoBajando1.png", ""}), 
+        BAJANDO2(new String[]{"avionAmigoBajando2.png", ""});
+
+        private final String[] filenames;
+        private Iconos(String[] filenames) {
+            this.filenames = filenames;
         }
     }
 
     private Iconos icono;
+    private int spritesEnUso;
+
     private double angulo;
     private boolean esquivando;
 
-    public AvionAmigo(Point posicion) throws IOException {
+    public AvionAmigo(SPRITES sprites, Point posicion) throws IOException {
         super("Avion Amigo", "avionAmigo.png", posicion);
-        this.jugador = ((Juego1943)Juego1943.getInstance()).getJugador();  //esta instancia es para poder pasar el puntaje al jugador
-        this.resistencia = this.energia/50;
+        
+        this.spritesEnUso = sprites.sprite;
         this.icono = Iconos.COMUN;
+        setIcon(icono);
+
+        this.jugador = ((Juego1943)Juego1943.getInstance()).getJugador();  //esta instancia es para poder pasar el puntaje al jugador
+        
+        this.resistencia = this.energia/50;
+        
         this.angulo = 0;
         this.esquivando = false;
 
@@ -39,7 +69,7 @@ public class AvionAmigo extends VehiculoMilitar {
     public void setIcon(Iconos ICONO) {
         if(!esquivando) {
             try {
-                this.setGrafico(ImageIO.read(AvionAmigo.class.getResource("imagenes/" + ICONO.filename)));
+                this.setGrafico(ImageIO.read(AvionAmigo.class.getResource("imagenes/" + ICONO.filenames[spritesEnUso])));
                 this.icono = ICONO;
             } catch (IOException e) {
                 System.out.println("Error animacion avion amigo en metodo setIcon");
@@ -112,6 +142,10 @@ public class AvionAmigo extends VehiculoMilitar {
 
     public Iconos getIcon() {
         return this.icono;
+    }
+
+    public SPRITES getSpritesEnUso() {
+        return SPRITES.getSprite(spritesEnUso);
     }
 
     public void pasarPuntaje(int puntos){

@@ -18,16 +18,21 @@ import com.entropyinteractive.Keyboard;
 
 public class Juego1943 extends Juego implements ActionListener {
     private static final Juego instance = new Juego1943();
-
+    private final double desplazamiento = 180.0;
+    
     private ArrayList<Suscriber> suscribers;
+
     private BufferedImage fotoFin;
+    
     private Mapa mapa;
     private Camara cam;
+    
     private boolean terminado= false;
+    
     Jugador1943 jugador; //esta instancia es para llevar el puntaje a la sist de juego
 
     private VehiculoMilitar avionAmigo;
-    private final double desplazamiento = 180.0;
+    private int spriteAvionAmigoElegido;
 
     private int misionAsignada;
     private Mision mision;
@@ -40,6 +45,7 @@ public class Juego1943 extends Juego implements ActionListener {
         super("1943", "Juego 1943");
         
         suscribers = new ArrayList<Suscriber>();
+        spriteAvionAmigoElegido = 0;
 
         setIcon(new File(getClass().getResource("/imagenes/1943ico.png").getPath()));
         
@@ -66,10 +72,17 @@ public class Juego1943 extends Juego implements ActionListener {
         return jugador;
     }
 
-    private void asiganarMision(int misionAsignada){
+    public void setSpriteAvionAmigo(int i) {
+        if(i == 0 || i == 1)
+            this.spriteAvionAmigoElegido = i;
+    }
+
+    private void asignarMision(int misionAsignada){
         this.misionAsignada = misionAsignada;
 
         try {
+            avionAmigo = new AvionAmigo(AvionAmigo.SPRITES.getSprite(spriteAvionAmigoElegido), new Point(400, 300));
+
             Enemigo e1 = new AvionEnemigo("avionEnemigo1.png", new Point(0, 0), avionAmigo.getPosicion());
             Enemigo e2 = new AvionEnemigo("avionEnemigo2.png", new Point(0, 0), avionAmigo.getPosicion());
             
@@ -138,14 +151,11 @@ public class Juego1943 extends Juego implements ActionListener {
 
     @Override
     public void gameStartup() {
-        try {
-            avionAmigo = new AvionAmigo(new Point(400, 300));
-        } catch (IOException e) {}
-        
         keyboard = this.getKeyboard();
 
         cam.setRegionVisible(800, 600);
-        asiganarMision(2);
+
+        asignarMision(1);
     }
 
     @Override
@@ -177,14 +187,14 @@ public class Juego1943 extends Juego implements ActionListener {
                 
                 fotoFin =  ImageIO.read(getClass().getResource("imagenes/win.png"));
                 if(keyboard.isKeyPressed(KeyEvent.VK_P)){
-                    asiganarMision(2);
+                    asignarMision(2);
                 }
             }
 
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 1){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
                 if(keyboard.isKeyPressed(KeyEvent.VK_P)){
-                    asiganarMision(1);
+                    asignarMision(1);
                 }
             }
 
@@ -200,7 +210,7 @@ public class Juego1943 extends Juego implements ActionListener {
             
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 2){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-                    asiganarMision(2);
+                    asignarMision(2);
             }
 
         } catch (IOException e) {

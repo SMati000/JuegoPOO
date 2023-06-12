@@ -23,6 +23,7 @@ public class Refuerzos extends Bonus {
             this.avionAmigo = avionAmigo;
 
             a1 = new AvionAmigo(
+                avionAmigo.getSpritesEnUso(),
                 new Point(
                     (int)avionAmigo.getPosicion().getX() - avionAmigo.grafico.getWidth() - 20, 
                     (int)avionAmigo.getPosicion().getY() + avionAmigo.grafico.getHeight() + 20
@@ -30,6 +31,7 @@ public class Refuerzos extends Bonus {
             );
 
             a2 = new AvionAmigo(
+                avionAmigo.getSpritesEnUso(),
                 new Point(
                     (int)avionAmigo.getPosicion().getX() + avionAmigo.grafico.getWidth() + 20, 
                     (int)avionAmigo.getPosicion().getY() + avionAmigo.grafico.getHeight() + 20

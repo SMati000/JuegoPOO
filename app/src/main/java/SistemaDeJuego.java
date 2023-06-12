@@ -25,6 +25,7 @@ class SistemaDeJuego extends JFrame {
         this.setComponentZOrder(fondo, 0);
         mostrarCatalogo();
 
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.repaint();
 
@@ -53,7 +54,7 @@ class SistemaDeJuego extends JFrame {
         //se aprieta varias veces, fijarme como llamar al frame anterior del juego, con un metodo puede ser
         img1943.addMouseListener(new MouseAdapter() {
             FrameJuego fj = new FrameJuego();
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if(!fj.abierto()){
                     fj.abrir();
                 }
@@ -112,8 +113,8 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
     JMenu menu1, menu2;
     JMenuItem item1, item2, item3;
     Configuraciones conf;
-    JButton jugar;
-    JButton ranking;
+    JButton jugar, ranking;
+    JComboBox<String> personaje;
     
 
     public FrameJuego(){
@@ -221,13 +222,17 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         JPanelBackgroundImage  fondoPanel=new JPanelBackgroundImage("imagenes/pantallaJuego.jpg");
         JPanelBackgroundSemiOpaco botonesPanel=new JPanelBackgroundSemiOpaco();
 
-        botonesPanel.setLayout(new GridLayout(2,1,10,50));
-        botonesPanel.setBorder(new EmptyBorder(60, 60, 60, 60));
-        jugar=new JButton("Jugar");
-        ranking=new JButton("Ver Ranking");
+        botonesPanel.setLayout(new GridLayout(3,1,10,10));
+        botonesPanel.setBorder(new EmptyBorder(160, 60, 60, 60));
+
+        jugar = new JButton("Jugar");
+        ranking = new JButton("Ver Ranking");
+        personaje = new JComboBox<>(new String[]{"P-38", "P-39(?"});
+        personaje.setToolTipText("Elije tu personaje");
 
         botonesPanel.add(jugar);
         botonesPanel.add(ranking);
+        botonesPanel.add(personaje);
 
         jugar.addActionListener(this);
         ranking.addActionListener(this);
@@ -235,7 +240,6 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
         fondoPanel.add(botonesPanel);
 
         return fondoPanel;
-
     }
 
     
@@ -243,7 +247,10 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
 
         if (evento.getActionCommand() == jugar.getActionCommand()){
             Juego juego = Juego1943.getInstance();
+
             ((Juego1943)juego).addSuscriber(this);
+            ((Juego1943)juego).setSpriteAvionAmigo(personaje.getSelectedIndex());
+
             Thread t = new Thread() {
                 public void run(){
                     juego.run(1.0 / 60.0);
@@ -484,15 +491,14 @@ class FrameJuego extends JFrame implements ActionListener, Suscriber {
 class JPanelBackgroundSemiOpaco extends JPanel{
 	 
 	public void paintComponent(Graphics g) {
-     
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setComposite(AlphaComposite.getInstance(
-            AlphaComposite.SRC_OVER, 0.50f));
+        // g2d.setComposite(AlphaComposite.getInstance(
+        //     AlphaComposite.SRC_OVER, 0.50f));
        // g2d.setColor(Color.black);
-        //g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10); 
+        // g2d.fillRoundRect(0,0, this.getWidth(), this.getHeight(), 10, 10); 
      
 	}
 }
