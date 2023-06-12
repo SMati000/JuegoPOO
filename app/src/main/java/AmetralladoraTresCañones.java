@@ -17,7 +17,7 @@ public class AmetralladoraTresCañones extends ArmadeFuego {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         this.avion = avion;
         avion.arma.setTipoMunicion(Arma.MUNICION.TRESCANOS);
         avion.arma.setTiros(3, new double[]{-12, 0, 12});

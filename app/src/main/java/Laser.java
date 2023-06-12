@@ -17,7 +17,7 @@ public class Laser extends ArmadeFuego {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         this.avion = avion;
         avion.arma.setTipoMunicion(Arma.MUNICION.LASER);
         avion.arma.setTiros(1, new double[]{0});

@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -184,16 +183,15 @@ public class Juego1943 extends Juego implements ActionListener {
         try {
 
             if(mision.getEstado() == Mision.ESTADO.GANA && misionAsignada == 1){
-                
                 fotoFin =  ImageIO.read(getClass().getResource("imagenes/win.png"));
-                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                if(keyboard.isKeyPressed(80)){      //80 es el codigo de VK_P
                     asignarMision(2);
                 }
             }
 
             if(mision.getEstado() == Mision.ESTADO.FIN && misionAsignada == 1){
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
-                if(keyboard.isKeyPressed(KeyEvent.VK_P)){
+                if(keyboard.isKeyPressed(80)){
                     asignarMision(1);
                 }
             }
@@ -204,7 +202,6 @@ public class Juego1943 extends Juego implements ActionListener {
                     terminarJuego();
                     terminado = true;
                 }
-                
                 return;
             }
             
@@ -212,6 +209,12 @@ public class Juego1943 extends Juego implements ActionListener {
                 fotoFin = ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
                     asignarMision(2);
             }
+
+            if(avionAmigo.getEnergia() <= 0 ){
+                fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
+            }
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -272,9 +275,9 @@ public class Juego1943 extends Juego implements ActionListener {
             }
         }
 
-        if(keyboard.isKeyPressed(KeyEvent.VK_X) && keyboard.isKeyPressed(KeyEvent.VK_Z)) {
+        if(keyboard.isKeyPressed(Configuraciones.disparo) && keyboard.isKeyPressed(Configuraciones.dispEspecial)) {
             ((AvionAmigo)avionAmigo).esquivar();
-        } else if(keyboard.isKeyPressed(KeyEvent.VK_Z) && !((AvionAmigo)avionAmigo).isEsquivando()) {
+        } else if(keyboard.isKeyPressed(Configuraciones.dispEspecial) && !((AvionAmigo)avionAmigo).isEsquivando()) {
             mision.ataqueEspecial();
         }
         
@@ -329,7 +332,7 @@ public class Juego1943 extends Juego implements ActionListener {
 
         ingresarNom.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if(ingresarNom.getText().equals(text)){
                     ingresarNom.setText("");
                 }
@@ -349,25 +352,31 @@ public class Juego1943 extends Juego implements ActionListener {
     @Override
     public void gameDraw(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        if(mision.getEstado() == Mision.ESTADO.FIN || mision.getEstado() == Mision.ESTADO.GANA 
-                ||  avionAmigo.getEnergia() <= 0) {
-            g.drawImage(fotoFin, 0, 0, null);
+        g.drawImage(fotoFin, 0, 0, null); 
 
+        // if(avionAmigo.getEnergia() <= 0) {
+        //     try {
+        //         fotoFin =  ImageIO.read(getClass().getResource("imagenes/gameover.jpg"));
 
-            // if(misionAsignada != -1) {
-            //     if(misionAsignada == 1){
-            //        //misionAsignada=2;
-            //         asiganarMision(2);
-            //     }else{
-            //         asiganarMision(-1);
-            //         terminarJuego();
-            //     }
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //     }
+
+        //     g.drawImage(fotoFin, 0, 0, null);    
+
+        //     // if(misionAsignada != -1) {
+        //     //     if(misionAsignada == 1){
+        //     //        //misionAsignada=2;
+        //     //         asiganarMision(2);
+        //     //     }else{
+        //     //         asiganarMision(-1);
+        //     //         terminarJuego();
+        //     //     }
                 
-            // }
+        //     // }
 
-            return;
-        }
+        //     return;
+        // }
 
         g.translate(cam.getX(),cam.getY());
     

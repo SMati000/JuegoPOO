@@ -18,7 +18,7 @@ public class Refuerzos extends Bonus {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avionAmigo) {
+    public void asignarBonus(AvionAmigo avionAmigo) {
         try {
             this.avionAmigo = avionAmigo;
 

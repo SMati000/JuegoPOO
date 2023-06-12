@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -44,9 +45,18 @@ public abstract class ObjetoGrafico {
         return this.posicion.y;
     }
 
+    public Dimension getDimensions() {
+        if(grafico != null) {
+            return new Dimension(grafico.getWidth(), grafico.getHeight());
+        }
+
+        return null;
+    }
+
     public String getNombre(){
         return nombre;
     }
+
     public abstract void update();
     public abstract void draw(Graphics2D g);
 }

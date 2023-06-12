@@ -17,7 +17,7 @@ public class Escopeta extends ArmadeFuego {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         this.avion = avion;
         avion.arma.setTipoMunicion(Arma.MUNICION.ESCOPETA);
         avion.arma.setFrecuenciaDisparos(20);

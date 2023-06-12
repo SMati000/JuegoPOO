@@ -15,7 +15,7 @@ public class EstrellaNinja extends PowerUp {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         avion.llenarEnergia();
     }
 

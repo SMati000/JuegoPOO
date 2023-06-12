@@ -16,7 +16,7 @@ public class Auto extends PowerUp {
         super(bonus);
     }
 
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         this.avion = avion;
         avion.arma.setModoDisparo(true);
     }

@@ -16,7 +16,7 @@ public class SuperShell extends PowerUp {
         super(bonus);
     }
 
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         this.avion = avion;
         avion.arma.setModoDisparo(true);
         avion.arma.setFrecuenciaDisparos(3);

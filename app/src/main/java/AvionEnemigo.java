@@ -14,20 +14,7 @@ public class AvionEnemigo extends Enemigo {
         this.arma = new Arma(enemigo.arma);
     }
     
-    // public void seguirHorizontalmente() {
-        // if(objetivo.x - this.posicion.x > 20) { // a la izq del objetivo
-        //     this.posicion.x = this.posicion.x + 1;
-        //     this.grafico = this.der;
-        // } else if(objetivo.x - this.posicion.x < -20) { // a la der del objetivo
-        //     this.posicion.x = this.posicion.x - 1;
-        //     this.grafico = this.izq;
-        // } 
-        
-        // if(!this.objetivoEnRadar(objetivo.y - 5)) { 
-        //     this.grafico = this.comun;
-        // }
-    // }
-
+   
     public Municion[][] disparar() {
         if(this.objetivoEnRadar() && 
             Math.abs((this.posicion.x + (grafico.getWidth()/2)) - (objetivo.x + (grafico.getWidth()/2))) < 70)

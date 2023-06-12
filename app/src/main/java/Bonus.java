@@ -13,7 +13,7 @@ public abstract class Bonus extends ObjetoGrafico {
         this.resistenciaBonus = vidaBonus/5;
     }
  
-    public abstract void AsignarBonus(AvionAmigo avion);
+    public abstract void asignarBonus(AvionAmigo avion);
     
     public void modificarVida(double deltaE){
         if((vidaBonus + deltaE) > 0){

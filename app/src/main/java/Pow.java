@@ -17,7 +17,7 @@ public class Pow extends PowerUp {
     }
 
     @Override
-    public void AsignarBonus(AvionAmigo avion) {
+    public void asignarBonus(AvionAmigo avion) {
         avion.modificarEnergia(30);
     }
 

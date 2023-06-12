@@ -41,7 +41,8 @@ public class Mapa extends ObjetoGrafico {
 				}
 			}
 		};
-		timer.schedule(task, 1000);
+		
+		timer.schedule(task, 5000);
 	}
 
 	public int getWidth(){
@@ -62,7 +63,6 @@ public class Mapa extends ObjetoGrafico {
 		cargarImagen(true);
 	}
 
-	// private int contador = 0;
 	public void cambiarMapa() {
 		if(grafico == aire) {
 			if(transicion != null)
